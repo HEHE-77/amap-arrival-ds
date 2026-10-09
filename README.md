@@ -237,6 +237,6 @@ assets/      从 Figma 导出的素材
 
 事件：`dish-select`（`{ name, rank }`）。
 
-新增 token：`--ds-color-text-honor`（荣誉信息，同距离色 `#835B32`）。入选店铺数统一为正文灰（Figma 中「麻辣烫」为 `#646464`）。
+新增 token：`--ds-color-text-honor`（荣誉信息，同距离色 `#835B32`）。入选店铺数统一为正文灰（Figma 中「麻辣烫」为 `#646464`）。「麻辣烫」排名按第 6 名（Figma 中误写为第 5 名，已确认）。
 
 素材：`assets/dish/samples/*.jpg`，6 张菜品图 84×84 @3x，仅预览用。
