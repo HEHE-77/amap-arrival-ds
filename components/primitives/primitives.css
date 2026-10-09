@@ -259,6 +259,7 @@ amap-button > .ds-btn { flex: 1 1 auto; }
 .ds-btn__price { font-family: var(--ds-font-family-price); font-size: var(--ds-font-size-16); font-weight: 700; line-height: 1; }
 .ds-btn__currency { font-family: var(--ds-font-family-base); font-size: var(--ds-font-size-12); font-weight: var(--ds-font-weight-semibold); }
 .ds-btn:active { opacity: 0.8; }
+.ds-btn--pill { border-radius: var(--ds-radius-pill); padding: 0 var(--ds-space-16); }
 
 /* ── amap-tag：小标签 ── */
 .ds-tag {

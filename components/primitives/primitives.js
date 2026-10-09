@@ -12,7 +12,7 @@
  *   <amap-status-tag text="营业中">            营业状态
  *   <amap-deal-tag type="团" price="98" discount="5.6折">  团购 / 代金券价格条
  *   <amap-media-pill text="1/12" [icon="star"] [muted]>    压在图片上的深色胶囊
- *   <amap-button label="看团购" variant="primary|secondary" [price="9.9"]>  按钮，原生 click
+ *   <amap-button label="看团购" variant="primary|secondary" [price="9.9"] [shape="pill"]>  按钮，原生 click；pill 为胶囊形
  *   <amap-tag text tone="neutral|tenure|promo">  小标签
  *   <amap-quick-order image title tag spec note price>  一键下单卡片，派发 order-buy / order-swap
  *   <amap-hot-review text="…" count="252 人在说">          热评条，原生 click
@@ -240,11 +240,12 @@
 
   /* ── amap-button：主按钮（渐变）/ 次按钮（描边）；可带价格「一键下单 | ¥ 9.9」 ── */
   class AmapButton extends Base {
-    static get observedAttributes() { return ['label', 'variant', 'price']; }
+    static get observedAttributes() { return ['label', 'variant', 'price', 'shape']; }
     render() {
       const variant = this.attr('variant', 'primary') === 'secondary' ? 'secondary' : 'primary';
       const price = this.attr('price');
-      this.innerHTML = `<button type="button" class="ds-btn ds-btn--${variant}">
+      const pill = this.attr('shape') === 'pill' ? ' ds-btn--pill' : '';
+      this.innerHTML = `<button type="button" class="ds-btn ds-btn--${variant}${pill}">
         <span>${esc(this.attr('label'))}</span>
         ${price ? `<span class="ds-btn__divider" aria-hidden="true"></span><span class="ds-btn__price"><span class="ds-btn__currency">¥ </span>${esc(price)}</span>` : ''}
       </button>`;

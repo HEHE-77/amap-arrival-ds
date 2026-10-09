@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>打车费用账单 · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/primitives/primitives.css">
+  <link rel="stylesheet" href="../components/taxi-bill/taxi-bill.css">
+  <style>
+    body { margin: 0; padding: 24px 16px; background: #fff; font-family: var(--ds-font-family-base); color: #191919; }
+    h2 { font-size: 14px; font-weight: 500; color: #60636c; margin: 32px 0 12px; }
+    h2:first-child { margin-top: 0; }
+    .stack { display: flex; flex-direction: column; gap: 16px; }
+    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin-top: 16px; font-family: ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body asset-base="../assets/">
+  <h2>Figma 765:7097（实例 765:7098 内容相同）</h2>
+  <amap-taxi-bill from="汇通太古城英皇之都(西1门)" to="壹号大院(南门)" amount="18.28"></amap-taxi-bill>
+
+  <h2>边界情况</h2>
+  <div class="stack">
+    <amap-taxi-bill from="西安咸阳国际机场 T5 航站楼 出发层 3 号门" to="大唐不夜城·贞观文化广场 南入口东侧临时停车点" amount="168.50"></amap-taxi-bill>
+    <amap-taxi-bill from="钟楼" to="鼓楼" amount="9" pay-label="去支付"
+      actions='[{"key":"contact","label":"联系司机"},{"key":"lost","label":"物品遗失"},{"key":"invoice","label":"开发票"}]'></amap-taxi-bill>
+  </div>
+
+  <div id="log"></div>
+  <script src="../components/primitives/primitives.js"></script>
+  <script src="../components/taxi-bill/taxi-bill.js"></script>
+  <script>
+    const log = (t) => { document.getElementById('log').textContent = t; };
+    ['bill-pay', 'bill-fee', 'bill-more'].forEach((ev) => document.addEventListener(ev, () => log(ev)));
+    document.addEventListener('bill-action', (e) => log('bill-action → ' + JSON.stringify(e.detail)));
+  </script>
+</body>
+</html>

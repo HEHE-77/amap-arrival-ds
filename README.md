@@ -11,7 +11,7 @@ assets/      从 Figma 导出的素材
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）。事件会显示在页面上。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`。事件会显示在页面上。
 
 加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
 
@@ -41,7 +41,7 @@ assets/      从 Figma 导出的素材
 | `<amap-status-tag text>` | 营业状态 | 地点卡 |
 | `<amap-deal-tag type price discount>` | 团 / 券价格条 | 地点卡 |
 | `<amap-media-pill text [icon=star] [muted]>` | 图片上的深色胶囊（收藏数、页码） | 地点卡 |
-| `<amap-button label variant [price]>` | 主按钮（渐变）/ 次按钮（描边），可带「\| ¥ 价格」，原生 click | 地点卡、一键下单 |
+| `<amap-button label variant [price] [shape=pill]>` | 主按钮（渐变）/ 次按钮（描边），可带「\| ¥ 价格」，`pill` 为胶囊形，原生 click | 地点卡、一键下单、打车账单 |
 | `<amap-tag text tone>` | 小标签：`neutral` 灰底信息 / `tenure` 收录年限 / `promo` 商品促销 | 地点卡、一键下单 |
 | `<amap-quick-order image title tag spec note price>` | 一键下单卡片，派发 `order-buy` / `order-swap` | 地点卡（上班） |
 | `<amap-hot-review text count>` | 热评条，原生 click | 地点卡 |
@@ -265,3 +265,28 @@ assets/      从 Figma 导出的素材
 复用：`amap-meta-line`（`sep="｜" accent-first`）与 `ds-link` 样式。新增 token：`--ds-color-divider`（`#F2F2F2`）。实例 `765:7054` 中部分说明文字为 `#5A5A5A`、首行高 62，已统一为正文灰与 63。区块标题（如「还有 20 分钟」「工作休息出来走走」）不属于本组件。
 
 素材：`assets/nearby/samples/*.jpg`，6 张 50×50 @3x，仅预览用。
+
+### 7. 打车费用账单（Figma `765:7097`，实例 `765:7098`）
+
+366×133 卡片：上半区为起终点（绿 / 红圆点）与「共计 18.28 元」「费用说明 >」，下半区为「⋮ / 物品遗失 / 联系司机」与胶囊形「立即支付」。
+
+```html
+<link rel="stylesheet" href="components/taxi-bill/taxi-bill.css">
+<script src="components/taxi-bill/taxi-bill.js"></script>
+
+<amap-taxi-bill from="汇通太古城英皇之都(西1门)" to="壹号大院(南门)" amount="18.28"></amap-taxi-bill>
+```
+
+| 属性 | 说明 |
+|---|---|
+| `from` / `to` | 起点 / 终点，超长省略 |
+| `amount` | 金额数字（Helvetica Bold 24） |
+| `amount-prefix` / `amount-unit` | 默认「共计」/「元」 |
+| `fee-label` / `pay-label` | 默认「费用说明」/「立即支付」 |
+| `actions` | JSON，默认 `[{"key":"lost","label":"物品遗失"},{"key":"contact","label":"联系司机"}]`；`key` 决定图标 |
+
+事件：`bill-pay`、`bill-fee`、`bill-more`、`bill-action`（`{ key, label }`）。
+
+复用：`amap-link`（费用说明）、`amap-button`（新增 `shape="pill"`）。图标从 Figma 导出后内联，颜色走 token。新增 token：`--ds-color-route-start` / `-end`、`--ds-radius-pill`、`--ds-space-16`。
+
+与 Figma 的统一：地址文字 `#1A1A1A`、费用说明与更多图标 `#5A5A5A`、分隔线 `#F1EEEE`、按钮渐变 `#1A68FE→#1989FE`，分别并入正文色、正文灰、`--ds-color-divider` 与主按钮渐变 token。

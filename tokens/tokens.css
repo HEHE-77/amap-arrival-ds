@@ -37,6 +37,8 @@
   --ds-blue-50: #eaf1ff;
   --ds-green-700: #16a85a;
   --ds-green-200: #a0dba4;
+  --ds-green-500: #25a544;
+  --ds-red-500: #ed3a4d;
   --ds-vermilion-500: #ff4d13;
   --ds-peach-75: #ffebde;
   --ds-peach-125: #ffdec8;
@@ -73,11 +75,13 @@
   --ds-space-8: 8px;
   --ds-space-10: 10px;
   --ds-space-14: 14px;
+  --ds-space-16: 16px;
 
   --ds-radius-3: 3px;
   --ds-radius-4: 4px;
   --ds-radius-8: 8px;
   --ds-radius-16: 16px;
+  --ds-radius-pill: 999px;
 
   --ds-shadow-card-raw: 0 4px 13.6px 0 rgba(0, 0, 0, 0.05);
 
@@ -93,6 +97,8 @@
   --ds-color-text-honor: var(--ds-brown-600);         /* 荣誉信息，如「必吃·第1名」（同距离色） */
   --ds-color-border-card: var(--ds-gray-200);         /* [figma] Stroke color */
   --ds-color-divider: var(--ds-gray-75);             /* [figma] 列表行分隔线 1px */
+  --ds-color-route-start: var(--ds-green-500);       /* 行程起点圆点 */
+  --ds-color-route-end: var(--ds-red-500);           /* 行程终点圆点 */
   --ds-color-surface-card: var(--ds-white-warm);
   --ds-color-surface-ranking-tag: rgba(255, 227, 201, 0.4); /* peach-100 @40% */
   --ds-color-surface-media-placeholder: var(--ds-gray-700);
