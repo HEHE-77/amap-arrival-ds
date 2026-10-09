@@ -12,9 +12,7 @@
   --header-gap-meta-rows: var(--ds-space-6);
   --header-gap-actions: var(--ds-space-8);
   --header-gap-icon-label: var(--ds-space-2);
-  --header-thumb-size: 216px;
-  --header-thumb-offset-end: -4px;
-  --header-thumb-offset-top: -85px;
+  --header-thumb-width: 212px; /* 地图缩略图 = header 内可见区域，素材按此尺寸 @3x 裁好 */
   --header-eco-icon-w: 18px;
   --header-eco-icon-h: 17px;
   --header-chevron-size: 17px;
@@ -34,14 +32,15 @@
   font-style: normal;
 }
 
-/* 地图缩略图：锚定右侧，宽度变化时始终贴右 */
+/* 地图缩略图：贴右、铺满高度，宽度变化时始终贴右 */
 .amap-header__thumb {
   position: absolute;
-  top: var(--header-thumb-offset-top);
-  right: var(--header-thumb-offset-end);
-  width: var(--header-thumb-size);
-  height: var(--header-thumb-size);
+  top: 0;
+  right: 0;
+  width: var(--header-thumb-width);
+  height: 100%;
   object-fit: cover;
+  object-position: right center;
   pointer-events: none;
 }
 
@@ -155,17 +154,9 @@
 /* ── 变体：打车到达（Figma 849:2938） ── */
 .amap-header--taxi {
   --header-height: 84px;
-  --header-fade-stop: 64.323%;
   --header-content-align: center;
-  --header-thumb-width: 323.264px;
-  --header-thumb-height: 245px;
-  --header-thumb-offset-end: -4.264px;
-  --header-thumb-offset-top: -52px;
+  --header-thumb-width: 319px;
   --header-meta-reserve: 96px;
-}
-.amap-header--taxi .amap-header__thumb {
-  width: var(--header-thumb-width);
-  height: var(--header-thumb-height);
 }
 
 /* 一行多段，「·」分隔，段间距 2 */

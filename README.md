@@ -23,7 +23,7 @@ assets/      从 Figma 导出的素材
 
 | 变体 | `variant` | Figma | 高度 |
 |---|---|---|---|
-| 常规到达 | `regular`（默认） | `849:2976` / `849:2920` | 72 |
+| 常规到达 | `regular`（默认） | `849:2920` | 72 |
 | 打车到达 | `taxi` | `849:2938` | 84，内容垂直居中 |
 
 ```html
@@ -51,11 +51,11 @@ assets/      从 Figma 导出的素材
 
 事件：`trip-replay`（点击行程回溯）。
 
-素材（`assets/`，均为 @3x PNG）：
+素材（`assets/`，均为 @3x PNG；地图只导出 header 内可见的那块）：
 
 | 文件名 | Figma 节点 | 尺寸 |
 |---|---|---|
-| `header-map-thumb.png` | `849:2977` image 6 | 216×216 |
-| `header-map-thumb-taxi.png` | `849:2939` image 7 | 323×245 · **待导出** |
+| `header-map-thumb.png` | `849:2921` image 8（可见区域） | 212×72 |
+| `header-map-thumb-taxi.png` | `849:2939` image 7（可见区域） | 319×84 |
 | `icon-green-energy.png` | `849:2986` Frame | 18×17 |
 | `icon-arrow-right.png` | `849:2992` ic:baseline-keyboard-arrow-right | 17×17 |

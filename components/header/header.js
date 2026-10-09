@@ -2,7 +2,7 @@
  * <amap-arrival-header> · 到达页 Header
  *
  * 变体（variant）
- *   regular  常规到达（默认）  Figma 849:2976 / 849:2920
+ *   regular  常规到达（默认）  Figma 849:2920
  *   taxi     打车到达          Figma 849:2938
  *
  * 通用属性
@@ -23,8 +23,8 @@
  *   trip-replay  点击「行程回溯」时派发（bubbles, composed）
  */
 const ASSETS = {
-  regular: { thumb: 'header-map-thumb.png', w: 216, h: 216 },
-  taxi: { thumb: 'header-map-thumb-taxi.png', w: 323, h: 245 },
+  regular: { thumb: 'header-map-thumb.png', w: 212, h: 72 },
+  taxi: { thumb: 'header-map-thumb-taxi.png', w: 319, h: 84 },
   eco: 'icon-green-energy.png',
   chevron: 'icon-arrow-right.png',
 };
