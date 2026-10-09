@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Khand';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../assets/fonts/khand-latin-600-normal.woff2') format('woff2'); /* SIL OFL 1.1 */
+}
+
 /* 高德到达页设计系统 · tokens.css
  * 由 tokens.json 对应生成；三层：primitive → semantic → component。
  * [figma] = Figma 中已存在的变量/样式；其余为从硬编码值提取的建议变量。
@@ -19,12 +27,30 @@
   --ds-peach-150: #fff4e2;
   --ds-peach-200: #fcd6b8;
   --ds-yellow-500: #ffb300;
+  --ds-gray-25: #fcfcfc;
+  --ds-brown-900: #4a240a;
+  --ds-blue-700: #1a67fe;
+  --ds-blue-650: #198afe;
+  --ds-blue-600: #137eff;
+  --ds-blue-550: #0980fe;
+  --ds-blue-500: #007fff;
+  --ds-blue-50: #eaf1ff;
+  --ds-green-700: #16a85a;
+  --ds-green-200: #a0dba4;
+  --ds-vermilion-500: #ff4d13;
+  --ds-peach-75: #ffebde;
+  --ds-peach-125: #ffdec8;
+  --ds-rose-50: #ffe9e7;
+  --ds-rose-75: #fcedeb;
 
+  --ds-font-family-numeral: 'Khand', var(--ds-font-family-base); /* TOP 排名数字，字体随包 assets/fonts */
   --ds-font-family-base: 'PingFang SC', -apple-system, BlinkMacSystemFont,
     'Noto Sans SC', 'Noto Sans CJK SC', 'Source Han Sans SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif; /* 苹方 → 思源黑体 → 微软雅黑，全部无衬线 */
   --ds-font-weight-regular: 400;
   --ds-font-weight-medium: 500;
   --ds-font-weight-semibold: 600;
+  --ds-font-size-8: 8px;
+  --ds-font-size-10: 10px;
   --ds-font-size-12: 12px;
   --ds-font-size-14: 14px;
   --ds-font-size-16: 16px;
@@ -39,6 +65,7 @@
   --ds-space-14: 14px;
 
   --ds-radius-3: 3px;
+  --ds-radius-4: 4px;
   --ds-radius-8: 8px;
   --ds-radius-16: 16px;
 
@@ -58,7 +85,24 @@
   --ds-color-surface-ranking-tag: rgba(255, 227, 201, 0.4); /* peach-100 @40% */
   --ds-color-surface-media-placeholder: var(--ds-gray-700);
   --ds-color-focus-ring: var(--ds-gray-900);           /* 键盘焦点框 */
-  --ds-color-favorite: var(--ds-yellow-500);           /* 收藏态（暂定，Figma 无对应） */
+  --ds-color-favorite: var(--ds-yellow-500);
+  --ds-color-surface-card-neutral: var(--ds-gray-25); /* 饭店到达卡片底色 */
+  --ds-color-text-ranking-strong: var(--ds-brown-900); /* TOP 排名飘带文字 */
+  --ds-color-action-primary-start: var(--ds-blue-700); /* 主按钮渐变起点 */
+  --ds-color-action-primary-end: var(--ds-blue-650); /* 主按钮渐变终点 */
+  --ds-color-action-secondary: var(--ds-blue-550); /* 描边按钮的边框与文字 */
+  --ds-color-score-solid: var(--ds-blue-600); /* 评分徽标左侧实色块 */
+  --ds-color-score-text: var(--ds-blue-500); /* 评分徽标文字（超棒） */
+  --ds-color-score-surface: var(--ds-blue-50); /* 评分徽标底色 */
+  --ds-color-status-open: var(--ds-green-700); /* 营业中文字 */
+  --ds-color-status-open-border: var(--ds-green-200); /* 营业中描边 */
+  --ds-color-deal: var(--ds-vermilion-500); /* 团购/代金券价格与文字 */
+  --ds-color-deal-surface: var(--ds-peach-75); /* 团/券图标底色 */
+  --ds-color-deal-border: var(--ds-peach-125); /* 折扣描边 */
+  --ds-color-hot-surface: var(--ds-rose-50); /* 热评条渐变起色 */
+  --ds-color-hot-count-surface: var(--ds-rose-75); /* 热评人数胶囊底色 */
+  --ds-color-overlay-media: rgba(19,19,19,0.8); /* 压在图片上的深色胶囊 */
+  --ds-color-text-on-overlay: var(--ds-gray-25); /* 深色胶囊上的文字 */           /* 收藏态（暂定，Figma 无对应） */
 
   --ds-shadow-card: var(--ds-shadow-card-raw);        /* [figma] 卡片 */
 
@@ -87,6 +131,14 @@
   --ds-type-numeral-m-size: var(--ds-font-size-14);
   --ds-type-numeral-m-weight: var(--ds-font-weight-semibold);
   --ds-type-numeral-m-line: 20px;
+
+  /* caption-xs：10 / Regular|Medium|Semibold / normal（标签、徽标） */
+  --ds-type-caption-xs-size: var(--ds-font-size-10);
+  --ds-type-caption-xs-line: 14px;
+  /* button-m：14 / Medium / 16.9（与卡片副标题同参数） */
+  --ds-type-button-m-size: var(--ds-font-size-14);
+  --ds-type-button-m-weight: var(--ds-font-weight-medium);
+  --ds-type-button-m-line: 16.9px;
 
   /* ── Theme · 卡片主题色（surface 卡片顶色 / accent 水印六边形 / accent-soft 水印箭头）── */
   --ds-theme-orange-surface: #ffefe5; --ds-theme-orange-accent: #ffebde; --ds-theme-orange-accent-soft: #fdf7f1; /* 853:4824 */

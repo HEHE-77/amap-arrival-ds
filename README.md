@@ -11,9 +11,11 @@ assets/      从 Figma 导出的素材
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）。事件会显示在页面上。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`restaurant-card.html`。事件会显示在页面上。
 
 加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
+
+字体：全部无衬线。苹果设备用苹方，其他平台优先思源黑体；TOP 排名数字用 Khand SemiBold（`assets/fonts/`，SIL OFL 1.1，由 `tokens.css` 的 `@font-face` 加载）。
 
 ## Token 分层
 
@@ -33,7 +35,14 @@ assets/      从 Figma 导出的素材
 | `<amap-ranking-tag text>` | 扫街榜标签 | POI 标题区 |
 | `<amap-rank-thumb rank src>` | 图片 + 排名角标，无图显示占位底色 | POI 列表行 |
 | `<amap-fav-button pressed label>` | 收藏星标，切换后派发 `fav-change { favorited }` | POI 列表行 |
-| `<amap-meta-line items sep accent-first>` | 分隔符串联的说明行，首段可强调 | POI 列表行 |
+| `<amap-meta-line items sep accent-first>` | 分隔符串联的说明行，首段可强调 | POI 列表行、饭店卡 |
+| `<amap-rank-ribbon rank>` | TOP 排名飘带（Khand 字体随包） | 饭店卡 |
+| `<amap-score-badge score label>` | 评分徽标「4.8 超棒」 | 饭店卡 |
+| `<amap-status-tag text>` | 营业状态 | 饭店卡 |
+| `<amap-deal-tag type price discount>` | 团 / 券价格条 | 饭店卡 |
+| `<amap-media-pill text [icon=star] [muted]>` | 图片上的深色胶囊（收藏数、页码） | 饭店卡 |
+| `<amap-button label variant>` | 主按钮（渐变）/ 次按钮（描边），原生 click | 饭店卡 |
+| `<amap-hot-review text count>` | 热评条，原生 click | 饭店卡 |
 
 ## 组件
 
@@ -115,3 +124,44 @@ assets/      从 Figma 导出的素材
 | `samples/*.png` | 18 张店铺图，仅预览用（按像素比对 Figma 缩略图对应到店铺） | 50×50 @3x |
 
 箭头用全局 `icon-chevron-right.svg`；星标与水印内联在组件中。收藏态填充 `--ds-color-favorite`（暂定 `#FFB300`）。
+
+### 3. 饭店到达卡片（Figma `853:5068`「饭店到达-1」）
+
+由 `amap-rank-ribbon` · `amap-media-pill` · `amap-score-badge` · `amap-meta-line` · `amap-ranking-tag` · `amap-status-tag` · `amap-hot-review` · `amap-deal-tag` · `amap-button` 组成。
+
+```html
+<link rel="stylesheet" href="components/restaurant-card/restaurant-card.css">
+<script src="components/restaurant-card/restaurant-card.js"></script>
+
+<amap-restaurant-card rank="1" name="胡大饭馆 24h (砺街总店)" distance="<100 米"
+  score="4.8" score-label="超棒" details='["川菜","￥150/人","3652 人导航过"]'
+  ranking="碑林区回头客榜单·第 1 名" status="营业中"
+  review="关晓彤推荐来的! 冲他家的蒜蓉酸辣螃蟹..." review-count="252 人在说"
+  deals='[{"type":"团","price":"98","discount":"5.6折","title":"夏宫双人招牌套餐 (需提前预约)"}]'
+  image="…" saves="10.7w+" image-index="1/12"></amap-restaurant-card>
+```
+
+| 属性 | 说明 |
+|---|---|
+| `rank` | 排名，生成 TOP 飘带；不传不显示 |
+| `name` / `distance` | 店名（超长省略）/ 距离 |
+| `score` / `score-label` | 评分徽标 |
+| `details` | JSON 数组，「·」串联 |
+| `ranking` / `status` | 扫街榜标签 / 营业状态，均可不传 |
+| `review` / `review-count` | 热评条 |
+| `deals` | JSON 数组 `[{ type: '团'\|'券', price, discount, title }]`，条数不限 |
+| `image` / `saves` / `image-index` | 主图 / 右上收藏数 / 右下页码 |
+| `primary-label` / `secondary-label` | 默认「看团购」/「查看路线」 |
+
+事件：`restaurant-primary`、`restaurant-route`、`restaurant-review`、`restaurant-deal`（`{ index, deal }`）。
+
+素材（`assets/restaurant/`，SVG 由 Figma 插件 API 直接导出）：
+
+| 文件名 | Figma 节点 | 尺寸 |
+|---|---|---|
+| `ribbon-bg.svg` | `764:3782` Rectangle 95 | 49×57 |
+| `laurel.svg` | `764:3785` Group 17 | 37×14 |
+| `score-glow.svg` | `765:3889` Ellipse 11 | 26×10 |
+| `icon-fire.svg` | `853:5096` ic:round-whatshot | 16×16 |
+| `icon-star-white.svg` | `853:5072` Star 3 | 15×14 |
+| `samples/huda-fanguan.jpg` | `853:5070` 主图（仅预览，1x） | 284×156 |

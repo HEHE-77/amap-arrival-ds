@@ -150,7 +150,7 @@
   text-overflow: ellipsis;
 }
 .amap-header__dot { flex: none; }
-.amap-header__dot { width: var(--header-dot-width); text-align: center; }
+.amap-header__dot { width: var(--header-dot-width); display: flex; justify-content: center; } /* 字形宽于格子时对称溢出 */
 
 .amap-header__ride { line-height: var(--ds-type-body-s-strong-line); }
 .amap-header__provider {

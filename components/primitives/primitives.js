@@ -7,6 +7,13 @@
  *   <amap-rank-thumb rank="1" src="…">         方形图片 + 左上排名角标
  *   <amap-fav-button pressed label="店名">     收藏星标，切换后派发 fav-change { favorited }
  *   <amap-meta-line sep="|" items='[…]' accent-first>  分隔符串联的一行说明，首段可强调（距离）
+ *   <amap-rank-ribbon rank="1">               TOP 排名飘带
+ *   <amap-score-badge score="4.8" label="超棒"> 评分徽标
+ *   <amap-status-tag text="营业中">            营业状态
+ *   <amap-deal-tag type="团" price="98" discount="5.6折">  团购 / 代金券价格条
+ *   <amap-media-pill text="1/12" [icon="star"] [muted]>    压在图片上的深色胶囊
+ *   <amap-button label="看团购" variant="primary|secondary">  按钮，原生 click
+ *   <amap-hot-review text="…" count="252 人在说">          热评条，原生 click
  *
  * 素材目录：读取自身或最近祖先的 asset-base 属性，默认 ../../assets/
  */
@@ -121,12 +128,114 @@
     }
   }
 
+  /* ── amap-rank-ribbon：TOP 排名飘带 ── */
+  class AmapRankRibbon extends Base {
+    static get observedAttributes() { return ['rank', 'label']; }
+    render() {
+      const base = assetBase(this);
+      const rank = Number(this.attr('rank', '1'));
+      this.innerHTML = `
+        <span class="ds-ribbon" aria-label="第 ${rank} 名">
+          <img class="ds-ribbon__bg" src="${base}restaurant/ribbon-bg.svg" alt="" width="49" height="57">
+          <span class="ds-ribbon__label" aria-hidden="true">${esc(this.attr('label', 'TOP'))}</span>
+          <span class="ds-ribbon__num" aria-hidden="true">${String(rank).padStart(2, '0')}</span>
+          <img class="ds-ribbon__laurel" src="${base}restaurant/laurel.svg" alt="" width="37" height="14">
+        </span>`;
+      markMissing(this);
+    }
+  }
+
+  /* ── amap-score-badge：评分徽标「4.8 超棒」 ── */
+  class AmapScoreBadge extends Base {
+    static get observedAttributes() { return ['score', 'label']; }
+    render() {
+      const label = this.attr('label');
+      this.innerHTML = `
+        <span class="ds-score">
+          <span class="ds-score__solid">
+            <img class="ds-score__glow" src="${assetBase(this)}restaurant/score-glow.svg" alt="" width="26" height="10">
+            <span class="ds-score__num">${esc(this.attr('score'))}</span>
+          </span>
+          ${label ? `<span class="ds-score__label">${esc(label)}</span>` : ''}
+        </span>`;
+    }
+  }
+
+  /* ── amap-status-tag：营业状态 ── */
+  class AmapStatusTag extends Base {
+    static get observedAttributes() { return ['text', 'tone']; }
+    render() {
+      this.innerHTML = `<span class="ds-status" data-tone="${esc(this.attr('tone', 'open'))}">${esc(this.attr('text', '营业中'))}</span>`;
+    }
+  }
+
+  /* ── amap-deal-tag：团 / 券 价格条 ── */
+  class AmapDealTag extends Base {
+    static get observedAttributes() { return ['type', 'price', 'discount']; }
+    render() {
+      const discount = this.attr('discount');
+      this.innerHTML = `
+        <span class="ds-deal">
+          <span class="ds-deal__type">${esc(this.attr('type', '团'))}</span>
+          <span class="ds-deal__price"><span class="ds-deal__currency">￥</span>${esc(this.attr('price'))}</span>
+          ${discount ? `<span class="ds-deal__discount">${esc(discount)}</span>` : ''}
+        </span>`;
+    }
+  }
+
+  /* ── amap-media-pill：压在图片上的深色胶囊（收藏数 / 页码） ── */
+  class AmapMediaPill extends Base {
+    static get observedAttributes() { return ['text', 'icon', 'muted']; }
+    render() {
+      const icon = this.attr('icon');
+      const muted = this.hasAttribute('muted');
+      this.innerHTML = `
+        <span class="ds-pill${muted ? ' is-muted' : ''}">
+          ${icon === 'star' ? `<span class="ds-pill__icon"><img src="${assetBase(this)}restaurant/icon-star-white.svg" alt="" width="15" height="14"></span>` : ''}
+          <span class="ds-pill__text">${esc(this.attr('text'))}</span>
+        </span>`;
+      markMissing(this);
+    }
+  }
+
+  /* ── amap-button：主按钮（渐变）/ 次按钮（描边） ── */
+  class AmapButton extends Base {
+    static get observedAttributes() { return ['label', 'variant']; }
+    render() {
+      const variant = this.attr('variant', 'primary') === 'secondary' ? 'secondary' : 'primary';
+      this.innerHTML = `<button type="button" class="ds-btn ds-btn--${variant}">${esc(this.attr('label'))}</button>`;
+    }
+  }
+
+  /* ── amap-hot-review：热评条（火焰 + 评论 + N 人在说 >） ── */
+  class AmapHotReview extends Base {
+    static get observedAttributes() { return ['text', 'count']; }
+    render() {
+      const base = assetBase(this);
+      const count = this.attr('count');
+      this.innerHTML = `
+        <button type="button" class="ds-hot">
+          <img class="ds-hot__icon" src="${base}restaurant/icon-fire.svg" alt="" width="16" height="16">
+          <span class="ds-hot__text">${esc(this.attr('text'))}</span>
+          ${count ? `<span class="ds-hot__count">${esc(count)}<img class="ds-hot__chevron" src="${base}${ASSETS.chevron}" alt="" width="16" height="18"></span>` : ''}
+        </button>`;
+      markMissing(this);
+    }
+  }
+
   const defs = {
     'amap-link': AmapLink,
     'amap-ranking-tag': AmapRankingTag,
     'amap-rank-thumb': AmapRankThumb,
     'amap-fav-button': AmapFavButton,
     'amap-meta-line': AmapMetaLine,
+    'amap-rank-ribbon': AmapRankRibbon,
+    'amap-score-badge': AmapScoreBadge,
+    'amap-status-tag': AmapStatusTag,
+    'amap-deal-tag': AmapDealTag,
+    'amap-media-pill': AmapMediaPill,
+    'amap-button': AmapButton,
+    'amap-hot-review': AmapHotReview,
   };
   for (const [tag, cls] of Object.entries(defs)) if (!customElements.get(tag)) customElements.define(tag, cls);
 

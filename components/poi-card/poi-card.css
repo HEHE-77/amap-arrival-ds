@@ -129,8 +129,8 @@
 }
 .amap-poi__row:active { opacity: 0.7; }
 .amap-poi__row:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; border-radius: 4px; }
-.amap-poi__row amap-rank-thumb { flex: none; display: block; }
-.amap-poi__item amap-fav-button { flex: none; display: block; }
+.amap-poi__row amap-rank-thumb { flex: none; display: flex; }
+.amap-poi__item amap-fav-button { flex: none; display: flex; }
 
 .amap-poi__info {
   display: flex;
@@ -149,4 +149,4 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.amap-poi__info amap-meta-line { display: block; }
+.amap-poi__info amap-meta-line { display: flex; }

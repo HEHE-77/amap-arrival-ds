@@ -1,0 +1,115 @@
+/* 饭店到达卡片 · Figma 853:5068「饭店到达-1」
+ * 依赖 tokens/tokens.css、components/primitives/primitives.css
+ */
+.amap-rest {
+  /* ── Component tokens ── */
+  --rest-width: 301px;
+  --rest-radius: var(--ds-radius-16);
+  --rest-border-width: 0.6px;
+  --rest-pad: var(--ds-space-8);
+  --rest-gap: var(--ds-space-8);
+  --rest-media-h: 156px;
+  --rest-media-radius: var(--ds-radius-8);
+  --rest-pill-end: 11.8px;
+  --rest-pill-top: 12px;
+  --rest-pill-bottom: 10px;
+  --rest-body-gap: var(--ds-space-6);
+  --rest-ribbon-start: 24.4px;
+  --rest-ribbon-top: -1.6px;
+  --rest-actions-gap: 8.8px;
+
+  position: relative;
+  box-sizing: border-box;
+  width: var(--rest-width);
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rest-gap);
+  padding: var(--rest-pad);
+  border: var(--rest-border-width) solid var(--ds-color-border-card);
+  border-radius: var(--rest-radius);
+  background: var(--ds-color-surface-card-neutral);
+  box-shadow: var(--ds-shadow-card);
+  font-family: var(--ds-font-family-base);
+  color: var(--ds-color-text-primary);
+}
+
+/* 排名飘带：压在卡片上沿，允许溢出 */
+.amap-rest__ribbon {
+  position: absolute;
+  z-index: 2;
+  top: var(--rest-ribbon-top);
+  left: var(--rest-ribbon-start);
+}
+
+/* ── 图片区 ── */
+.amap-rest__media {
+  position: relative;
+  height: var(--rest-media-h);
+  overflow: hidden;
+  border-radius: var(--rest-media-radius);
+  background: var(--ds-color-surface-media-placeholder);
+}
+.amap-rest__photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.amap-rest__saves { position: absolute; top: var(--rest-pill-top); right: var(--rest-pill-end); }
+.amap-rest__page { position: absolute; bottom: var(--rest-pill-bottom); right: var(--rest-pill-end); }
+
+/* ── 信息区 ── */
+.amap-rest__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rest-body-gap);
+  min-width: 0;
+}
+.amap-rest__row { display: flex; align-items: center; min-width: 0; }
+
+.amap-rest__title { justify-content: space-between; gap: var(--ds-space-8); }
+.amap-rest__name {
+  margin: 0;
+  min-width: 0;
+  font-size: var(--ds-type-title-m-size);
+  font-weight: var(--ds-type-title-m-weight);
+  line-height: var(--ds-type-title-m-line);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.amap-rest__distance {
+  flex: none;
+  font-size: var(--ds-type-body-s-size);
+  line-height: var(--ds-type-body-s-line);
+  white-space: nowrap;
+}
+
+.amap-rest__details { gap: var(--ds-space-8); }
+.amap-rest__details amap-score-badge { flex: none; display: flex; }
+.amap-rest__details amap-meta-line { flex: 1 1 0; min-width: 0; display: flex; }
+/* 「·」分隔：段距 2，分隔符固定 6 宽（与 Header 一致） */
+.amap-rest__details .ds-meta-line { gap: var(--ds-space-2); }
+.amap-rest__details .ds-meta-line__sep { width: 6px; display: flex; justify-content: center; } /* 字形宽于 6px 时向两侧对称溢出（思源黑体的「·」为全角） */
+
+.amap-rest__badges { gap: var(--ds-space-6); align-items: flex-start; }
+.amap-rest__badges amap-ranking-tag { flex: 0 1 auto; display: flex; }
+.amap-rest__badges amap-status-tag { flex: none; display: flex; }
+
+.amap-rest__deal {
+  gap: var(--ds-space-6);
+  margin: 0; padding: 0; border: 0; background: none;
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.amap-rest__deal:active { opacity: 0.7; }
+.amap-rest__deal:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; border-radius: 4px; }
+.amap-rest__deal amap-deal-tag { flex: none; display: flex; }
+.amap-rest__deal-title {
+  min-width: 0;
+  font-size: var(--ds-type-body-s-size);
+  line-height: var(--ds-type-body-s-line);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── 按钮区（Figma 宽 136 / 139，间距 8.8） ── */
+.amap-rest__actions { display: flex; gap: var(--rest-actions-gap); }
+.amap-rest__actions amap-button { flex: 1 1 0; min-width: 0; }
