@@ -69,3 +69,16 @@ amap-service-card {
 }
 .amap-svc__tags { display: flex; gap: var(--ds-space-6); min-width: 0; overflow: hidden; }
 .amap-svc__action { flex: none; }
+
+/* 头像版（代驾卡，Figma 765:5304）：44 圆形头像 + 15 号名称，名称与说明间距 4 */
+.amap-svc__avatar {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--ds-color-score-surface);
+}
+.amap-svc.has-avatar { justify-content: flex-start; }
+.amap-svc.has-avatar .amap-svc__info { --svc-info-gap: var(--ds-space-4); }
+.amap-svc.has-avatar .amap-svc__name { font-size: 15px; line-height: 21px; }

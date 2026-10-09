@@ -1,0 +1,164 @@
+/* 到达页意图模拟器 · 外壳样式（左侧控制面板 + 右侧 iPhone 16 Pro 402×874） */
+:root {
+  --app-bg: #f4f4f1;
+  --app-surface: #ffffff;
+  --app-line: #e3e2dc;
+  --app-text: #1f1f1d;
+  --app-text-2: #6b6a64;
+  --app-text-3: #9c9a92;
+  --app-accent: #0980fe;
+  --app-accent-bg: #eaf3ff;
+  --app-warn: #9a5b12;
+  --app-warn-bg: #fbf0e0;
+  --phone-w: 402px;
+  --phone-h: 874px;
+  --bezel: 11px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--app-bg);
+  color: var(--app-text);
+  font-family: var(--ds-font-family-base);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; }
+
+.app {
+  display: grid;
+  grid-template-columns: minmax(380px, 1fr) auto;
+  gap: 40px;
+  max-width: 1240px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 28px 32px;
+}
+
+/* ───────── 左侧 ───────── */
+.panel { min-width: 0; padding-bottom: 40px; }
+.panel h1 { margin: 0; font-size: 22px; font-weight: 600; line-height: 1.3; letter-spacing: 0.2px; }
+.panel .lede { margin: 6px 0 22px; color: var(--app-text-2); font-size: 13px; }
+
+.block { margin-top: 22px; }
+.block__title { display: flex; align-items: baseline; gap: 10px; margin: 0 0 10px; font-size: 13px; font-weight: 600; color: var(--app-text); }
+.block__title small { font-weight: 400; color: var(--app-text-3); }
+
+.scenes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.scene {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid var(--app-line); border-radius: 12px;
+  background: var(--app-surface);
+  text-align: left; cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+}
+.scene:hover { border-color: #c9c6be; }
+.scene[aria-pressed="true"] { border-color: var(--app-accent); box-shadow: 0 0 0 3px var(--app-accent-bg); }
+.scene b { font-size: 14px; font-weight: 600; }
+.scene span { font-size: 12px; color: var(--app-text-2); }
+.scene em { font-style: normal; font-size: 11px; color: var(--app-text-3); }
+
+.dims { display: grid; gap: 14px; padding: 16px; border: 1px solid var(--app-line); border-radius: 12px; background: var(--app-surface); }
+.dim[data-disabled] { opacity: 0.4; }
+.dim__head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.dim__label { font-size: 13px; font-weight: 600; white-space: nowrap; }
+.dim__hint { font-size: 12px; color: var(--app-text-3); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 4px 11px;
+  border: 1px solid var(--app-line); border-radius: 999px;
+  background: var(--app-surface); color: var(--app-text-2);
+  font-size: 12.5px; line-height: 20px; cursor: pointer;
+}
+.chip:hover:not(:disabled) { color: var(--app-text); border-color: #c9c6be; }
+.chip[aria-pressed="true"] { border-color: var(--app-accent); background: var(--app-accent-bg); color: var(--app-accent); font-weight: 500; }
+.chip:disabled { cursor: not-allowed; }
+.chip:focus-visible, .scene:focus-visible, .order__item:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; }
+
+.order { margin: 0; padding: 0; list-style: none; border: 1px solid var(--app-line); border-radius: 12px; background: var(--app-surface); overflow: hidden; }
+.order__item {
+  display: grid; grid-template-columns: 22px 120px 1fr; gap: 10px; align-items: baseline;
+  width: 100%; padding: 9px 14px;
+  border: 0; border-top: 1px solid var(--app-line); background: none;
+  text-align: left; cursor: pointer;
+}
+.order li:first-child .order__item { border-top: 0; }
+.order__item:hover { background: #fafaf7; }
+.order__no { font-size: 12px; color: var(--app-text-3); font-variant-numeric: tabular-nums; }
+.order__name { font-weight: 600; font-size: 13px; }
+.order__desc { font-size: 12px; color: var(--app-text-2); }
+
+.log { margin-top: 10px; min-height: 20px; font-size: 12px; color: var(--app-text-3); }
+.log b { color: var(--app-accent); font-weight: 500; }
+
+.notes { margin: 0; padding: 12px 16px 12px 32px; border-radius: 12px; background: var(--app-warn-bg); color: var(--app-warn); font-size: 12px; }
+.notes li + li { margin-top: 4px; }
+
+/* ───────── 右侧手机 ───────── */
+.stage { position: sticky; top: 28px; align-self: start; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.stage__frame { transform-origin: top center; }
+.phone {
+  position: relative;
+  width: calc(var(--phone-w) + var(--bezel) * 2);
+  height: calc(var(--phone-h) + var(--bezel) * 2);
+  padding: var(--bezel);
+  border-radius: 66px;
+  background: #1b1b1d;
+  box-shadow: 0 0 0 1.5px #3a3a3e inset, 0 30px 60px -20px rgba(0, 0, 0, 0.35), 0 12px 24px -12px rgba(0, 0, 0, 0.25);
+}
+.screen {
+  position: relative;
+  width: var(--phone-w);
+  height: var(--phone-h);
+  border-radius: 55px;
+  overflow: hidden;
+  background: var(--ds-gray-50);   /* 页面底色 #FBFBFB（Figma 812:7853） */
+}
+.screen__scroll { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
+.screen__scroll::-webkit-scrollbar { display: none; }
+.statusbar {
+  position: sticky; top: 0; z-index: 5;
+  height: 51px;
+  background: var(--ds-gray-50);
+}
+.statusbar img { position: absolute; left: 0; top: 0; width: 402px; height: 51px; }
+/* 常规到达：Figma 顶部区块有 4 的上内边距，状态栏整体下移 4；打车到达没有 */
+.statusbar.is-regular { height: 55px; }
+.statusbar.is-regular img, .statusbar.is-regular .statusbar__time { transform: translateY(4px); }
+.statusbar__time {
+  position: absolute; left: 39px; top: 15px; width: 33px;
+  text-align: center;
+  font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 17px; font-weight: 600; line-height: 22px; letter-spacing: -0.3px;
+  color: #646464;
+}
+.home-indicator {
+  position: absolute; left: 50%; bottom: 8px; z-index: 6;
+  width: 134px; height: 5px; margin-left: -67px;
+  border-radius: 100px; background: var(--ds-color-text-primary);
+  pointer-events: none;
+}
+.stage__caption { font-size: 12px; color: var(--app-text-3); }
+
+/* ───────── 页面编排（手机内） ───────── */
+.page {
+  display: flex; flex-direction: column; gap: 16px;   /* 模块间距 16（Figma 三张整页一致） */
+  padding: 0 0 41px;                                   /* 底部留出 home indicator 25 + 16 */
+}
+.pg-top { display: flex; flex-direction: column; gap: 8px; }
+.pg-top amap-nav-bar { width: 100%; }
+.pg-top__header, .pg-pad { padding: 0 18px; }
+.pg-stack { display: flex; flex-direction: column; gap: 8px; }
+.pg-dwell { display: flex; flex-direction: column; gap: 8px; }
+.pg-dwell__long { display: flex; flex-direction: column; gap: 8px; padding-top: 6px; }
+.page amap-section, .page amap-nav-bar, .page amap-facility-bar { width: 100%; }
+.page [data-flash] { animation: flash 1.2s ease; }
+@keyframes flash { 0%, 40% { box-shadow: 0 0 0 3px var(--app-accent-bg) inset; background: rgba(9, 128, 254, 0.06); } 100% { box-shadow: none; background: transparent; } }
+
+@media (max-width: 960px) {
+  .app { grid-template-columns: 1fr; padding: 20px 16px; gap: 24px; }
+  .stage { position: static; order: -1; }
+  .scenes { grid-template-columns: 1fr; }
+}

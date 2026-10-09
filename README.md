@@ -9,6 +9,20 @@ preview/     组件状态预览页
 assets/      从 Figma 导出的素材
 ```
 
+## 意图模拟器（整页）
+
+打开 `app/index.html`：左侧按《到达页信息优先级模拟器 v17.2》的维度（出行方式、到访频次、常驻城市、终点类型、到店状态、时段、收藏）选择意图，右侧 iPhone 16 Pro（402 × 874）里用设计系统组件实时拼出整页。
+
+- 场景样例：开车去商场（Figma `812:7852`）、外地游客到钟楼（`812:7853`）、上班族打车到公司（`812:7854`），点选套用默认参数；地址栏 `?scene=explore` 可直接打开。
+- 「本次调用结果」按页面顺序列出模块，点击定位到手机里对应位置；手机里点按钮、卡片会在下方显示触发的事件。
+- `app/intent.js`：维度、编排规则（原表 `layout()`）与各模块数据；`app/render.js`：把模块映射到组件；`app/app.js`：面板与交互。
+
+页面布局（取自三张 Figma 整页）：状态栏 51（常规到达上方另有 4），顶部区块为导航栏 / Header / 设施入口，间距 8；模块之间统一间距 16；左右边距 18；页面底色 `#FBFBFB`；底部留出 home indicator。
+
+新增组件：`<amap-tier-label>`（「还有 20 分钟」「有 1 小时以上」分档小标题，Figma `765:5257`）、`<amap-notice>`（到店受阻提示条，Figma 暂无，样式暂定）；`amap-service-card` 新增 `avatar`（代驾卡，Figma `765:5304`）；`amap-place-card` 新增 `closed`（打烊态）；`amap-section` 新增 `subheading`；`amap-arrival-header` 的 `asset-base` 可从祖先继承。素材：`assets/page/`（状态栏、分档图标）、`assets/drive/daijia-avatar.jpg`。
+
+与 Figma 整页的差异（来自意图表规则，模拟器以意图表为准）：设施入口顺序按「出行方式首项 + 场景项」生成；外地游客「平时」的附近精选首张为下午茶榜；末班车排在收藏之前；商场样例为常驻城市，不出异地限行。
+
 ## 查看交互效果
 
 在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）、`reminders.html`（限行 / 末班车）、`nav-bar.html`、`place-row.html`（收藏地点）、`more-card.html`、`facility-bar.html`。事件会显示在页面上。

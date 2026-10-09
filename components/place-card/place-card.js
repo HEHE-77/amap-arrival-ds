@@ -22,6 +22,7 @@
  *   info-tag        灰色信息标签，如「西安的市中心」
  *   tenure          收录年限标签，如「收录 2 年」
  *   status          营业状态，如「营业中」「正在开放」
+ *   closed          布尔，打烊态：status 改用灰色标签（如「今日已打烊」）
  *   review / review-count  热评条
  *   deals           JSON 数组 [{ type: '团'|'券'|'票', price, discount, title }]
  *   deal-more       第一条团购右侧入口文案，如「查看更多」
@@ -48,7 +49,7 @@
 
   class AmapPlaceCard extends HTMLElement {
     static get observedAttributes() {
-      return ['scene', 'rank', 'name', 'distance', 'score', 'score-label', 'details', 'ranking', 'info-tag', 'tenure', 'status',
+      return ['scene', 'rank', 'name', 'distance', 'score', 'score-label', 'details', 'ranking', 'info-tag', 'tenure', 'status', 'closed',
         'review', 'review-count', 'deals', 'deal-more', 'image', 'saves', 'image-index', 'primary-label', 'secondary-label', 'order', 'layout', 'asset-base'];
     }
     get defaultScene() { return 'restaurant'; }
@@ -77,7 +78,7 @@
         has(a('ranking')) ? `<amap-ranking-tag text="${esc(a('ranking'))}"></amap-ranking-tag>` : '',
         has(a('info-tag')) ? `<amap-tag tone="neutral" text="${esc(a('info-tag'))}"></amap-tag>` : '',
         has(a('tenure')) ? `<amap-tag tone="tenure" text="${esc(a('tenure'))}"></amap-tag>` : '',
-        has(a('status')) ? `<amap-status-tag text="${esc(a('status'))}"></amap-status-tag>` : '',
+        has(a('status')) ? (this.hasAttribute('closed') ? `<amap-tag tone="neutral" text="${esc(a('status'))}"></amap-tag>` : `<amap-status-tag text="${esc(a('status'))}"></amap-status-tag>`) : '',
       ].join('');
 
       this.innerHTML = `

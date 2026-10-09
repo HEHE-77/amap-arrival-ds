@@ -9,7 +9,7 @@
  *   heading      标题，默认「已到达」
  *   address      地址
  *   trip-label   行程回溯文案，默认「行程回溯」
- *   asset-base   素材目录，默认 ../../assets/
+ *   asset-base   素材目录；不传时读最近祖先的 asset-base，默认 ../../assets/
  *
  * regular 专属
  *   energy       绿色能量克数；不传则隐藏
@@ -84,7 +84,7 @@ class AmapArrivalHeader extends HTMLElement {
 
   render() {
     const variant = this.attr('variant', 'regular') === 'taxi' ? 'taxi' : 'regular';
-    const base = this.attr('asset-base', '../../assets/');
+    const base = this.getAttribute('asset-base') ?? this.closest('[asset-base]')?.getAttribute('asset-base') ?? '../../assets/';
     const heading = this.attr('heading', '已到达');
     const thumb = ASSETS[variant];
 

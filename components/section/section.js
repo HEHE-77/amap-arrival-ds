@@ -10,6 +10,7 @@
  *
  * 属性
  *   heading     模块标题（16 Semibold），超长省略
+ *   subheading  标题下方的灰色说明（如「等位太久？这三家不用等」）
  *   more-label  标题右侧入口文案，如「查看更多」；不传不显示（amap-link，需加载 primitives）
  *   layout      不传为竖向堆叠；scroll 为横向滑动（如当地特色菜）
  *
@@ -21,7 +22,7 @@
     String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   class AmapSection extends HTMLElement {
-    static get observedAttributes() { return ['heading', 'more-label']; }
+    static get observedAttributes() { return ['heading', 'subheading', 'more-label']; }
 
     connectedCallback() {
       if (!this._body) {
@@ -31,6 +32,7 @@
         this.innerHTML = `
           <section class="amap-section">
             <div class="amap-section__header"><h2 class="amap-section__title"></h2><span class="amap-section__more"></span></div>
+            <p class="amap-section__sub" hidden></p>
             <div class="amap-section__body"></div>
           </section>`;
         this._title = this.querySelector('.amap-section__title');
@@ -48,6 +50,9 @@
       const h = this.getAttribute('heading') ?? '';
       const more = this.getAttribute('more-label') ?? '';
       this._title.innerHTML = esc(h);
+      const sub = this.querySelector('.amap-section__sub');
+      sub.textContent = this.getAttribute('subheading') ?? '';
+      sub.hidden = !sub.textContent;
       this.querySelector('.amap-section__more').innerHTML = more ? `<amap-link label="${esc(more)}"></amap-link>` : '';
       this.querySelector('.amap-section__header').hidden = !h && !more;
     }

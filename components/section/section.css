@@ -36,6 +36,14 @@ amap-section {
   text-overflow: ellipsis;
 }
 .amap-section__header[hidden] { display: none; }
+.amap-section__sub {
+  margin: -4px 0 0;
+  padding: 0 var(--section-inset);
+  font-size: var(--ds-type-body-s-size);
+  line-height: var(--ds-type-body-s-line);
+  color: var(--ds-color-text-muted);
+}
+.amap-section__sub[hidden] { display: none; }
 .amap-section__more { flex: none; display: flex; }
 .amap-section__more:empty { display: none; }
 .amap-section__body {
