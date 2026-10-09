@@ -1,0 +1,192 @@
+<title>到达页组件台</title>
+<style>
+/* Layout: 左侧舞台（组件真实尺寸）+ 右侧/下方控制面板；窄屏堆叠 */
+:root {
+  --bg: #f3f4f6;
+  --panel: #ffffff;
+  --line: #e1e4e9;
+  --fg: #1d2128;
+  --muted: #6b7280;
+  --accent: #1f6feb;
+  --stage: #dfe5ec;
+  --ok: #00a27f;
+  --mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --ui: 'PingFang SC', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15181d; --panel: #1d2128; --line: #2c323b; --fg: #e8eaee; --muted: #9aa3af; --accent: #6ea8fe; --stage: #2a3038; --ok: #3fcca6; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15181d; --panel: #1d2128; --line: #2c323b; --fg: #e8eaee; --muted: #9aa3af; --accent: #6ea8fe; --stage: #2a3038; --ok: #3fcca6; color-scheme: dark }
+
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--fg); font-family: var(--ui); }
+.wrap { max-width: 980px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 40px; display: grid; gap: 20px; }
+header.top h1 { font-size: 20px; margin: 0 0 4px; text-wrap: balance; }
+header.top p { margin: 0; color: var(--muted); font-size: 13px; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; }
+@media (max-width: 760px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+.stage { background: var(--stage); border-radius: 12px; padding: 32px 0; display: grid; gap: 10px; overflow: hidden; }
+.stage-label { font-size: 12px; color: var(--muted); padding-inline: 16px; display: flex; justify-content: space-between; gap: 8px; font-variant-numeric: tabular-nums; }
+.stage-slot { width: var(--slot-w, 366px); max-width: 100%; }
+.log { margin: 0; padding-inline: 16px; font-size: 12px; color: var(--ok); min-height: 17px; font-family: var(--mono); }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 14px; }
+.panel h2 { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0; font-weight: 600; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 13px; }
+.field input[type=text], .field input[type=number] {
+  font: inherit; font-size: 13px; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); min-width: 0;
+}
+.field input:focus-visible, .seg button:focus-visible, .presets button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-size: 13px; padding: 7px; border: 0; background: transparent; color: var(--fg); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.row { display: flex; align-items: center; gap: 10px; }
+.row input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+.row output { font-family: var(--mono); font-size: 12px; color: var(--muted); width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.presets button { font: inherit; font-size: 12px; padding: 5px 9px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; }
+.presets button:hover { border-color: var(--accent); color: var(--accent); }
+.hint { font-size: 12px; color: var(--muted); margin: 0; }
+
+.code { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; }
+.code pre { margin: 0; padding: 14px 16px; font-family: var(--mono); font-size: 12px; line-height: 1.6; white-space: pre; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/*__COMPONENT_CSS__*/
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Header 组件台</h1>
+    <p>真实尺寸渲染。改右侧的参数看效果，点「行程回溯」会触发事件。</p>
+  </header>
+
+  <div class="grid">
+    <section class="stage" aria-label="组件预览">
+      <div class="stage-label"><span id="stageVariant">常规到达 · regular</span><span id="stageSize">366 × 72</span></div>
+      <div class="stage-slot" id="slot">
+        <amap-arrival-header id="hdr" asset-base="assets/"></amap-arrival-header>
+      </div>
+      <p class="log" id="log" aria-live="polite"></p>
+    </section>
+
+    <form class="panel" id="controls" autocomplete="off">
+      <div class="field">
+        <h2>变体</h2>
+        <div class="seg" role="group" aria-label="变体">
+          <button type="button" id="vRegular" aria-pressed="true">常规到达</button>
+          <button type="button" id="vTaxi" aria-pressed="false">打车到达</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="address">地址</label>
+        <input type="text" id="address">
+      </div>
+
+      <div class="field" data-for="regular">
+        <label for="energy">绿色能量（g），清空则隐藏</label>
+        <input type="number" id="energy" min="0">
+      </div>
+
+      <div class="field" data-for="taxi" hidden>
+        <label for="place">地点名称</label>
+        <input type="text" id="place">
+      </div>
+      <div class="field" data-for="taxi" hidden>
+        <label for="provider">运力</label>
+        <input type="text" id="provider">
+      </div>
+      <div class="field" data-for="taxi" hidden>
+        <label for="driver">司机 · 车牌</label>
+        <input type="text" id="driver">
+      </div>
+
+      <div class="field">
+        <label for="width">宽度</label>
+        <div class="row"><input type="range" id="width" min="280" max="366" value="366"><output id="widthOut">366</output></div>
+      </div>
+
+      <div class="field">
+        <h2>压力测试</h2>
+        <div class="presets">
+          <button type="button" id="pDefault">设计稿内容</button>
+          <button type="button" id="pLong">超长文案</button>
+          <button type="button" id="pNarrow">窄屏 320</button>
+        </div>
+        <p class="hint">超长时地址和司机信息省略，「行程回溯」始终完整显示。</p>
+      </div>
+    </form>
+  </div>
+
+  <div class="code" aria-label="当前用法"><pre id="snippet"></pre></div>
+</div>
+
+<script>
+/*__COMPONENT_JS__*/
+</script>
+<script>
+(() => {
+  const hdr = document.getElementById('hdr');
+  const $ = (id) => document.getElementById(id);
+  const DATA = {
+    regular: { address: '地铁2号线 · 钟楼(地铁站)', energy: '54' },
+    taxi: { place: '中贸广场 B 座', address: '长安南路 79 号', provider: '享道-经济型', driver: '何师傅·陕 AA01306' },
+  };
+  const LONG = {
+    regular: { address: '雁塔区小寨东路与长安南路交叉口东北角 289 号 · 西安万象城 L1 层(生命之树)', energy: '128' },
+    taxi: { place: '西安咸阳国际机场 T3 航站楼', address: '出发层 4 号门', provider: '享道-舒适型', driver: '欧阳师傅·陕 AD12345F 白色比亚迪汉' },
+  };
+  let variant = 'regular';
+  const fields = ['address', 'energy', 'place', 'provider', 'driver'];
+
+  function fill(src) {
+    fields.forEach((f) => { $(f).value = src[f] ?? ''; });
+  }
+
+  function apply() {
+    hdr.setAttribute('variant', variant);
+    const used = variant === 'taxi' ? ['address', 'place', 'provider', 'driver'] : ['address', 'energy'];
+    fields.forEach((f) => {
+      const v = $(f).value.trim();
+      if (used.includes(f) && v !== '') hdr.setAttribute(f, v); else hdr.removeAttribute(f);
+    });
+    const w = $('width').value;
+    $('widthOut').textContent = w;
+    $('slot').style.setProperty('--slot-w', w + 'px');
+    document.querySelectorAll('[data-for]').forEach((el) => { el.hidden = el.dataset.for !== variant; });
+    $('vRegular').setAttribute('aria-pressed', String(variant === 'regular'));
+    $('vTaxi').setAttribute('aria-pressed', String(variant === 'taxi'));
+    $('stageVariant').textContent = variant === 'taxi' ? '打车到达 · taxi' : '常规到达 · regular';
+    requestAnimationFrame(() => {
+      const r = hdr.querySelector('.amap-header').getBoundingClientRect();
+      $('stageSize').textContent = Math.round(r.width) + ' × ' + Math.round(r.height);
+    });
+    const attrs = used.map((f) => [f, $(f).value.trim()]).filter(([, v]) => v !== '');
+    const lines = [variant === 'taxi' ? '  variant="taxi"' : null, ...attrs.map(([k, v]) => `  ${k}="${v}"`)].filter(Boolean);
+    $('snippet').textContent = `<amap-arrival-header\n${lines.join('\n')}>\n</amap-arrival-header>`;
+  }
+
+  function setVariant(v) { variant = v; fill(DATA[v]); apply(); }
+
+  $('vRegular').addEventListener('click', () => setVariant('regular'));
+  $('vTaxi').addEventListener('click', () => setVariant('taxi'));
+  $('controls').addEventListener('input', apply);
+  $('controls').addEventListener('submit', (e) => e.preventDefault());
+  $('pDefault').addEventListener('click', () => { fill(DATA[variant]); $('width').value = 366; apply(); });
+  $('pLong').addEventListener('click', () => { fill(LONG[variant]); apply(); });
+  $('pNarrow').addEventListener('click', () => { $('width').value = 320; apply(); });
+
+  let n = 0;
+  hdr.addEventListener('trip-replay', () => {
+    n += 1;
+    $('log').textContent = `trip-replay 事件 ×${n} · ${new Date().toLocaleTimeString()}`;
+  });
+
+  setVariant('regular');
+})();
+</script>

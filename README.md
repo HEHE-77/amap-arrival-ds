@@ -9,6 +9,11 @@ preview/     组件状态预览页
 assets/      从 Figma 导出的素材
 ```
 
+## 查看交互效果
+
+- **在线组件台**：claude.ai 上的私有 Artifact「到达页组件台」，可切换变体、改文案、调宽度、点击行程回溯看事件。
+- **本地**：打开 `preview/header.html`（全部状态静态对照），或运行 `python3 playground/build.py` 后打开 `playground/dist/index.html`。
+
 ## Token 分层
 
 | 层 | 作用 | 例子 |
