@@ -11,7 +11,7 @@ assets/      从 Figma 导出的素材
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）。事件会显示在页面上。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）。事件会显示在页面上。
 
 加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
 
@@ -240,3 +240,28 @@ assets/      从 Figma 导出的素材
 新增 token：`--ds-color-text-honor`（荣誉信息，同距离色 `#835B32`）。入选店铺数统一为正文灰（Figma 中「麻辣烫」为 `#646464`）。「麻辣烫」排名按第 6 名（Figma 中误写为第 5 名，已确认）。
 
 素材：`assets/dish/samples/*.jpg`，6 张菜品图 84×84 @3x，仅预览用。
+
+### 6. 附近 POI 列表（Figma `765:5256` 附近景点POI，实例 `765:5259` / `765:5757` / `765:7054`）
+
+宽 366 的竖向列表：每行 50×50 图 + 名称 / 「距离｜说明…」+ 右侧「查看详情 >」，行顶 1px 分隔线。Figma 中固定 2 行，组件支持任意行数。
+
+```html
+<link rel="stylesheet" href="components/nearby-list/nearby-list.css">
+<script src="components/nearby-list/nearby-list.js"></script>
+
+<amap-nearby-list items='[
+  {"name":"生命之树","distance":"距您 200 米","details":["免费","22:00 关"],"image":"…"},
+  {"name":"西安电视塔","distance":"距您 580 米","details":["登塔 ¥50","20:00 关"],"image":"…"}]'></amap-nearby-list>
+```
+
+| 属性 | 说明 |
+|---|---|
+| `items` | JSON 数组或 `el.items = [...]`；每项 `{ name, distance, details[], image }`，说明行用「｜」串联，距离为棕色 |
+| `detail-label` | 右侧入口文案，默认「查看详情」 |
+| `asset-base` | 素材目录（全局箭头） |
+
+事件：`nearby-select`（`{ index, item }`，整行可点，含「查看详情」）。
+
+复用：`amap-meta-line`（`sep="｜" accent-first`）与 `ds-link` 样式。新增 token：`--ds-color-divider`（`#F2F2F2`）。实例 `765:7054` 中部分说明文字为 `#5A5A5A`、首行高 62，已统一为正文灰与 63。区块标题（如「还有 20 分钟」「工作休息出来走走」）不属于本组件。
+
+素材：`assets/nearby/samples/*.jpg`，6 张 50×50 @3x，仅预览用。

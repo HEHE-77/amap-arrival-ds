@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>附近 POI 列表 · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/primitives/primitives.css">
+  <link rel="stylesheet" href="../components/nearby-list/nearby-list.css">
+  <style>
+    body { margin: 0; padding: 24px 16px; background: #fff; font-family: var(--ds-font-family-base); color: #191919; }
+    h2 { font-size: 14px; font-weight: 500; color: #60636c; margin: 32px 0 12px; }
+    h2:first-child { margin-top: 0; }
+    /* 仅预览：模拟所在区块（宽 402，左右 18），区块标题不属于本组件 */
+    .section { width: 402px; max-width: 100%; box-sizing: border-box; padding: 0 18px; }
+    .section__title { margin: 0 0 8px; font-size: 14px; font-weight: 500; line-height: 17px; }
+    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin-top: 16px; font-family: ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body asset-base="../assets/">
+  <h2>组件本体 765:5256（实例 765:5259 内容相同）</h2>
+  <div class="section">
+    <amap-nearby-list items='[
+      {"name":"生命之树","distance":"距您 200 米","details":["免费","22:00 关"],"image":"../assets/nearby/samples/shengming-zhi-shu.jpg"},
+      {"name":"西安电视塔","distance":"距您 580 米","details":["登塔 ¥50","20:00 关"],"image":"../assets/nearby/samples/xian-tv-tower.jpg"}]'></amap-nearby-list>
+  </div>
+
+  <h2>实例 765:5757</h2>
+  <div class="section">
+    <p class="section__title">还有 20 分钟</p>
+    <amap-nearby-list items='[
+      {"name":"秦腔艺术博物馆","distance":"距您 200 米","details":["门票 ¥20","22:00 关"],"image":"../assets/nearby/samples/qinqiang-museum.jpg"},
+      {"name":"粉巷","distance":"距您 580 米","details":["免费","2:00 关"],"image":"../assets/nearby/samples/fenxiang.jpg"}]'></amap-nearby-list>
+  </div>
+
+  <h2>实例 765:7054</h2>
+  <div class="section">
+    <p class="section__title">工作休息出来走走</p>
+    <amap-nearby-list items='[
+      {"name":"星巴克臻选店","distance":"距您 150 米","details":["安静","21:00 关"],"image":"../assets/nearby/samples/starbucks-reserve.jpg"},
+      {"name":"小雁塔广场","distance":"距您 380 米","details":["免费","有长椅"],"image":"../assets/nearby/samples/xiaoyanta-square.jpg"}]'></amap-nearby-list>
+  </div>
+
+  <h2>边界情况</h2>
+  <div class="section">
+    <amap-nearby-list detail-label="去看看" items='[
+      {"name":"自定义入口文案「去看看」","distance":"距您 90 米","details":["免费"]},
+      {"name":"超长的地点名称会省略显示超长的地点名称","distance":"距您 1.2 公里","details":["门票 ¥120 起","全天开放","需预约"]},
+      {"name":"无距离","details":["免费","有长椅"]}]'></amap-nearby-list>
+  </div>
+
+  <div id="log"></div>
+  <script src="../components/primitives/primitives.js"></script>
+  <script src="../components/nearby-list/nearby-list.js"></script>
+  <script>
+    document.addEventListener('nearby-select', (e) => {
+      document.getElementById('log').textContent = 'nearby-select → ' + e.detail.index + ' ' + e.detail.item.name;
+    });
+  </script>
+</body>
+</html>

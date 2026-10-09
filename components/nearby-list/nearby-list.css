@@ -1,0 +1,75 @@
+/* <amap-nearby-list> · 附近 POI 列表（Figma 765:5256「附近景点POI」）
+ * 依赖 tokens/tokens.css、components/primitives/primitives.css（复用 ds-link 样式与 amap-meta-line）
+ */
+amap-nearby-list {
+  /* 组件变量，可覆盖 */
+  --nearby-row-pad: var(--ds-space-6);
+  --nearby-image-size: 50px;
+  --nearby-image-radius: var(--ds-radius-8);
+  --nearby-gap: 12px;
+  --nearby-text-gap: var(--ds-space-3);
+
+  display: block;
+  width: var(--nearby-width, 366px);
+  max-width: 100%;
+  font-family: var(--ds-font-family-base);
+}
+
+.amap-nearby { margin: 0; padding: 0; list-style: none; }
+
+/* 每行：上边线 1px + 上内边距 6；行与行之间再留 6（末行没有下内边距） */
+.amap-nearby__item {
+  border-top: 1px solid var(--ds-color-divider);
+  padding: var(--nearby-row-pad) 0;
+}
+.amap-nearby__item:last-child { padding-bottom: 0; }
+
+.amap-nearby__row {
+  display: flex;
+  align-items: center;
+  gap: var(--nearby-gap);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.amap-nearby__row:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; border-radius: var(--ds-radius-8); }
+.amap-nearby__row:active .ds-link { opacity: 0.6; }
+
+.amap-nearby__media {
+  flex: none;
+  width: var(--nearby-image-size);
+  height: var(--nearby-image-size);
+  border-radius: var(--nearby-image-radius);
+  overflow: hidden;
+  background: var(--ds-color-tag-neutral-surface);
+}
+.amap-nearby__photo { display: block; width: 100%; height: 100%; object-fit: cover; }
+.amap-nearby__photo.is-missing { visibility: hidden; }
+
+.amap-nearby__text {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nearby-text-gap);
+}
+.amap-nearby__name {
+  margin: 0;
+  font-size: var(--ds-type-title-m-size);
+  font-weight: var(--ds-type-title-m-weight);
+  line-height: var(--ds-type-title-m-line);
+  color: var(--ds-color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.amap-nearby__meta { max-width: 100%; }
+
+.amap-nearby__detail { flex: none; }

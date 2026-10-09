@@ -43,6 +43,7 @@
   --ds-rose-50: #ffe9e7;
   --ds-rose-75: #fcedeb;
   --ds-gray-100: #efefef;
+  --ds-gray-75: #f2f2f2;
   --ds-apricot-100: #ffecdc;
   --ds-apricot-700: #bd581a;
   --ds-coral-500: #fe5e33;
@@ -91,6 +92,7 @@
   --ds-color-text-ranking: var(--ds-brown-700);       /* 扫街榜标签文字 */
   --ds-color-text-honor: var(--ds-brown-600);         /* 荣誉信息，如「必吃·第1名」（同距离色） */
   --ds-color-border-card: var(--ds-gray-200);         /* [figma] Stroke color */
+  --ds-color-divider: var(--ds-gray-75);             /* [figma] 列表行分隔线 1px */
   --ds-color-surface-card: var(--ds-white-warm);
   --ds-color-surface-ranking-tag: rgba(255, 227, 201, 0.4); /* peach-100 @40% */
   --ds-color-surface-media-placeholder: var(--ds-gray-700);
