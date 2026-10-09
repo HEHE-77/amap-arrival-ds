@@ -87,7 +87,7 @@
   font-size: var(--ds-type-body-s-size);
   font-weight: var(--ds-type-body-s-weight);
   line-height: var(--ds-type-body-s-line);
-  color: var(--ds-color-text-secondary);
+  color: var(--ds-color-text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -134,7 +134,7 @@
   font-size: var(--ds-type-body-s-size);
   font-weight: var(--ds-type-body-s-weight);
   line-height: var(--ds-type-body-s-line);
-  color: var(--ds-color-text-secondary);
+  color: var(--ds-color-text-muted);
   white-space: nowrap;
   border-radius: 4px;
   -webkit-tap-highlight-color: transparent;
@@ -170,7 +170,7 @@
   font-size: var(--ds-type-body-s-size);
   font-weight: var(--ds-type-body-s-weight);
   line-height: var(--ds-type-body-s-line);
-  color: var(--ds-color-text-secondary);
+  color: var(--ds-color-text-muted);
   white-space: nowrap;
 }
 .amap-header__seg:last-child,

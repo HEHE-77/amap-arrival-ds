@@ -18,7 +18,7 @@ assets/      从 Figma 导出的素材
 | 层 | 作用 | 例子 |
 |---|---|---|
 | primitive | 原始值，不带语义 | `--ds-gray-900` `--ds-space-8` |
-| semantic | 用途，组件只引用这一层 | `--ds-color-text-primary` |
+| semantic | 用途，组件只引用这一层 | `--ds-color-text-primary` `--ds-color-text-muted`（全系统唯一次要灰） |
 | component | 组件私有尺寸/间距，可被覆盖 | `--header-fade-stop` |
 
 ## 组件
@@ -87,6 +87,8 @@ assets/      从 Figma 导出的素材
 | `items` | JSON 数组或 `el.items = [...]`；字段 `name` `distance` `price` `image` `favorited` |
 | `asset-base` | 素材目录 |
 
+收藏星标内联在组件里（路径取自 `853:4854`），未收藏为「正文灰」描边，收藏后用 `--ds-color-favorite` 填充（暂定 `#FFB300`，改 token 即可）。
+
 事件：`poi-more`、`poi-select`（`{ index, item }`）、`poi-favorite`（`{ index, item, favorited }`，组件内已切换状态）。排名序号按顺序自动生成 01、02…
 
 素材（`assets/poi/`；矢量 SVG，照片 PNG）：
@@ -94,10 +96,7 @@ assets/      从 Figma 导出的素材
 | 文件名 | Figma 节点 | 尺寸 |
 |---|---|---|
 | `poi-watermark.svg` | `853:4827` Group 18（已按卡片上沿裁切） | 73×61 |
-| `saojiebang-logo.svg` | `853:4834` image 21 · **待提供** | 34×12 |
+| `saojiebang-logo.png` | `853:4834` image 21（Figma 中为位图，按 @3x 渲染导出） | 34×12 |
 | — | 箭头用全局 `icon-chevron-right.svg` | |
-| `rank-badge-1.svg` | `853:4845` · **待提供** | 29×29 |
-| `rank-badge-2.svg` | `853:4860` · **待提供** | 29×29 |
-| `icon-star-outline.svg` | `853:4854` | 26×25 |
-| `icon-star-filled.svg` | 收藏态 · **待确认** | 26×25 |
+| `rank-badge.svg` | `853:4845` / `853:4860`（两者相同，各名次共用） | 29×29 |
 | `sample-poi-1.png` / `sample-poi-2.png` | `853:4844` / `853:4859`（仅预览用） | 50×50 @3x |

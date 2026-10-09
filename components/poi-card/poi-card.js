@@ -24,12 +24,15 @@
 (() => {
   const ASSETS = {
     watermark: 'poi/poi-watermark.svg',
-    logo: 'poi/saojiebang-logo.svg',
+    logo: 'poi/saojiebang-logo.png', // Figma 中为位图，按 @3x 导出
     chevron: 'icon-chevron-right.svg',
-    rank: (n) => (n === 1 ? 'poi/rank-badge-1.svg' : 'poi/rank-badge-2.svg'),
-    star: 'poi/icon-star-outline.svg',
-    starOn: 'poi/icon-star-filled.svg',
+    rank: 'poi/rank-badge.svg', // 各名次共用
   };
+
+  // 星标：路径取自 Figma 853:4854 导出的 SVG，内联以便用 token 控制描边/填充（收藏态）
+  const STAR = '<svg class="amap-poi__fav-icon" width="26" height="25" viewBox="0 0 26 25" aria-hidden="true">'
+    + '<path d="M12.2148 2.83594C12.5585 2.22247 13.4415 2.22247 13.7852 2.83594L16.0371 6.8584C16.3751 7.46221 16.9668 7.88199 17.6484 8.00098L22.2197 8.79883C22.9366 8.92396 23.2162 9.80427 22.7031 10.3203L19.5674 13.4746C19.0599 13.9852 18.8205 14.7041 18.9209 15.417L19.5381 19.8008C19.6375 20.5067 18.9155 21.0427 18.2686 20.7432L13.9668 18.751C13.3538 18.4672 12.6462 18.4672 12.0332 18.751L7.73145 20.7432C7.0845 21.0427 6.36251 20.5067 6.46191 19.8008L7.0791 15.417C7.17948 14.7041 6.94012 13.9852 6.43262 13.4746L3.29688 10.3203C2.78381 9.80427 3.06342 8.92396 3.78027 8.79883L8.35156 8.00098C9.03322 7.88199 9.62492 7.46221 9.96289 6.8584L12.2148 2.83594Z" stroke-width="1.4"/>'
+    + '</svg>';
 
   const esc = (s) =>
     String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -76,7 +79,7 @@
           <button type="button" class="amap-poi__row" aria-label="第 ${rank} 名 ${esc(item.name)}">
             <span class="amap-poi__thumb">
               ${has(item.image) ? `<img class="amap-poi__photo" src="${esc(item.image)}" alt="">` : ''}
-              <img class="amap-poi__rank-bg" src="${base}${ASSETS.rank(rank)}" alt="" width="29" height="29">
+              <img class="amap-poi__rank-bg" src="${base}${ASSETS.rank}" alt="" width="29" height="29">
               <span class="amap-poi__rank" aria-hidden="true">${pad2(rank)}</span>
             </span>
             <span class="amap-poi__info">
@@ -85,7 +88,7 @@
             </span>
           </button>
           <button type="button" class="amap-poi__fav" aria-pressed="${fav}" aria-label="${fav ? '取消收藏' : '收藏'} ${esc(item.name)}">
-            <img class="amap-poi__fav-icon" src="${base}${fav ? ASSETS.starOn : ASSETS.star}" alt="" width="26" height="25">
+            ${STAR}
           </button>
         </li>`;
     }
@@ -137,10 +140,6 @@
         favBtn.addEventListener('click', () => {
           const item = this._items[index];
           item.favorited = !item.favorited;
-          const icon = favBtn.querySelector('img');
-          icon.classList.remove('is-missing');
-          icon.addEventListener('error', () => icon.classList.add('is-missing'), { once: true });
-          icon.src = base + (item.favorited ? ASSETS.starOn : ASSETS.star);
           favBtn.setAttribute('aria-pressed', String(item.favorited));
           favBtn.setAttribute('aria-label', `${item.favorited ? '取消收藏' : '收藏'} ${item.name}`);
           fire('poi-favorite', { index, item, favorited: item.favorited });

@@ -5,7 +5,6 @@
 :root {
   /* ── Primitive ─────────────────────────────── */
   --ds-gray-900: #191919;
-  --ds-gray-600: #5a5a5a;
   --ds-gray-50: #fbfbfb;
   --ds-green-600: #00a27f;
   --ds-orange-600: #ca7c1c;
@@ -20,6 +19,7 @@
   --ds-peach-100: #ffe3c9;
   --ds-peach-150: #fff4e2;
   --ds-peach-200: #fcd6b8;
+  --ds-yellow-500: #ffb300;
 
   --ds-font-family-base: 'PingFang SC', -apple-system, BlinkMacSystemFont,
     'Helvetica Neue', 'Microsoft YaHei', sans-serif;
@@ -47,11 +47,10 @@
 
   /* ── Semantic ──────────────────────────────── */
   --ds-color-text-primary: var(--ds-gray-900);   /* [figma] 正文字体 */
-  --ds-color-text-secondary: var(--ds-gray-600);
   --ds-color-text-eco: var(--ds-green-600);
   --ds-color-text-ride-provider: var(--ds-orange-600); /* 打车运力名称 */
   --ds-color-surface-page: var(--ds-gray-50);
-  --ds-color-text-muted: var(--ds-gray-500);          /* [figma] 正文灰 */
+  --ds-color-text-muted: var(--ds-gray-500);          /* [figma] 正文灰 · 全系统唯一次要灰 */
   --ds-color-text-distance: var(--ds-brown-600);      /* [figma] 距离 */
   --ds-color-text-on-media: var(--ds-white);
   --ds-color-text-ranking: var(--ds-brown-700);       /* 扫街榜标签文字 */
@@ -60,6 +59,7 @@
   --ds-color-surface-card: var(--ds-white-warm);
   --ds-color-surface-ranking-tag: rgba(255, 227, 201, 0.4); /* peach-100 @40% */
   --ds-color-surface-media-placeholder: var(--ds-gray-700);
+  --ds-color-favorite: var(--ds-yellow-500);           /* 收藏态（暂定，Figma 无对应） */
 
   --ds-shadow-card: var(--ds-shadow-card-raw);        /* [figma] 卡片 */
 

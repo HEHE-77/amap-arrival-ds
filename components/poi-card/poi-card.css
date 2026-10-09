@@ -39,6 +39,10 @@
   --poi-meta-gap: var(--ds-space-3);
   --poi-fav-w: 26px;
   --poi-fav-h: 25px;
+  --poi-fav-stroke: var(--ds-color-text-muted);
+  --poi-fav-fill: none;
+  --poi-fav-stroke-on: var(--ds-color-favorite);
+  --poi-fav-fill-on: var(--ds-color-favorite);
 
   position: relative;
   box-sizing: border-box;
@@ -266,6 +270,17 @@
   display: block;
   width: var(--poi-fav-w);
   height: var(--poi-fav-h);
+  fill: var(--poi-fav-fill);
+  stroke: var(--poi-fav-stroke);
+  transition: fill 0.15s ease, stroke 0.15s ease, transform 0.15s ease;
+}
+.amap-poi__fav[aria-pressed="true"] .amap-poi__fav-icon {
+  fill: var(--poi-fav-fill-on);
+  stroke: var(--poi-fav-stroke-on);
+}
+.amap-poi__fav:active .amap-poi__fav-icon { transform: scale(0.88); }
+@media (prefers-reduced-motion: reduce) {
+  .amap-poi__fav-icon { transition: none; }
 }
 
 /* 素材缺失时显示等尺寸占位 */
