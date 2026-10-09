@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>当地特色菜卡 · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/dish-card/dish-card.css">
+  <style>
+    body { margin: 0; padding: 24px 16px; background: #fff; font-family: var(--ds-font-family-base); color: #191919; }
+    h2 { font-size: 14px; font-weight: 500; color: #60636c; margin: 28px 0 12px; }
+    h2:first-child { margin-top: 0; }
+    /* 仅预览：模拟 Figma 402:7209「当地特色菜」区块的横向滚动列表（宽 402，左边距 18，卡片间距 8） */
+    .section { width: 402px; max-width: 100%; }
+    .section__title { margin: 0 0 8px 18px; font-size: 16px; font-weight: 600; line-height: 22px; }
+    .row { display: flex; gap: var(--ds-space-8); padding: 0 18px; overflow-x: auto; scrollbar-width: none; }
+    .row::-webkit-scrollbar { display: none; }
+    .grid { display: flex; flex-wrap: wrap; gap: 16px; }
+    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin-top: 16px; font-family: ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body>
+  <h2>Figma 实例（765:6258–765:6306，横向可滑动）</h2>
+  <div class="section">
+    <p class="section__title">当地特色菜</p>
+    <div class="row">
+      <amap-dish-card name="葫芦鸡" rank="1" stores="91家店入选" image="../assets/dish/samples/hulu-ji.jpg"></amap-dish-card>
+      <amap-dish-card name="水盆羊肉" rank="2" stores="67家店入选" image="../assets/dish/samples/shuipen-yangrou.jpg"></amap-dish-card>
+      <amap-dish-card name="小酥肉" rank="3" stores="45家店入选" image="../assets/dish/samples/xiao-surou.jpg"></amap-dish-card>
+      <amap-dish-card name="锅盔夹馍" rank="4" stores="40家店入选" image="../assets/dish/samples/guokui-jiamo.jpg"></amap-dish-card>
+      <amap-dish-card name="浆水鱼鱼" rank="5" stores="37家店入选" image="../assets/dish/samples/jiangshui-yuyu.jpg"></amap-dish-card>
+      <amap-dish-card name="麻辣烫" rank="6" stores="29家店入选" image="../assets/dish/samples/malatang.jpg"></amap-dish-card>
+    </div>
+  </div>
+
+  <h2>边界情况</h2>
+  <div class="grid">
+    <amap-dish-card name="无图占位" rank="1" stores="91家店入选"></amap-dish-card>
+    <amap-dish-card name="超长的菜名会省略显示" rank="12" honor-label="人气" stores="1234家店入选"></amap-dish-card>
+    <amap-dish-card name="自定义荣誉" honor="本地人常吃" stores="18家店入选"></amap-dish-card>
+    <amap-dish-card name="无排名" stores="9家店入选"></amap-dish-card>
+  </div>
+
+  <div id="log"></div>
+  <script src="../components/dish-card/dish-card.js"></script>
+  <script>
+    document.addEventListener('dish-select', (e) => {
+      document.getElementById('log').textContent = 'dish-select → ' + JSON.stringify(e.detail);
+    });
+  </script>
+</body>
+</html>

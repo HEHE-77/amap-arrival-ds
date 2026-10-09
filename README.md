@@ -11,7 +11,7 @@ assets/      从 Figma 导出的素材
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）。事件会显示在页面上。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）。事件会显示在页面上。
 
 加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
 
@@ -214,3 +214,29 @@ assets/      从 Figma 导出的素材
 9 个实例统一用同一套模糊参数（Figma 中「回民街」为半径 4、从顶部开始，已确认按其余卡片统一）。
 
 素材：`assets/poi-recommend/samples/*.jpg`，9 张未模糊原图 189×189 @3x，仅预览用。
+
+### 5. 当地特色菜卡（Figma `765:6257` 本地菜，实例 `765:6258`–`765:6306`）
+
+84 宽的单品卡：84×84 菜品图 + 菜名 / 「必吃·第 N 名」/ 入选店铺数。在「当地特色菜」区块中横向排列、可滑动，卡片间距 8（`--ds-space-8`）。
+
+```html
+<link rel="stylesheet" href="components/dish-card/dish-card.css">
+<script src="components/dish-card/dish-card.js"></script>
+
+<amap-dish-card name="葫芦鸡" rank="1" stores="91家店入选" image="…/hulu-ji.jpg"></amap-dish-card>
+```
+
+| 属性 | 说明 |
+|---|---|
+| `name` | 菜名，超长省略 |
+| `rank` | 排名数字 → 「必吃·第 N 名」，不传不显示 |
+| `honor-label` | 荣誉前缀，默认「必吃」 |
+| `honor` | 整行自定义文案，覆盖 `honor-label` + `rank` |
+| `stores` | 入选店铺文案，如「91家店入选」 |
+| `image` | 菜品图；无图或加载失败显示灰色占位 |
+
+事件：`dish-select`（`{ name, rank }`）。
+
+新增 token：`--ds-color-text-honor`（荣誉信息，同距离色 `#835B32`）。入选店铺数统一为正文灰（Figma 中「麻辣烫」为 `#646464`）。
+
+素材：`assets/dish/samples/*.jpg`，6 张菜品图 84×84 @3x，仅预览用。

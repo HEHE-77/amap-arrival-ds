@@ -1,0 +1,72 @@
+/* <amap-dish-card> · 当地特色菜单品卡（Figma 765:6257「本地菜」）
+ * 依赖 tokens/tokens.css
+ */
+amap-dish-card {
+  /* 组件变量，可覆盖 */
+  --dish-width: 84px;
+  --dish-image-size: 84px;
+  --dish-image-radius: var(--ds-radius-8);
+  --dish-gap: 6px;
+  --dish-text-gap: var(--ds-space-4);
+
+  display: block;
+  flex: none;
+  width: var(--dish-width);
+  font-family: var(--ds-font-family-base);
+}
+
+.amap-dish {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dish-gap);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: start;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.amap-dish:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; border-radius: var(--dish-image-radius); }
+
+.amap-dish__media {
+  width: var(--dish-image-size);
+  height: var(--dish-image-size);
+  border-radius: var(--dish-image-radius);
+  overflow: hidden;
+  background: var(--ds-color-tag-neutral-surface);   /* 无图 / 加载失败时的占位 */
+}
+.amap-dish__photo { display: block; width: 100%; height: 100%; object-fit: cover; }
+.amap-dish__photo.is-missing { visibility: hidden; }
+
+.amap-dish__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dish-text-gap);
+  min-width: 0;
+}
+.amap-dish__name,
+.amap-dish__honor,
+.amap-dish__stores {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.amap-dish__name {
+  font-size: var(--ds-type-subtitle-m-size);
+  font-weight: var(--ds-type-subtitle-m-weight);
+  line-height: var(--ds-type-subtitle-m-line);
+  color: var(--ds-color-text-primary);
+}
+.amap-dish__honor,
+.amap-dish__stores {
+  font-size: var(--ds-type-body-s-size);
+  font-weight: var(--ds-type-body-s-weight);
+  line-height: var(--ds-type-body-s-line);
+}
+.amap-dish__honor { color: var(--ds-color-text-honor); }
+.amap-dish__stores { color: var(--ds-color-text-muted); }

@@ -89,6 +89,7 @@
   --ds-color-text-distance: var(--ds-brown-600);      /* [figma] 距离 */
   --ds-color-text-on-media: var(--ds-white);
   --ds-color-text-ranking: var(--ds-brown-700);       /* 扫街榜标签文字 */
+  --ds-color-text-honor: var(--ds-brown-600);         /* 荣誉信息，如「必吃·第1名」（同距离色） */
   --ds-color-border-card: var(--ds-gray-200);         /* [figma] Stroke color */
   --ds-color-surface-card: var(--ds-white-warm);
   --ds-color-surface-ranking-tag: rgba(255, 227, 201, 0.4); /* peach-100 @40% */
