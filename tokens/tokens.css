@@ -8,6 +8,7 @@
   --ds-gray-600: #5a5a5a;
   --ds-gray-50: #fbfbfb;
   --ds-green-600: #00a27f;
+  --ds-orange-600: #ca7c1c;
 
   --ds-font-family-base: 'PingFang SC', -apple-system, BlinkMacSystemFont,
     'Helvetica Neue', 'Microsoft YaHei', sans-serif;
@@ -27,6 +28,7 @@
   --ds-color-text-primary: var(--ds-gray-900);   /* [figma] 正文字体 */
   --ds-color-text-secondary: var(--ds-gray-600);
   --ds-color-text-eco: var(--ds-green-600);
+  --ds-color-text-ride-provider: var(--ds-orange-600); /* 打车运力名称 */
   --ds-color-surface-page: var(--ds-gray-50);
 
   /* title-l：24 / Semibold / 22.8 */

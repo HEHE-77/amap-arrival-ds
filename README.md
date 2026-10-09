@@ -19,7 +19,12 @@ assets/      从 Figma 导出的素材
 
 ## 组件
 
-### 1. Header（Figma `849:2976`）
+### 1. Header
+
+| 变体 | `variant` | Figma | 高度 |
+|---|---|---|---|
+| 常规到达 | `regular`（默认） | `849:2976` / `849:2920` | 72 |
+| 打车到达 | `taxi` | `849:2938` | 84，内容垂直居中 |
 
 ```html
 <link rel="stylesheet" href="tokens/tokens.css">
@@ -27,22 +32,30 @@ assets/      从 Figma 导出的素材
 <script src="components/header/header.js"></script>
 
 <amap-arrival-header address="长安南路 289 号 · 西安万象城(生命之树)" energy="28"></amap-arrival-header>
+
+<amap-arrival-header variant="taxi" place="中贸广场 B 座" address="长安南路 79 号"
+  provider="享道-经济型" driver="何师傅·陕 AA01306"></amap-arrival-header>
 ```
 
-| 属性 | 说明 |
-|---|---|
-| `heading` | 标题，默认「已到达」 |
-| `address` | 地址，超长省略 |
-| `energy` | 绿色能量克数，不传则隐藏 |
-| `trip-label` | 默认「行程回溯」 |
-| `asset-base` | 素材目录 |
+| 属性 | 变体 | 说明 |
+|---|---|---|
+| `variant` | — | `regular` / `taxi` |
+| `heading` | 全部 | 标题，默认「已到达」 |
+| `address` | 全部 | 地址；regular 超长省略 |
+| `trip-label` | 全部 | 默认「行程回溯」 |
+| `asset-base` | 全部 | 素材目录 |
+| `energy` | regular | 绿色能量克数，不传则隐藏 |
+| `place` | taxi | 地址行第一段，如「中贸广场 B 座」 |
+| `provider` | taxi | 运力名称，橙色强调 |
+| `driver` | taxi | 司机·车牌，超长省略（行程回溯始终可见） |
 
 事件：`trip-replay`（点击行程回溯）。
 
-素材（需从 Figma 导出到 `assets/`）：
+素材（`assets/`，均为 @3x PNG）：
 
 | 文件名 | Figma 节点 | 尺寸 |
 |---|---|---|
-| `header-map-thumb.png` | `849:2977` image 6 | 216×216，导出 @2x/@3x |
+| `header-map-thumb.png` | `849:2977` image 6 | 216×216 |
+| `header-map-thumb-taxi.png` | `849:2939` image 7 | 323×245 · **待导出** |
 | `icon-green-energy.png` | `849:2986` Frame | 18×17 |
 | `icon-arrow-right.png` | `849:2992` ic:baseline-keyboard-arrow-right | 17×17 |

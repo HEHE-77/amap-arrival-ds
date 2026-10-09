@@ -1,18 +1,30 @@
 /**
- * <amap-arrival-header> · 到达页 Header（Figma 849:2976）
+ * <amap-arrival-header> · 到达页 Header
  *
- * 属性
+ * 变体（variant）
+ *   regular  常规到达（默认）  Figma 849:2976 / 849:2920
+ *   taxi     打车到达          Figma 849:2938
+ *
+ * 通用属性
  *   heading      标题，默认「已到达」
- *   address      地址行（超长省略）
- *   energy       绿色能量克数；不传则隐藏该项
+ *   address      地址
  *   trip-label   行程回溯文案，默认「行程回溯」
  *   asset-base   素材目录，默认 ../../assets/
+ *
+ * regular 专属
+ *   energy       绿色能量克数；不传则隐藏
+ *
+ * taxi 专属
+ *   place        上车/到达点名称（地址行第一段），如「中贸广场 B 座」
+ *   provider     运力名称，如「享道-经济型」
+ *   driver       司机与车牌，如「何师傅·陕 AA01306」
  *
  * 事件
  *   trip-replay  点击「行程回溯」时派发（bubbles, composed）
  */
-const TEMPLATE_ASSETS = {
-  thumb: 'header-map-thumb.png',
+const ASSETS = {
+  regular: { thumb: 'header-map-thumb.png', w: 216, h: 216 },
+  taxi: { thumb: 'header-map-thumb-taxi.png', w: 323, h: 245 },
   eco: 'icon-green-energy.png',
   chevron: 'icon-arrow-right.png',
 };
@@ -20,41 +32,72 @@ const TEMPLATE_ASSETS = {
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+const has = (v) => v != null && v !== '';
+
 class AmapArrivalHeader extends HTMLElement {
   static get observedAttributes() {
-    return ['heading', 'address', 'energy', 'trip-label', 'asset-base'];
+    return ['variant', 'heading', 'address', 'energy', 'trip-label', 'asset-base', 'place', 'provider', 'driver'];
   }
 
   connectedCallback() { this.render(); }
   attributeChangedCallback() { if (this.isConnected) this.render(); }
 
-  render() {
-    const base = this.getAttribute('asset-base') ?? '../../assets/';
-    const heading = this.getAttribute('heading') ?? '已到达';
-    const address = this.getAttribute('address') ?? '';
-    const energy = this.getAttribute('energy');
-    const tripLabel = this.getAttribute('trip-label') ?? '行程回溯';
+  attr(name, fallback = '') { return this.getAttribute(name) ?? fallback; }
 
-    const eco = energy == null || energy === '' ? '' : `
+  tripButton(base) {
+    return `
+      <button type="button" class="amap-header__trip">
+        <span>${esc(this.attr('trip-label', '行程回溯'))}</span>
+        <img class="amap-header__chevron" src="${base}${ASSETS.chevron}" alt="" width="17" height="17">
+      </button>`;
+  }
+
+  regularMeta(base) {
+    const energy = this.getAttribute('energy');
+    const eco = has(energy) ? `
       <div class="amap-header__eco">
-        <img class="amap-header__eco-icon" src="${base}${TEMPLATE_ASSETS.eco}" alt="" width="18" height="17">
+        <img class="amap-header__eco-icon" src="${base}${ASSETS.eco}" alt="" width="18" height="17">
         <span class="amap-header__eco-label">收获 ${esc(energy)}g 绿色能量</span>
-      </div>`;
+      </div>` : '';
+    const address = this.attr('address');
+    return `
+      <p class="amap-header__address" title="${esc(address)}">${esc(address)}</p>
+      <div class="amap-header__actions">${eco}${this.tripButton(base)}</div>`;
+  }
+
+  taxiMeta(base) {
+    const place = this.attr('place');
+    const address = this.attr('address');
+    const provider = this.attr('provider');
+    const driver = this.attr('driver');
+    const dot = '<span class="amap-header__dot" aria-hidden="true">·</span>';
+
+    const addressParts = [place, address].filter(has).map((t) => `<span class="amap-header__seg">${esc(t)}</span>`);
+    const full = [place, address].filter(has).join(' · ');
+
+    const ride = has(provider) || has(driver) ? `
+      <span class="amap-header__ride">
+        ${has(provider) ? `<span class="amap-header__provider">${esc(provider)}</span>` : ''}${has(provider) && has(driver) ? '｜' : ''}${esc(driver)}
+      </span>${dot}` : '';
+
+    return `
+      <p class="amap-header__line amap-header__line--address" title="${esc(full)}">${addressParts.join(dot)}</p>
+      <div class="amap-header__line">${ride}${this.tripButton(base)}</div>`;
+  }
+
+  render() {
+    const variant = this.attr('variant', 'regular') === 'taxi' ? 'taxi' : 'regular';
+    const base = this.attr('asset-base', '../../assets/');
+    const heading = this.attr('heading', '已到达');
+    const thumb = ASSETS[variant];
 
     this.innerHTML = `
-      <section class="amap-header" aria-label="${esc(heading)}">
-        <img class="amap-header__thumb" src="${base}${TEMPLATE_ASSETS.thumb}" alt="" width="216" height="216">
+      <section class="amap-header amap-header--${variant}" aria-label="${esc(heading)}">
+        <img class="amap-header__thumb" src="${base}${thumb.thumb}" alt="" width="${thumb.w}" height="${thumb.h}">
         <div class="amap-header__content">
           <h1 class="amap-header__title">${esc(heading)}</h1>
           <div class="amap-header__meta">
-            <p class="amap-header__address" title="${esc(address)}">${esc(address)}</p>
-            <div class="amap-header__actions">
-              ${eco}
-              <button type="button" class="amap-header__trip">
-                <span>${esc(tripLabel)}</span>
-                <img class="amap-header__chevron" src="${base}${TEMPLATE_ASSETS.chevron}" alt="" width="17" height="17">
-              </button>
-            </div>
+            ${variant === 'taxi' ? this.taxiMeta(base) : this.regularMeta(base)}
           </div>
         </div>
       </section>`;
