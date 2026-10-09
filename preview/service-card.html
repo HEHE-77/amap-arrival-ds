@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>停车场与加油站 · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/primitives/primitives.css">
+  <link rel="stylesheet" href="../components/section/section.css">
+  <link rel="stylesheet" href="../components/service-card/service-card.css">
+  <style>
+    body { margin: 0; padding: 24px 0; background: #fff; font-family: var(--ds-font-family-base); color: #191919; }
+    .label { font-size: 14px; font-weight: 500; color: #60636c; margin: 32px 16px 12px; }
+    .label:first-child { margin-top: 0; }
+    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin: 16px; font-family: ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body asset-base="../assets/">
+  <p class="label">停车场 765:5300（实例 765:5305 相同）</p>
+  <amap-section heading="泊车指引更省心">
+    <amap-service-card name="高科大厦西侧停车场" meta='["步行 8 分钟","距终点 450 米"]'
+      tags='[{"text":"地面/地下","tone":"outline"},{"text":"车位紧张","tone":"danger"}]' action-label="去停车"></amap-service-card>
+    <amap-service-card name="高科大厦东侧停车场" meta='["步行 8 分钟","距终点 450 米"]'
+      tags='[{"text":"地面/地下","tone":"outline"},{"text":"车位紧张","tone":"danger"}]' action-label="去停车"></amap-service-card>
+  </amap-section>
+
+  <p class="label">加油站提示 765:5299（实例 765:5306 相同）</p>
+  <amap-section heading="终点5公里内可优惠加油">
+    <amap-service-card badge="团" name="中国石化加油站 (科技路站)" meta='["距终点 1.2 公里","92# 优惠 0.8 元/升"]'
+      tags='[{"text":"直降 1.2 元","tone":"deal"},{"text":"免费洗车","tone":"neutral"}]' action-label="去加油"></amap-service-card>
+    <amap-service-card badge="团" name="中国石油加油站（高新路站）" meta='["距终点 2.5 公里"]'
+      tags='[{"text":"直降 1.2 元","tone":"deal"},{"text":"免费洗车","tone":"neutral"}]' action-label="去加油"></amap-service-card>
+  </amap-section>
+
+  <p class="label">边界情况</p>
+  <amap-section heading="超长的模块标题会省略显示超长的模块标题会省略显示">
+    <amap-service-card badge="团" name="超长的名称会省略显示超长的名称会省略显示超长的名称" meta='["距终点 12.8 公里","95# 优惠 1.2 元/升","24 小时营业"]'
+      tags='[{"text":"直降 1.2 元","tone":"deal"},{"text":"免费洗车","tone":"neutral"},{"text":"便利店","tone":"neutral"},{"text":"充气","tone":"neutral"}]' action-label="去加油"></amap-service-card>
+    <amap-service-card name="无标签、无按钮" meta='["步行 3 分钟"]'></amap-service-card>
+  </amap-section>
+
+  <div id="log"></div>
+  <script src="../components/primitives/primitives.js"></script>
+  <script src="../components/section/section.js"></script>
+  <script src="../components/service-card/service-card.js"></script>
+  <script>
+    document.addEventListener('service-action', (e) => {
+      document.getElementById('log').textContent = 'service-action → ' + JSON.stringify(e.detail);
+    });
+  </script>
+</body>
+</html>

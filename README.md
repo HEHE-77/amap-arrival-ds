@@ -11,7 +11,7 @@ assets/      从 Figma 导出的素材
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`。事件会显示在页面上。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）。事件会显示在页面上。
 
 加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
 
@@ -35,14 +35,14 @@ assets/      从 Figma 导出的素材
 | `<amap-ranking-tag text [on-photo]>` | 扫街榜标签；`on-photo` 为照片上的半透明暖底白字版 | POI 标题区、推荐卡 |
 | `<amap-rank-thumb rank src>` | 图片 + 排名角标，无图显示占位底色 | POI 列表行 |
 | `<amap-fav-button pressed label>` | 收藏星标，切换后派发 `fav-change { favorited }` | POI 列表行 |
-| `<amap-meta-line items sep accent-first>` | 分隔符串联的说明行，首段可强调 | POI 列表行、饭店卡 |
+| `<amap-meta-line items sep accent-first>` | 分隔符串联的说明行，首段可强调；`--meta-gap` / `--meta-sep-color` 可调间距与分隔符颜色 | POI 列表行、饭店卡、服务卡 |
 | `<amap-rank-ribbon rank [tier]>` | TOP 排名飘带，1 金 / 2 银 / 3 铜（Khand 字体随包） | 地点卡 |
 | `<amap-score-badge score label>` | 评分徽标「4.8 超棒」 | 地点卡 |
 | `<amap-status-tag text>` | 营业状态 | 地点卡 |
 | `<amap-deal-tag type price discount>` | 团 / 券价格条 | 地点卡 |
 | `<amap-media-pill text [icon=star] [muted]>` | 图片上的深色胶囊（收藏数、页码） | 地点卡 |
-| `<amap-button label variant [price] [shape=pill]>` | 主按钮（渐变）/ 次按钮（描边），可带「\| ¥ 价格」，`pill` 为胶囊形，原生 click | 地点卡、一键下单、打车账单 |
-| `<amap-tag text tone>` | 小标签：`neutral` 灰底信息 / `tenure` 收录年限 / `promo` 商品促销 | 地点卡、一键下单 |
+| `<amap-button label variant [price] [shape=pill]>` | `primary` 渐变 / `secondary` 描边 / `tonal` 浅底（34 高，13 Semibold），可带「\| ¥ 价格」，`pill` 为胶囊形，原生 click | 地点卡、一键下单、打车账单、服务卡 |
+| `<amap-tag text tone [size=m]>` | 小标签：`neutral` 灰底信息 / `tenure` 收录年限 / `promo` 商品促销 / `outline` 蓝描边 / `danger` 警示 / `deal` 优惠；`size="m"` 为 18 高 | 地点卡、一键下单、服务卡 |
 | `<amap-quick-order image title tag spec note price>` | 一键下单卡片，派发 `order-buy` / `order-swap` | 地点卡（上班） |
 | `<amap-hot-review text count>` | 热评条，原生 click | 地点卡 |
 
@@ -290,3 +290,36 @@ assets/      从 Figma 导出的素材
 复用：`amap-link`（费用说明）、`amap-button`（新增 `shape="pill"`）。图标从 Figma 导出后内联，颜色走 token。新增 token：`--ds-color-route-start` / `-end`、`--ds-radius-pill`、`--ds-space-16`。
 
 与 Figma 的统一：地址文字 `#1A1A1A`、费用说明与更多图标 `#5A5A5A`、分隔线 `#F1EEEE`、按钮渐变 `#1A68FE→#1989FE`，分别并入正文色、正文灰、`--ds-color-divider` 与主按钮渐变 token。
+
+### 8. 模块容器 + 服务卡（Figma `765:5300` 停车场 / `765:5299` 加油站提示，实例 `765:5305` / `765:5306`）
+
+两个 component 结构相同：模块标题 + 两张服务卡。拆成两个组件：
+
+- `<amap-section heading [layout=scroll]>`：通用模块容器，标题 16 Semibold，左右内边距 `--section-inset`（默认 16），标题与内容、内容之间间距 8。子元素即内容。后续拼页面时所有模块都用它。
+- `<amap-service-card>`：370 宽，左侧名称 / 说明行 / 标签，右侧浅底按钮。
+
+```html
+<link rel="stylesheet" href="components/section/section.css">
+<link rel="stylesheet" href="components/service-card/service-card.css">
+<script src="components/section/section.js"></script>
+<script src="components/service-card/service-card.js"></script>
+
+<amap-section heading="终点5公里内可优惠加油">
+  <amap-service-card badge="团" name="中国石化加油站 (科技路站)" meta='["距终点 1.2 公里","92# 优惠 0.8 元/升"]'
+    tags='[{"text":"直降 1.2 元","tone":"deal"},{"text":"免费洗车","tone":"neutral"}]' action-label="去加油"></amap-service-card>
+</amap-section>
+```
+
+| `amap-service-card` 属性 | 说明 |
+|---|---|
+| `name` | 名称，超长省略 |
+| `badge` | 名称前小标识，如「团」 |
+| `meta` | JSON 数组，「\|」串联（分隔符 `#999999`） |
+| `tags` | JSON `[{ text, tone }]`，tone 为 `outline` / `danger` / `deal` / `neutral` 等 |
+| `action-label` | 右侧按钮文案，如「去停车」「去加油」 |
+
+事件：`service-action`（`{ name, label }`）。
+
+基础组件扩展：`amap-tag` 新增 `size="m"` 与 `outline` / `danger` / `deal` 三种 tone；`amap-button` 新增 `variant="tonal"`；`amap-meta-line` 间距与分隔符颜色可调。新增 token：`--ds-color-action-tonal-surface`、`--ds-color-tag-danger-*`、`--ds-color-text-separator`、`--ds-radius-6`、`--ds-type-button-s-*`。
+
+与 Figma 的统一：「免费洗车」底色 `#F5F5F5` 并入已有灰色标签 `#EFEFEF`。

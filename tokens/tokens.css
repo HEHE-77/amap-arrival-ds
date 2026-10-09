@@ -35,10 +35,14 @@
   --ds-blue-550: #0980fe;
   --ds-blue-500: #007fff;
   --ds-blue-50: #eaf1ff;
+  --ds-blue-40: #edf3ff;
   --ds-green-700: #16a85a;
   --ds-green-200: #a0dba4;
   --ds-green-500: #25a544;
   --ds-red-500: #ed3a4d;
+  --ds-red-450: #ff3041;
+  --ds-red-50: #ffeded;
+  --ds-gray-400: #999999;
   --ds-vermilion-500: #ff4d13;
   --ds-peach-75: #ffebde;
   --ds-peach-125: #ffdec8;
@@ -64,6 +68,7 @@
   --ds-font-size-8: 8px;
   --ds-font-size-10: 10px;
   --ds-font-size-12: 12px;
+  --ds-font-size-13: 13px;
   --ds-font-size-14: 14px;
   --ds-font-size-16: 16px;
   --ds-font-size-24: 24px;
@@ -79,6 +84,7 @@
 
   --ds-radius-3: 3px;
   --ds-radius-4: 4px;
+  --ds-radius-6: 6px;
   --ds-radius-8: 8px;
   --ds-radius-16: 16px;
   --ds-radius-pill: 999px;
@@ -109,6 +115,7 @@
   --ds-color-action-primary-start: var(--ds-blue-700); /* 主按钮渐变起点 */
   --ds-color-action-primary-end: var(--ds-blue-650); /* 主按钮渐变终点 */
   --ds-color-action-secondary: var(--ds-blue-550); /* 描边按钮的边框与文字 */
+  --ds-color-action-tonal-surface: var(--ds-blue-40); /* 浅底按钮（去停车 / 去加油），文字同 action-secondary */
   --ds-color-score-solid: var(--ds-blue-600); /* 评分徽标左侧实色块 */
   --ds-color-score-text: var(--ds-blue-500); /* 评分徽标文字（超棒） */
   --ds-color-score-surface: var(--ds-blue-50); /* 评分徽标底色 */
@@ -125,6 +132,9 @@
   --ds-color-tag-tenure-surface: var(--ds-apricot-100); /* 「收录 N 年」标签底 */
   --ds-color-tag-tenure-text: var(--ds-apricot-700); /* 「收录 N 年」标签文字 */
   --ds-color-tag-promo-text: var(--ds-coral-500); /* 商品促销标签文字（如「上次那杯」），底色同 deal-surface */
+  --ds-color-tag-danger-surface: var(--ds-red-50);    /* 警示标签底（如「车位紧张」） */
+  --ds-color-tag-danger-text: var(--ds-red-450);      /* 警示标签文字 */
+  --ds-color-text-separator: var(--ds-gray-400);      /* 说明行里的「|」分隔符 */
   --ds-color-order-surface: var(--ds-sky-25); /* 一键下单卡片底 */
   --ds-color-order-border: var(--ds-sky-75); /* 一键下单卡片描边 */
   --ds-color-text-on-photo: var(--ds-gray-10); /* 照片上的主文字（推荐卡名称） */
@@ -168,6 +178,11 @@
   --ds-type-button-m-size: var(--ds-font-size-14);
   --ds-type-button-m-weight: var(--ds-font-weight-medium);
   --ds-type-button-m-line: 16.9px;
+
+  /* button-s：13 / Semibold / 18（浅底按钮，如「去停车」） */
+  --ds-type-button-s-size: var(--ds-font-size-13);
+  --ds-type-button-s-weight: var(--ds-font-weight-semibold);
+  --ds-type-button-s-line: 18px;
 
   /* ── Theme · 卡片主题色（surface 卡片顶色 / accent 水印六边形 / accent-soft 水印箭头）── */
   --ds-theme-orange-surface: #ffefe5; --ds-theme-orange-accent: #ffebde; --ds-theme-orange-accent-soft: #fdf7f1; /* 853:4824 */

@@ -1,0 +1,50 @@
+/* <amap-section> · 模块容器：标题 + 内容（Figma 停车场 / 加油站提示 中的 Section Header + section-content）
+ * 依赖 tokens/tokens.css
+ */
+amap-section {
+  /* 组件变量，可覆盖 */
+  --section-inset: 16px;          /* 左右内边距（POI 榜单、特色菜等处为 18，待统一） */
+  --section-gap: var(--ds-space-8);  /* 标题与内容、内容各项之间 */
+
+  display: block;
+  width: var(--section-width, 402px);
+  max-width: 100%;
+  font-family: var(--ds-font-family-base);
+}
+
+.amap-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+}
+.amap-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-8);
+  padding: 0 var(--section-inset);
+}
+.amap-section__title {
+  margin: 0;
+  min-width: 0;
+  font-size: var(--ds-type-title-m-size);
+  font-weight: var(--ds-type-title-m-weight);
+  line-height: var(--ds-type-title-m-line);
+  color: var(--ds-color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.amap-section__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+  padding: 0 var(--section-inset);
+}
+/* 横向滑动的内容（如当地特色菜）：<amap-section layout="scroll"> */
+amap-section[layout="scroll"] .amap-section__body {
+  flex-direction: row;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+amap-section[layout="scroll"] .amap-section__body::-webkit-scrollbar { display: none; }

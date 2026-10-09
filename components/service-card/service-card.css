@@ -1,0 +1,71 @@
+/* <amap-service-card> · 服务卡（Figma 765:5300 停车场 / 765:5299 加油站提示 中的卡片）
+ * 依赖 tokens/tokens.css、components/primitives/primitives.css（amap-meta-line / amap-tag / amap-button）
+ */
+amap-service-card {
+  /* 组件变量，可覆盖 */
+  --svc-pad: 12px;
+  --svc-border: 0.6px;
+  --svc-radius: var(--ds-radius-16);
+  --svc-info-gap: var(--ds-space-6);
+
+  display: block;
+  width: 100%;
+  font-family: var(--ds-font-family-base);
+}
+
+.amap-svc {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: calc(var(--svc-pad) + var(--svc-border));   /* Figma 描边计入布局：12 + 0.6 */
+  border-radius: var(--svc-radius);
+  background: var(--ds-color-surface-card-neutral);
+  box-shadow: inset 0 0 0 var(--svc-border) var(--ds-color-border-card);
+}
+
+.amap-svc__info {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--svc-info-gap);
+}
+.amap-svc__title {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-6);
+  min-width: 0;
+  margin: 0;
+}
+.amap-svc__badge {   /* 「团」小标识 */
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--ds-radius-3);
+  background: var(--ds-color-deal-surface);
+  color: var(--ds-color-deal);
+  font-size: var(--ds-type-caption-xs-size);
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: var(--ds-type-caption-xs-line);
+}
+.amap-svc__name {
+  min-width: 0;
+  font-size: var(--ds-type-title-m-size);
+  font-weight: var(--ds-type-title-m-weight);
+  line-height: var(--ds-type-title-m-line);
+  color: var(--ds-color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.amap-svc__meta {
+  --meta-gap: 7px;                               /* Figma 为「  |  」两侧各两个空格 */
+  --meta-sep-color: var(--ds-color-text-separator);
+  max-width: 100%;
+}
+.amap-svc__tags { display: flex; gap: var(--ds-space-6); min-width: 0; overflow: hidden; }
+.amap-svc__action { flex: none; }
