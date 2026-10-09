@@ -1,0 +1,156 @@
+/* Header · Figma 849:2976
+ * 依赖 tokens/tokens.css
+ */
+.amap-header {
+  /* ── Component tokens ── */
+  --header-width: 366px;
+  --header-height: 72px;
+  --header-radius-end: var(--ds-radius-16);
+  --header-fade-color: var(--ds-color-surface-page);
+  --header-fade-stop: 64.247%;
+  --header-gap-title-meta: var(--ds-space-8);
+  --header-gap-meta-rows: var(--ds-space-6);
+  --header-gap-actions: var(--ds-space-8);
+  --header-gap-icon-label: var(--ds-space-2);
+  --header-thumb-size: 216px;
+  --header-thumb-offset-end: -4px;
+  --header-thumb-offset-top: -85px;
+  --header-eco-icon-w: 18px;
+  --header-eco-icon-h: 17px;
+  --header-chevron-size: 17px;
+
+  position: relative;
+  box-sizing: border-box;
+  width: var(--header-width);
+  max-width: 100%;
+  height: var(--header-height);
+  overflow: hidden;
+  border-radius: 0 var(--header-radius-end) var(--header-radius-end) 0;
+  font-family: var(--ds-font-family-base);
+  font-style: normal;
+}
+
+/* 地图缩略图：锚定右侧，宽度变化时始终贴右 */
+.amap-header__thumb {
+  position: absolute;
+  top: var(--header-thumb-offset-top);
+  right: var(--header-thumb-offset-end);
+  width: var(--header-thumb-size);
+  height: var(--header-thumb-size);
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* 内容层：左侧实色 → 右侧渐隐，露出地图 */
+.amap-header__content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--header-gap-title-meta);
+  background: linear-gradient(
+    to right,
+    var(--header-fade-color) var(--header-fade-stop),
+    color-mix(in srgb, var(--header-fade-color) 0%, transparent)
+  );
+}
+
+.amap-header__title {
+  margin: 0;
+  height: 23px;
+  font-size: var(--ds-type-title-l-size);
+  font-weight: var(--ds-type-title-l-weight);
+  line-height: var(--ds-type-title-l-line);
+  color: var(--ds-color-text-primary);
+  white-space: nowrap;
+}
+
+.amap-header__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--header-gap-meta-rows);
+  /* 文字区域不压到地图上的终点标记 */
+  max-width: calc(100% - 120px);
+}
+
+.amap-header__address {
+  margin: 0;
+  max-width: 100%;
+  height: var(--ds-type-body-s-line);
+  font-size: var(--ds-type-body-s-size);
+  font-weight: var(--ds-type-body-s-weight);
+  line-height: var(--ds-type-body-s-line);
+  color: var(--ds-color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.amap-header__actions {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--header-gap-actions);
+}
+
+.amap-header__eco {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--header-gap-icon-label);
+  height: var(--ds-type-body-s-line);
+}
+
+.amap-header__eco-icon {
+  display: block;
+  flex: none;
+  width: var(--header-eco-icon-w);
+  height: var(--header-eco-icon-h);
+}
+
+.amap-header__eco-label {
+  font-size: var(--ds-type-body-s-strong-size);
+  font-weight: var(--ds-type-body-s-strong-weight);
+  line-height: var(--ds-type-body-s-strong-line);
+  color: var(--ds-color-text-eco);
+  white-space: nowrap;
+}
+
+/* 行程回溯：唯一可交互元素 */
+.amap-header__trip {
+  display: flex;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--ds-type-body-s-size);
+  font-weight: var(--ds-type-body-s-weight);
+  line-height: var(--ds-type-body-s-line);
+  color: var(--ds-color-text-secondary);
+  white-space: nowrap;
+  border-radius: 4px;
+  -webkit-tap-highlight-color: transparent;
+}
+.amap-header__trip:active { opacity: 0.6; }
+.amap-header__trip:focus-visible {
+  outline: 2px solid var(--ds-color-text-eco);
+  outline-offset: 2px;
+}
+
+.amap-header__chevron {
+  display: block;
+  flex: none;
+  width: var(--header-chevron-size);
+  height: var(--header-chevron-size);
+}
+
+/* 素材缺失时显示等尺寸占位，便于核对布局 */
+.amap-header img.is-missing {
+  visibility: visible;
+  background: repeating-linear-gradient(45deg, #e6e6e6 0 4px, #f2f2f2 4px 8px);
+  outline: 1px dashed #b5b5b5;
+  outline-offset: -1px;
+}

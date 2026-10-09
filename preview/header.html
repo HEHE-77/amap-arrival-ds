@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Header · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/header/header.css">
+  <style>
+    body { margin: 0; padding: 24px 16px; background: #eef0f2; font-family: var(--ds-font-family-base); color: #191919; }
+    h2 { font-size: 13px; font-weight: 500; color: #5a5a5a; margin: 28px 0 10px; }
+    h2:first-child { margin-top: 0; }
+    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h2>默认（Figma 849:2976）</h2>
+  <amap-arrival-header id="default" address="长安南路 289 号 · 西安万象城(生命之树)" energy="28" asset-base="../assets/"></amap-arrival-header>
+  <div id="log"></div>
+
+  <h2>无绿色能量（非绿色出行方式）</h2>
+  <amap-arrival-header address="长安南路 289 号 · 西安万象城(生命之树)" asset-base="../assets/"></amap-arrival-header>
+
+  <h2>超长地址 → 省略</h2>
+  <amap-arrival-header address="雁塔区小寨东路与长安南路交叉口东北角 289 号 · 西安万象城 L1 层(生命之树)" energy="128" asset-base="../assets/"></amap-arrival-header>
+
+  <h2>窄宽度 320px（缩略图贴右）</h2>
+  <amap-arrival-header style="display:block;width:320px" address="长安南路 289 号 · 西安万象城(生命之树)" energy="28" asset-base="../assets/"></amap-arrival-header>
+
+  <script src="../components/header/header.js"></script>
+  <script>
+    document.getElementById('default').addEventListener('trip-replay', () => {
+      document.getElementById('log').textContent = 'trip-replay 事件已触发 · ' + new Date().toLocaleTimeString();
+    });
+  </script>
+</body>
+</html>

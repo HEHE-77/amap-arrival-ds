@@ -1,0 +1,44 @@
+/* 高德到达页设计系统 · tokens.css
+ * 由 tokens.json 对应生成；三层：primitive → semantic → component。
+ * [figma] = Figma 中已存在的变量/样式；其余为从硬编码值提取的建议变量。
+ */
+:root {
+  /* ── Primitive ─────────────────────────────── */
+  --ds-gray-900: #191919;
+  --ds-gray-600: #5a5a5a;
+  --ds-gray-50: #fbfbfb;
+  --ds-green-600: #00a27f;
+
+  --ds-font-family-base: 'PingFang SC', -apple-system, BlinkMacSystemFont,
+    'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+  --ds-font-weight-regular: 400;
+  --ds-font-weight-medium: 500;
+  --ds-font-weight-semibold: 600;
+  --ds-font-size-12: 12px;
+  --ds-font-size-24: 24px;
+
+  --ds-space-2: 2px;
+  --ds-space-6: 6px;
+  --ds-space-8: 8px;
+
+  --ds-radius-16: 16px;
+
+  /* ── Semantic ──────────────────────────────── */
+  --ds-color-text-primary: var(--ds-gray-900);   /* [figma] 正文字体 */
+  --ds-color-text-secondary: var(--ds-gray-600);
+  --ds-color-text-eco: var(--ds-green-600);
+  --ds-color-surface-page: var(--ds-gray-50);
+
+  /* title-l：24 / Semibold / 22.8 */
+  --ds-type-title-l-size: var(--ds-font-size-24);
+  --ds-type-title-l-weight: var(--ds-font-weight-semibold);
+  --ds-type-title-l-line: 22.8px;
+  /* body-s：12 / Regular / 17   [figma] 卡片正文 */
+  --ds-type-body-s-size: var(--ds-font-size-12);
+  --ds-type-body-s-weight: var(--ds-font-weight-regular);
+  --ds-type-body-s-line: 17px;
+  /* body-s-strong：12 / Medium / 16.8 */
+  --ds-type-body-s-strong-size: var(--ds-font-size-12);
+  --ds-type-body-s-strong-weight: var(--ds-font-weight-medium);
+  --ds-type-body-s-strong-line: 16.8px;
+}
