@@ -5,43 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>POI 卡片 · 到达页设计系统</title>
   <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/primitives/primitives.css">
   <link rel="stylesheet" href="../components/poi-card/poi-card.css">
   <style>
     body { margin: 0; padding: 24px 16px; background: #eef0f2; font-family: var(--ds-font-family-base); color: #191919; }
-    h2.label { font-size: 13px; font-weight: 500; color: #5a5a5a; margin: 28px 0 10px; }
+    h2.label { font-size: 13px; font-weight: 500; color: #60636c; margin: 32px 0 12px; }
     h2.label:first-child { margin-top: 0; }
-    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin-top: 8px; font-family: ui-monospace, Menlo, monospace; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, 301px); gap: 24px 12px; }
+    .cell { display: grid; gap: 6px; }
+    .cap { font-size: 12px; color: #60636c; font-family: ui-monospace, Menlo, monospace; }
+    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin-top: 12px; font-family: ui-monospace, Menlo, monospace; }
   </style>
 </head>
 <body>
-  <h2 class="label">默认（Figma 853:4824）</h2>
-  <amap-poi-card id="default" heading="藏在街巷的烟火气" count="13" asset-base="../assets/"></amap-poi-card>
-  <div id="log"></div>
+  <h2 class="label">Figma 853:4824 + 853:4996 全部实例（9 种主题）</h2>
+  <div class="grid" id="grid"></div>
+  <div id="log">点击行 / 星标 / 完整榜单，事件显示在这里</div>
 
-  <h2 class="label">已收藏第一项</h2>
-  <amap-poi-card id="fav" heading="藏在街巷的烟火气" count="13" asset-base="../assets/"></amap-poi-card>
+  <h2 class="label">边界情况：超长标题与店名 → 省略；第二行三段；图片缺失 → 占位底色</h2>
+  <div class="grid">
+    <amap-poi-card id="long" theme="blue" heading="钟楼周边本地人常去的老字号小吃合集" subtitle="精选 128 个热门店铺" asset-base="../assets/"></amap-poi-card>
+  </div>
 
-  <h2 class="label">超长标题 / 店名 → 省略；图片缺失 → 占位底色</h2>
-  <amap-poi-card id="long" heading="钟楼周边本地人常去的老字号小吃合集" count="128" asset-base="../assets/"></amap-poi-card>
-
+  <script src="../components/primitives/primitives.js"></script>
   <script src="../components/poi-card/poi-card.js"></script>
   <script>
-    const SAMPLE = [
-      { name: '老白家肉丸胡辣汤', distance: '距您 250 米', price: '人均 ¥18', image: '../assets/poi/sample-poi-1.png' },
-      { name: '竹笆市甑糕', distance: '距您 780 米', price: '人均 ¥15', image: '../assets/poi/sample-poi-2.png' },
-    ];
-    document.getElementById('default').items = SAMPLE;
-    document.getElementById('fav').items = SAMPLE.map((it, i) => ({ ...it, favorited: i === 0 }));
-    document.getElementById('long').items = [
-      { name: '回民街老孙家羊肉泡馍（总店）钟楼饭庄', distance: '距您 1.2 公里', price: '人均 ¥45', image: '../assets/poi/sample-poi-1.png' },
-      { name: '没有图片的店铺', distance: '距您 3.6 公里', price: '人均 ¥120' },
+    const IMG1 = '../assets/poi/sample-poi-1.png', IMG2 = '../assets/poi/sample-poi-2.png';
+    // 内容逐字取自 Figma 各实例；仅 orange 卡有店铺图素材，其余显示占位底色
+    const CARDS = [
+      { node: '853:4824', theme: 'orange', heading: '藏在街巷的烟火气', subtitle: '精选 13 个热门店铺', items: [
+        { name: '老白家肉丸胡辣汤', distance: '距您 250 米', details: ['人均 ¥18'], image: IMG1 },
+        { name: '竹笆市甑糕', distance: '距您 780 米', details: ['人均 ¥15'], image: IMG2 }] },
+      { node: '853:4877', theme: 'blue', heading: '臻选好店品质生活', subtitle: '精选 8 个热门店铺', items: [
+        { name: '隐庐·会席料理', distance: '距您 320 米', details: ['人均 ¥328', '4.9分'] },
+        { name: '翠园·粤式茶餐厅', distance: '距您 485 米', details: ['人均 ¥168', '4.8分'] }] },
+      { node: '853:4939', theme: 'green', heading: '值得专程去吃一趟', subtitle: '精选 10 个热门店铺', items: [
+        { name: '建国路油茶麻花', distance: '距您 60 米', details: ['现炸'] },
+        { name: '老焦熏肉大饼', distance: '距您 160 米', details: ['现烤'] }] },
+      { node: '853:4472', theme: 'indigo', heading: '舒适好住品质之选', subtitle: '精选10家热门酒店', items: [
+        { name: '亚朵酒店 (朱雀大街店)', distance: '距您 980 米', details: ['4.9分'] },
+        { name: '钟楼CitiGO欢阁 (钟楼店)', distance: '距您 740 米', details: ['4.8分'] }] },
+      { node: '853:4531', theme: 'pink', heading: '本地人都在吃什么', subtitle: '精选10个热门店铺', items: [
+        { name: '洒金桥菜市', distance: '距您 476 米', details: ['游客少'] },
+        { name: '德福巷咖啡街', distance: '距您 508 米', details: ['坐得住'] }] },
+      { node: '853:4592', theme: 'amber', heading: '茶歇时间到', subtitle: '精选13家人气饮品店', items: [
+        { name: '% Arabica咖啡', distance: '距您 168 米', details: ['人均 ¥38'] },
+        { name: '喜茶·城市限定店', distance: '距您 98 米', details: ['可自取'] }] },
+      { node: '853:4648', theme: 'purple', heading: '疲惫一扫轻松享受', subtitle: '精选10家热门店铺', items: [
+        { name: '松筋堂 (雁塔南路店)', distance: '距您 742 米', details: ['团购 ¥38起'] },
+        { name: '筋膜实验室', distance: '距您 516 米', details: ['无需预约'] }] },
+      { node: '853:4703', theme: 'red', heading: '吃腻了换换口味', subtitle: '精选10家热门店铺', items: [
+        { name: '巷子里的面', distance: '距您 653 米', details: ['4.9分'] },
+        { name: '松川唐风料理', distance: '距您 451 米', details: ['4.8分'] }] },
+      { node: '853:4765', theme: 'lime', heading: '一杯慢饮享悠闲', subtitle: '精选13家人气饮品店', items: [
+        { name: 'Manner 咖啡', distance: '距您 56 米', details: ['人均 ¥18'] },
+        { name: '蓝瓶咖啡 (高新旗舰店)', distance: '距您 32 米', details: ['人均 ¥22'] }] },
     ];
 
+    const grid = document.getElementById('grid');
     const log = (t) => { document.getElementById('log').textContent = t + ' · ' + new Date().toLocaleTimeString(); };
-    const card = document.getElementById('default');
-    card.addEventListener('poi-more', () => log('poi-more'));
-    card.addEventListener('poi-select', (e) => log(`poi-select #${e.detail.index + 1} ${e.detail.item.name}`));
-    card.addEventListener('poi-favorite', (e) => log(`poi-favorite #${e.detail.index + 1} → ${e.detail.favorited}`));
+    for (const c of CARDS) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.innerHTML = `<span class="cap">${c.theme} · ${c.node}</span>`;
+      const card = document.createElement('amap-poi-card');
+      card.setAttribute('theme', c.theme);
+      card.setAttribute('heading', c.heading);
+      card.setAttribute('subtitle', c.subtitle);
+      card.setAttribute('asset-base', '../assets/');
+      card.items = c.items;
+      card.dataset.node = c.node;
+      cell.appendChild(card);
+      grid.appendChild(cell);
+      card.addEventListener('poi-more', () => log(`${c.theme} poi-more`));
+      card.addEventListener('poi-select', (e) => log(`${c.theme} poi-select #${e.detail.index + 1} ${e.detail.item.name}`));
+      card.addEventListener('poi-favorite', (e) => log(`${c.theme} poi-favorite #${e.detail.index + 1} → ${e.detail.favorited}`));
+    }
+
+    document.getElementById('long').items = [
+      { name: '回民街老孙家羊肉泡馍（总店）钟楼饭庄', distance: '距您 1.2 公里', details: ['人均 ¥45', '4.7分', '老字号'], image: IMG1, favorited: true },
+      { name: '没有图片的店铺', distance: '距您 3.6 公里', details: ['人均 ¥120'] },
+    ];
   </script>
 </body>
 </html>

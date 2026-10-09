@@ -1,5 +1,5 @@
-/* POI 榜单卡片 · secondary · Figma 853:4824
- * 依赖 tokens/tokens.css
+/* POI 榜单卡片 · secondary · Figma 853:4824 及其实例 853:4996
+ * 依赖 tokens/tokens.css、components/primitives/primitives.css
  */
 .amap-poi {
   /* ── Component tokens ── */
@@ -14,35 +14,20 @@
   --poi-head-inset-start: 6.8px;
   --poi-gap-title-sub: var(--ds-space-4);
   --poi-watermark-w: 73px;
-  --poi-watermark-h: 61px;   /* 导出的 SVG 已按卡片上沿裁切 */
-  --poi-watermark-top: -14px; /* 贴卡片内容区上沿 */
+  --poi-watermark-h: 61px;   /* 已按卡片上沿裁切 */
+  --poi-watermark-top: -14px;
   --poi-watermark-end: 10px;
-  --poi-tag-h: 16px;
-  --poi-tag-radius: var(--ds-radius-3);
-  --poi-tag-gap: var(--ds-space-3);
-  --poi-tag-plate-w: 39px;
-  --poi-tag-logo-w: 34px;
-  --poi-tag-logo-h: 12px;
-  --poi-more-chevron-w: 16px;
-  --poi-more-chevron-h: 18px;
   --poi-list-pad: var(--ds-space-8);
   --poi-list-gap: var(--ds-space-8);
   --poi-list-radius: var(--ds-radius-8);
   --poi-row-h: 50px;
   --poi-row-gap: var(--ds-space-10);
-  --poi-thumb: 50px;
-  --poi-thumb-radius: var(--ds-radius-8);
-  --poi-rank-badge: 29px;
-  --poi-rank-inset: 5px;
-  --poi-info-w: 157px;
   --poi-info-gap: var(--ds-space-3);
-  --poi-meta-gap: var(--ds-space-3);
-  --poi-fav-w: 26px;
-  --poi-fav-h: 25px;
-  --poi-fav-stroke: var(--ds-color-text-muted);
-  --poi-fav-fill: none;
-  --poi-fav-stroke-on: var(--ds-color-favorite);
-  --poi-fav-fill-on: var(--ds-color-favorite);
+
+  /* ── 主题（默认 orange，即原始稿 853:4824）── */
+  --poi-tint: var(--ds-theme-orange-surface);
+  --poi-wm-shape: var(--ds-theme-orange-accent);
+  --poi-wm-arrow: var(--ds-theme-orange-accent-soft);
 
   position: relative;
   box-sizing: border-box;
@@ -56,23 +41,21 @@
   overflow: hidden;
   border: var(--poi-border-width) solid var(--ds-color-border-card);
   border-radius: var(--poi-radius);
-  background: linear-gradient(to bottom, var(--ds-color-surface-card-warm), var(--ds-color-surface-card) var(--poi-bg-fade-stop));
+  background: linear-gradient(to bottom, var(--poi-tint), var(--ds-color-surface-card) var(--poi-bg-fade-stop));
   box-shadow: var(--ds-shadow-card);
   font-family: var(--ds-font-family-base);
   font-style: normal;
 }
 
-.amap-poi button {
-  margin: 0; padding: 0; border: 0; background: none;
-  font: inherit; color: inherit; cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-.amap-poi button:focus-visible,
-.amap-poi__row:focus-visible {
-  outline: 2px solid var(--ds-color-text-ranking);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
+.amap-poi[data-theme="orange"] { --poi-tint: var(--ds-theme-orange-surface); --poi-wm-shape: var(--ds-theme-orange-accent); --poi-wm-arrow: var(--ds-theme-orange-accent-soft); }
+.amap-poi[data-theme="amber"]  { --poi-tint: var(--ds-theme-amber-surface);  --poi-wm-shape: var(--ds-theme-amber-accent);  --poi-wm-arrow: var(--ds-theme-amber-accent-soft); }
+.amap-poi[data-theme="red"]    { --poi-tint: var(--ds-theme-red-surface);    --poi-wm-shape: var(--ds-theme-red-accent);    --poi-wm-arrow: var(--ds-theme-red-accent-soft); }
+.amap-poi[data-theme="pink"]   { --poi-tint: var(--ds-theme-pink-surface);   --poi-wm-shape: var(--ds-theme-pink-accent);   --poi-wm-arrow: var(--ds-theme-pink-accent-soft); }
+.amap-poi[data-theme="purple"] { --poi-tint: var(--ds-theme-purple-surface); --poi-wm-shape: var(--ds-theme-purple-accent); --poi-wm-arrow: var(--ds-theme-purple-accent-soft); }
+.amap-poi[data-theme="indigo"] { --poi-tint: var(--ds-theme-indigo-surface); --poi-wm-shape: var(--ds-theme-indigo-accent); --poi-wm-arrow: var(--ds-theme-indigo-accent-soft); }
+.amap-poi[data-theme="blue"]   { --poi-tint: var(--ds-theme-blue-surface);   --poi-wm-shape: var(--ds-theme-blue-accent);   --poi-wm-arrow: var(--ds-theme-blue-accent-soft); }
+.amap-poi[data-theme="green"]  { --poi-tint: var(--ds-theme-green-surface);  --poi-wm-shape: var(--ds-theme-green-accent);  --poi-wm-arrow: var(--ds-theme-green-accent-soft); }
+.amap-poi[data-theme="lime"]   { --poi-tint: var(--ds-theme-lime-surface);   --poi-wm-shape: var(--ds-theme-lime-accent);   --poi-wm-arrow: var(--ds-theme-lime-accent-soft); }
 
 /* ── 标题区 ── */
 .amap-poi__head {
@@ -86,6 +69,7 @@
   position: relative;
   z-index: 1;
   margin: 0;
+  max-width: calc(100% - var(--poi-watermark-w) - var(--poi-watermark-end));
   font-size: var(--ds-type-title-m-size);
   font-weight: var(--ds-type-title-m-weight);
   line-height: var(--ds-type-title-m-line);
@@ -93,8 +77,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  /* 不压到右上角水印 */
-  max-width: calc(100% - var(--poi-watermark-w) - var(--poi-watermark-end));
 }
 .amap-poi__watermark {
   position: absolute;
@@ -104,6 +86,7 @@
   height: var(--poi-watermark-h);
   pointer-events: none;
 }
+.amap-poi__watermark .wm-shape { fill: var(--poi-wm-shape); }
 
 .amap-poi__sub {
   position: relative;
@@ -114,64 +97,8 @@
   gap: var(--ds-space-8);
   height: var(--ds-type-body-s-line);
 }
-
-/* 扫街榜标签 */
-.amap-poi__tag {
-  display: flex;
-  align-items: center;
-  gap: var(--poi-tag-gap);
-  min-width: 0;
-  height: var(--poi-tag-h);
-  padding-inline-end: var(--ds-space-3);
-  border-radius: var(--poi-tag-radius);
-  background: var(--ds-color-surface-ranking-tag);
-}
-.amap-poi__tag-plate {
-  position: relative;
-  flex: none;
-  width: var(--poi-tag-plate-w);
-  height: var(--poi-tag-h);
-  border-radius: var(--ds-radius-3) 0 5px var(--ds-radius-3);
-  background: linear-gradient(-75.6deg,
-    var(--ds-peach-200) 14.557%,
-    var(--ds-peach-150) 61.187%,
-    var(--ds-peach-100) 97.022%);
-}
-.amap-poi__tag-logo {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: var(--poi-tag-logo-w);
-  height: var(--poi-tag-logo-h);
-}
-.amap-poi__tag-text {
-  font-size: var(--ds-type-body-s-size);
-  font-weight: var(--ds-type-body-s-weight);
-  line-height: var(--ds-type-body-s-line);
-  color: var(--ds-color-text-ranking);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* 完整榜单 */
-/* 两级选择器，压过上面的 button 重置 */
-.amap-poi .amap-poi__more {
-  flex: none;
-  display: flex;
-  align-items: center;
-  height: var(--ds-type-body-s-line);
-  font-size: var(--ds-type-body-s-size);
-  line-height: var(--ds-type-body-s-line);
-  color: var(--ds-color-text-muted);
-  white-space: nowrap;
-}
-.amap-poi__more:active { opacity: 0.6; }
-.amap-poi__more-icon {
-  display: block;
-  width: var(--poi-more-chevron-w);
-  height: var(--poi-more-chevron-h);
-}
+.amap-poi__sub amap-ranking-tag { flex: 0 1 auto; align-self: flex-end; }
+.amap-poi__sub amap-link { flex: none; }
 
 /* ── 列表 ── */
 .amap-poi__list {
@@ -195,52 +122,23 @@
   display: flex;
   align-items: center;
   gap: var(--poi-row-gap);
-  text-align: left;
+  margin: 0; padding: 0; border: 0; background: none;
+  font: inherit; color: inherit; text-align: left;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 .amap-poi__row:active { opacity: 0.7; }
-
-.amap-poi__thumb {
-  position: relative;
-  flex: none;
-  width: var(--poi-thumb);
-  height: var(--poi-thumb);
-  overflow: hidden;
-  border-radius: var(--poi-thumb-radius);
-  background: var(--ds-color-surface-media-placeholder);
-}
-.amap-poi__photo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.amap-poi__rank-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--poi-rank-badge);
-  height: var(--poi-rank-badge);
-}
-.amap-poi__rank {
-  position: absolute;
-  top: 0;
-  left: var(--poi-rank-inset);
-  font-size: var(--ds-type-numeral-m-size);
-  font-weight: var(--ds-type-numeral-m-weight);
-  line-height: var(--ds-type-numeral-m-line);
-  color: var(--ds-color-text-on-media);
-  font-variant-numeric: tabular-nums;
-}
+.amap-poi__row:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; border-radius: 4px; }
+.amap-poi__row amap-rank-thumb { flex: none; display: block; }
+.amap-poi__item amap-fav-button { flex: none; display: block; }
 
 .amap-poi__info {
   display: flex;
   flex-direction: column;
   gap: var(--poi-info-gap);
-  width: var(--poi-info-w);
+  /* 占满到星标前的剩余宽度（Figma 中三段说明会溢出名义宽 157 到 171） */
   min-width: 0;
-  flex: 0 1 auto;
+  flex: 1 1 0;
 }
 .amap-poi__name {
   font-size: var(--ds-type-subtitle-m-size);
@@ -251,42 +149,4 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.amap-poi__meta {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--poi-meta-gap);
-  font-size: var(--ds-type-body-s-size);
-  font-weight: var(--ds-type-body-s-weight);
-  line-height: var(--ds-type-body-s-line);
-  color: var(--ds-color-text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-}
-.amap-poi__distance { color: var(--ds-color-text-distance); }
-
-/* 收藏 */
-.amap-poi__fav { flex: none; display: block; }
-.amap-poi__fav-icon {
-  display: block;
-  width: var(--poi-fav-w);
-  height: var(--poi-fav-h);
-  fill: var(--poi-fav-fill);
-  stroke: var(--poi-fav-stroke);
-  transition: fill 0.15s ease, stroke 0.15s ease, transform 0.15s ease;
-}
-.amap-poi__fav[aria-pressed="true"] .amap-poi__fav-icon {
-  fill: var(--poi-fav-fill-on);
-  stroke: var(--poi-fav-stroke-on);
-}
-.amap-poi__fav:active .amap-poi__fav-icon { transform: scale(0.88); }
-@media (prefers-reduced-motion: reduce) {
-  .amap-poi__fav-icon { transition: none; }
-}
-
-/* 素材缺失时显示等尺寸占位 */
-.amap-poi img.is-missing {
-  background: repeating-linear-gradient(45deg, #e6e6e6 0 4px, #f2f2f2 4px 8px);
-  outline: 1px dashed #b5b5b5;
-  outline-offset: -1px;
-}
-.amap-poi__photo.is-missing { visibility: hidden; }
+.amap-poi__info amap-meta-line { display: block; }

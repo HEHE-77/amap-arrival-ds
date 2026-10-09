@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>基础组件 · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/primitives/primitives.css">
+  <style>
+    body { margin: 0; padding: 24px 16px; background: #fff; font-family: var(--ds-font-family-base); color: #191919; }
+    table { border-collapse: collapse; }
+    th, td { text-align: left; padding: 14px 18px 14px 0; border-bottom: 1px solid #eee; vertical-align: middle; }
+    th { font-size: 12px; font-weight: 500; color: #60636c; }
+    code { font-size: 12px; color: #60636c; }
+    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin-top: 16px; font-family: ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body asset-base="../assets/">
+  <table>
+    <tr><th>组件</th><th>示例</th><th>用在</th></tr>
+    <tr><td><code>amap-link</code></td><td><amap-link label="完整榜单"></amap-link></td><td><code>Header 行程回溯 · POI 完整榜单</code></td></tr>
+    <tr><td><code>amap-ranking-tag</code></td><td><amap-ranking-tag text="精选10家热门酒店"></amap-ranking-tag></td><td><code>POI 卡片标题区</code></td></tr>
+    <tr><td><code>amap-rank-thumb</code></td><td><amap-rank-thumb rank="1" src="../assets/poi/sample-poi-1.png"></amap-rank-thumb> <amap-rank-thumb rank="12"></amap-rank-thumb></td><td><code>POI 列表行</code></td></tr>
+    <tr><td><code>amap-fav-button</code></td><td><amap-fav-button label="示例"></amap-fav-button> <amap-fav-button pressed label="示例"></amap-fav-button></td><td><code>POI 列表行</code></td></tr>
+    <tr><td><code>amap-meta-line</code></td><td><amap-meta-line accent-first items='["距您 320 米","人均 ¥328","4.9分"]'></amap-meta-line></td><td><code>POI 列表行</code></td></tr>
+  </table>
+  <div id="log"></div>
+  <script src="../components/primitives/primitives.js"></script>
+  <script>
+    document.addEventListener('fav-change', (e) => { document.getElementById('log').textContent = 'fav-change → ' + e.detail.favorited; });
+  </script>
+</body>
+</html>

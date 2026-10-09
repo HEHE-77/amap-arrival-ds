@@ -15,7 +15,6 @@
   --ds-white-warm: #fefefe;
   --ds-brown-600: #835b32;
   --ds-brown-700: #8b4424;
-  --ds-peach-50: #ffefe5;
   --ds-peach-100: #ffe3c9;
   --ds-peach-150: #fff4e2;
   --ds-peach-200: #fcd6b8;
@@ -55,10 +54,10 @@
   --ds-color-text-on-media: var(--ds-white);
   --ds-color-text-ranking: var(--ds-brown-700);       /* 扫街榜标签文字 */
   --ds-color-border-card: var(--ds-gray-200);         /* [figma] Stroke color */
-  --ds-color-surface-card-warm: var(--ds-peach-50);
   --ds-color-surface-card: var(--ds-white-warm);
   --ds-color-surface-ranking-tag: rgba(255, 227, 201, 0.4); /* peach-100 @40% */
   --ds-color-surface-media-placeholder: var(--ds-gray-700);
+  --ds-color-focus-ring: var(--ds-gray-900);           /* 键盘焦点框 */
   --ds-color-favorite: var(--ds-yellow-500);           /* 收藏态（暂定，Figma 无对应） */
 
   --ds-shadow-card: var(--ds-shadow-card-raw);        /* [figma] 卡片 */
@@ -88,4 +87,15 @@
   --ds-type-numeral-m-size: var(--ds-font-size-14);
   --ds-type-numeral-m-weight: var(--ds-font-weight-semibold);
   --ds-type-numeral-m-line: 20px;
+
+  /* ── Theme · 卡片主题色（surface 卡片顶色 / accent 水印六边形 / accent-soft 水印箭头）── */
+  --ds-theme-orange-surface: #ffefe5; --ds-theme-orange-accent: #ffebde; --ds-theme-orange-accent-soft: #fdf7f1; /* 853:4824 */
+  --ds-theme-amber-surface: #fff5e5; --ds-theme-amber-accent: #ffeed0; --ds-theme-amber-accent-soft: #fffbea; /* 853:4592 */
+  --ds-theme-red-surface: #ffe5e5; --ds-theme-red-accent: #ffdede; --ds-theme-red-accent-soft: #fdf1f2; /* 853:4703 */
+  --ds-theme-pink-surface: #ffe5ef; --ds-theme-pink-accent: #ffd8eb; --ds-theme-pink-accent-soft: #fdf1f7; /* 853:4531 */
+  --ds-theme-purple-surface: #f3e5ff; --ds-theme-purple-accent: #f2ddff; --ds-theme-purple-accent-soft: #faf1fd; /* 853:4648 */
+  --ds-theme-indigo-surface: #e5edff; --ds-theme-indigo-accent: #dbe4fd; --ds-theme-indigo-accent-soft: #f2f1fd; /* 853:4472 */
+  --ds-theme-blue-surface: #e5f2ff; --ds-theme-blue-accent: #dfebfb; --ds-theme-blue-accent-soft: #f1f7fd; /* 853:4877 */
+  --ds-theme-green-surface: #e5fff0; --ds-theme-green-accent: #d8fde4; --ds-theme-green-accent-soft: #f1fff7; /* 853:4939 */
+  --ds-theme-lime-surface: #f3ffe5; --ds-theme-lime-accent: #ddffd8; --ds-theme-lime-accent-soft: #f7fdf1; /* 853:4765 */
 }

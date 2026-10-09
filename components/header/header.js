@@ -19,6 +19,8 @@
  *   provider     运力名称，如「享道-经济型」
  *   driver       司机与车牌，如「何师傅·陕 AA01306」
  *
+ * 依赖 components/primitives/primitives.js（「行程回溯」使用 amap-link）
+ *
  * 事件
  *   trip-replay  点击「行程回溯」时派发（bubbles, composed）
  */
@@ -26,7 +28,6 @@ const ASSETS = {
   regular: { thumb: 'header-map-thumb.png', w: 212, h: 72 },
   taxi: { thumb: 'header-map-thumb-taxi.png', w: 319, h: 84 },
   eco: 'icon-green-energy.svg',
-  chevron: 'icon-chevron-right.svg',
 };
 
 const esc = (s) =>
@@ -44,12 +45,8 @@ class AmapArrivalHeader extends HTMLElement {
 
   attr(name, fallback = '') { return this.getAttribute(name) ?? fallback; }
 
-  tripButton(base) {
-    return `
-      <button type="button" class="amap-header__trip">
-        <span>${esc(this.attr('trip-label', '行程回溯'))}</span>
-        <img class="amap-header__chevron" src="${base}${ASSETS.chevron}" alt="" width="16" height="18">
-      </button>`;
+  tripButton() {
+    return `<amap-link class="amap-header__trip" label="${esc(this.attr('trip-label', '行程回溯'))}"></amap-link>`;
   }
 
   regularMeta(base) {
@@ -62,7 +59,7 @@ class AmapArrivalHeader extends HTMLElement {
     const address = this.attr('address');
     return `
       <p class="amap-header__address" title="${esc(address)}">${esc(address)}</p>
-      <div class="amap-header__actions">${eco}${this.tripButton(base)}</div>`;
+      <div class="amap-header__actions">${eco}${this.tripButton()}</div>`;
   }
 
   taxiMeta(base) {
@@ -82,7 +79,7 @@ class AmapArrivalHeader extends HTMLElement {
 
     return `
       <p class="amap-header__line amap-header__line--address" title="${esc(full)}">${addressParts.join(dot)}</p>
-      <div class="amap-header__line">${ride}${this.tripButton(base)}</div>`;
+      <div class="amap-header__line">${ride}${this.tripButton()}</div>`;
   }
 
   render() {

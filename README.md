@@ -4,14 +4,16 @@
 
 ```
 tokens/      tokens.json（真源）+ tokens.css（CSS 变量）
-components/  每个组件一个目录：*.css + *.js
+components/  primitives/ 为共用基础组件，其余每个复合组件一个目录：*.css + *.js
 preview/     组件状态预览页
 assets/      从 Figma 导出的素材
 ```
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应组件的页面（如 `preview/poi-card.html`），列出全部状态，事件会显示在默认态下方。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）。事件会显示在页面上。
+
+加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
 
 ## Token 分层
 
@@ -20,6 +22,18 @@ assets/      从 Figma 导出的素材
 | primitive | 原始值，不带语义 | `--ds-gray-900` `--ds-space-8` |
 | semantic | 用途，组件只引用这一层 | `--ds-color-text-primary` `--ds-color-text-muted`（全系统唯一次要灰） |
 | component | 组件私有尺寸/间距，可被覆盖 | `--header-fade-stop` |
+
+## 基础组件（`components/primitives/`）
+
+被多个复合组件共用，也可单独使用。素材目录读取自身或最近祖先的 `asset-base`。
+
+| 组件 | 用法 | 用在 |
+|---|---|---|
+| `<amap-link label>` | 文字 + 全局箭头，原生 click | Header「行程回溯」、POI「完整榜单」 |
+| `<amap-ranking-tag text>` | 扫街榜标签 | POI 标题区 |
+| `<amap-rank-thumb rank src>` | 图片 + 排名角标，无图显示占位底色 | POI 列表行 |
+| `<amap-fav-button pressed label>` | 收藏星标，切换后派发 `fav-change { favorited }` | POI 列表行 |
+| `<amap-meta-line items sep accent-first>` | 分隔符串联的说明行，首段可强调 | POI 列表行 |
 
 ## 组件
 
@@ -53,7 +67,7 @@ assets/      从 Figma 导出的素材
 | `provider` | taxi | 运力名称，橙色强调 |
 | `driver` | taxi | 司机·车牌，超长省略（行程回溯始终可见） |
 
-事件：`trip-replay`（点击行程回溯）。
+事件：`trip-replay`（点击行程回溯，内部为 `amap-link`）。
 
 素材（`assets/`；矢量导出 SVG，位图导出 @3x PNG，地图只导出 header 内可见的那块）：
 
@@ -64,39 +78,40 @@ assets/      从 Figma 导出的素材
 | `icon-green-energy.svg` | `849:2986` Frame | 18×17 |
 | `icon-chevron-right.svg` | 全局统一箭头，所有组件共用 | 16×18 |
 
-### 2. POI 榜单卡片（Figma `853:4824` poi/secondary）
+
+### 2. POI 榜单卡片（Figma `853:4824` poi/secondary，实例 `853:4996`）
+
+由 `amap-ranking-tag` · `amap-link` · `amap-rank-thumb` · `amap-meta-line` · `amap-fav-button` 组成。
 
 ```html
-<link rel="stylesheet" href="components/poi-card/poi-card.css">
-<script src="components/poi-card/poi-card.js"></script>
-
-<amap-poi-card heading="藏在街巷的烟火气" count="13"></amap-poi-card>
+<amap-poi-card theme="blue" heading="臻选好店品质生活" subtitle="精选 8 个热门店铺"></amap-poi-card>
 <script>
   document.querySelector('amap-poi-card').items = [
-    { name: '老白家肉丸胡辣汤', distance: '距您 250 米', price: '人均 ¥18', image: '…' },
-    { name: '竹笆市甑糕', distance: '距您 780 米', price: '人均 ¥15', image: '…', favorited: true },
+    { name: '隐庐·会席料理', distance: '距您 320 米', details: ['人均 ¥328', '4.9分'], image: '…' },
+    { name: '翠园·粤式茶餐厅', distance: '距您 485 米', details: ['人均 ¥168', '4.8分'], favorited: true },
   ];
 </script>
 ```
 
 | 属性 | 说明 |
 |---|---|
+| `theme` | `orange`（默认）`amber` `red` `pink` `purple` `indigo` `blue` `green` `lime` |
 | `heading` | 榜单标题，超长省略（不压水印） |
-| `count` | 生成「精选 N 个热门店铺」，不传只显示扫街榜标识 |
+| `subtitle` | 扫街榜标签文案，如「精选10家热门酒店」 |
 | `more-label` | 默认「完整榜单」 |
-| `items` | JSON 数组或 `el.items = [...]`；字段 `name` `distance` `price` `image` `favorited` |
+| `items` | JSON 数组或 `el.items = [...]`；字段 `name` `distance` `details[]` `image` `favorited` |
 | `asset-base` | 素材目录 |
 
-收藏星标内联在组件里（路径取自 `853:4854`），未收藏为「正文灰」描边，收藏后用 `--ds-color-favorite` 填充（暂定 `#FFB300`，改 token 即可）。
+事件：`poi-more`、`poi-select`（`{ index, item }`）、`poi-favorite`（`{ index, item, favorited }`）。排名自动编号 01、02…
 
-事件：`poi-more`、`poi-select`（`{ index, item }`）、`poi-favorite`（`{ index, item, favorited }`，组件内已切换状态）。排名序号按顺序自动生成 01、02…
+主题色读自 Figma 各实例填充，每套 3 个 token：`--ds-theme-{name}-surface`（卡片顶色）/ `-accent`（水印六边形）/ `-accent-soft`（水印箭头）。水印为内联 SVG（路径取自 `853:4827`），颜色随主题切换。
 
-素材（`assets/poi/`；矢量 SVG，照片 PNG）：
+素材（`assets/poi/`）：
 
 | 文件名 | Figma 节点 | 尺寸 |
 |---|---|---|
-| `poi-watermark.svg` | `853:4827` Group 18（已按卡片上沿裁切） | 73×61 |
 | `saojiebang-logo.png` | `853:4834` image 21（Figma 中为位图，按 @3x 渲染导出） | 34×12 |
-| — | 箭头用全局 `icon-chevron-right.svg` | |
 | `rank-badge.svg` | `853:4845` / `853:4860`（两者相同，各名次共用） | 29×29 |
 | `sample-poi-1.png` / `sample-poi-2.png` | `853:4844` / `853:4859`（仅预览用） | 50×50 @3x |
+
+箭头用全局 `icon-chevron-right.svg`；星标与水印内联在组件中。收藏态填充 `--ds-color-favorite`（暂定 `#FFB300`）。
