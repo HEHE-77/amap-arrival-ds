@@ -47,7 +47,9 @@ amap-section {
 /* 横向滑动的内容（如当地特色菜）：<amap-section layout="scroll"> */
 amap-section[layout="scroll"] .amap-section__body {
   flex-direction: row;
+  gap: var(--section-row-gap, var(--section-gap));   /* 横向卡片间距，榜单 / 推荐卡为 12 */
   overflow-x: auto;
   scrollbar-width: none;
 }
 amap-section[layout="scroll"] .amap-section__body::-webkit-scrollbar { display: none; }
+amap-section[layout="scroll"] .amap-section__body > * { flex: none; }   /* 横向滑动时卡片保持原宽 */

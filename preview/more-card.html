@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>查看更多卡 · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/primitives/primitives.css">
+  <link rel="stylesheet" href="../components/section/section.css">
+  <link rel="stylesheet" href="../components/poi-recommend/poi-recommend.css">
+  <link rel="stylesheet" href="../components/more-card/more-card.css">
+  <style>
+    body { margin: 0; padding: 24px 0; background: #fff; font-family: var(--ds-font-family-base); color: #191919; }
+    .label { font-size: 14px; font-weight: 500; color: #60636c; margin: 32px 18px 12px; }
+    .label:first-child { margin-top: 0; }
+    .solo { display: flex; gap: 16px; align-items: flex-start; padding: 0 18px; }
+    .solo amap-more-card { align-self: auto; }
+    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin: 16px 18px; font-family: ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body asset-base="../assets/">
+  <p class="label">三个 component：查看更多 765:5691 · 查看其他榜单 765:6006 · 查看完整扫街榜 765:4869</p>
+  <div class="solo">
+    <amap-more-card style="height:168px"></amap-more-card>
+    <amap-more-card label="查看其他榜单" style="height:199px"></amap-more-card>
+    <amap-more-card label="看完整&#10;扫街榜" style="height:370px"></amap-more-card>
+  </div>
+
+  <p class="label">放在横向列表末尾，高度自动撑满（实例 765:7186 等，间距 12）</p>
+  <amap-section heading="附近值得去" layout="scroll" style="--section-row-gap: 12px">
+    <amap-poi-recommend name="大唐不夜城" tag="特色街区" saves="44.6w+人收藏" tint="#936B3B" tint-end="#93543B" image="../assets/poi-recommend/samples/datang-buyecheng.jpg"></amap-poi-recommend>
+    <amap-poi-recommend name="陕西历史博物馆" tag="文物古迹" saves="30.9w+人收藏" tint="#3A4A4C" image="../assets/poi-recommend/samples/shaanxi-history-museum.jpg"></amap-poi-recommend>
+    <amap-poi-recommend name="永宁门" tag="文物古迹" saves="36.1w+人收藏" tint="#892929" tint-end="#894129" image="../assets/poi-recommend/samples/yongningmen.jpg"></amap-poi-recommend>
+    <amap-more-card></amap-more-card>
+  </amap-section>
+
+  <div id="log"></div>
+  <script src="../components/primitives/primitives.js"></script>
+  <script src="../components/section/section.js"></script>
+  <script src="../components/poi-recommend/poi-recommend.js"></script>
+  <script src="../components/more-card/more-card.js"></script>
+  <script>
+    document.addEventListener('more-select', (e) => { document.getElementById('log').textContent = 'more-select → ' + JSON.stringify(e.detail); });
+  </script>
+</body>
+</html>

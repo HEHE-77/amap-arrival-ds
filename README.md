@@ -11,7 +11,7 @@ assets/      从 Figma 导出的素材
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）、`reminders.html`（限行 / 末班车）、`nav-bar.html`、`place-row.html`（收藏地点）。事件会显示在页面上。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）、`reminders.html`（限行 / 末班车）、`nav-bar.html`、`place-row.html`（收藏地点）、`more-card.html`。事件会显示在页面上。
 
 加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
 
@@ -295,7 +295,7 @@ assets/      从 Figma 导出的素材
 
 两个 component 结构相同：模块标题 + 两张服务卡。拆成两个组件：
 
-- `<amap-section heading [more-label] [layout=scroll]>`：通用模块容器，标题 16 Semibold，可带右侧「查看更多 >」（派发 `section-more`），左右内边距 `--section-inset`（全页统一 18，已确认；停车场 / 加油站原稿的 16 已改为 18），标题与内容、内容之间间距 8。子元素即内容。后续拼页面时所有模块都用它。
+- `<amap-section heading [more-label] [layout=scroll]>`：通用模块容器，标题 16 Semibold，可带右侧「查看更多 >」（派发 `section-more`），`layout="scroll"` 时横向滑动、卡片保持原宽（间距 `--section-row-gap`，榜单 / 推荐卡为 12），左右内边距 `--section-inset`（全页统一 18，已确认；停车场 / 加油站原稿的 16 已改为 18），标题与内容、内容之间间距 8。子元素即内容。后续拼页面时所有模块都用它。
 - `<amap-service-card>`：随容器撑满（统一边距后为 366 宽，原稿 370），左侧名称 / 说明行 / 标签，右侧浅底按钮。
 
 ```html
@@ -383,3 +383,24 @@ assets/      从 Figma 导出的素材
 事件：`place-select`（`{ name }`，点图片或文字）、`place-action`（`{ name, label }`）。名称 `#222222` → 正文色。
 
 素材：`assets/place-row/samples/*.jpg`，2 张 56×56 @3x，仅预览用。
+
+### 12. 查看更多卡（Figma `765:5691` 查看更多 / `765:6006` 查看其他榜单 / `765:4869` 查看完整扫街榜）
+
+三个 component 只有文案与高度不同，合为一个组件，共 10 个实例，都放在横向卡片列表的末尾。宽 100，高度随所在行撑满（168 / 199 / 370 / 390）。
+
+```html
+<link rel="stylesheet" href="components/more-card/more-card.css">
+<script src="components/more-card/more-card.js"></script>
+
+<amap-section heading="附近值得去" layout="scroll" style="--section-row-gap: 12px">
+  <amap-poi-recommend …></amap-poi-recommend>
+  <amap-more-card></amap-more-card>
+</amap-section>
+
+<amap-more-card label="查看其他榜单"></amap-more-card>
+<amap-more-card label="看完整&#10;扫街榜"></amap-more-card>
+```
+
+`label` 默认「查看更多」，可换行。事件：`more-select`（`{ label }`）。
+
+新增 token：`--ds-color-action-tonal-icon-surface`（`#D4E6FF`）。卡片底色 Figma 为 `#EBF3FE`，并入浅底按钮色 `#EDF3FF`。实例 `777:2659`（上班到达那行）高 384，比同行卡片（390）矮 6，组件按撑满处理。

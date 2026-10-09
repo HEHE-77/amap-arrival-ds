@@ -36,6 +36,7 @@
   --ds-blue-500: #007fff;
   --ds-blue-50: #eaf1ff;
   --ds-blue-40: #edf3ff;
+  --ds-blue-100: #d4e6ff;
   --ds-green-700: #16a85a;
   --ds-green-200: #a0dba4;
   --ds-green-500: #25a544;
@@ -116,6 +117,7 @@
   --ds-color-action-primary-end: var(--ds-blue-650); /* 主按钮渐变终点 */
   --ds-color-action-secondary: var(--ds-blue-550); /* 描边按钮的边框与文字 */
   --ds-color-action-tonal-surface: var(--ds-blue-40); /* 浅底按钮（去停车 / 去加油），文字同 action-secondary */
+  --ds-color-action-tonal-icon-surface: var(--ds-blue-100); /* 浅底卡片上的圆形图标底（查看更多卡） */
   --ds-color-score-solid: var(--ds-blue-600); /* 评分徽标左侧实色块 */
   --ds-color-score-text: var(--ds-blue-500); /* 评分徽标文字（超棒） */
   --ds-color-score-surface: var(--ds-blue-50); /* 评分徽标底色 */

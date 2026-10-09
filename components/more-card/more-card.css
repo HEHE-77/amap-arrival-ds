@@ -1,0 +1,52 @@
+/* <amap-more-card> · 横向列表末尾的「查看更多」卡
+ * Figma 765:5691 查看更多 / 765:6006 查看其他榜单 / 765:4869 查看完整扫街榜（三者仅文案与高度不同）
+ * 依赖 tokens/tokens.css
+ */
+amap-more-card {
+  --more-width: 100px;
+
+  display: flex;
+  flex: none;
+  width: var(--more-width);
+  align-self: stretch;          /* 高度随所在横向列表撑满 */
+  min-height: 120px;
+  font-family: var(--ds-font-family-base);
+}
+
+.amap-more {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-6);
+  margin: 0;
+  padding: 0 var(--ds-space-8);
+  border: 0;
+  border-radius: var(--ds-radius-16);
+  background: var(--ds-color-action-tonal-surface);
+  color: var(--ds-color-action-secondary);
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.amap-more:active { opacity: 0.7; }
+.amap-more:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; }
+
+.amap-more__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ds-color-action-tonal-icon-surface);
+}
+.amap-more__icon svg { display: block; width: 7px; height: 13px; transform: translateX(1.5px); }   /* 同 Figma，箭头略偏右做视觉居中 */
+
+.amap-more__label {
+  font-size: var(--ds-type-body-s-size);
+  line-height: 16.2px;
+  text-align: center;
+  white-space: pre-line;   /* 文案里的换行会保留，如「看完整\n扫街榜」 */
+}

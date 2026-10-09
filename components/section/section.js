@@ -14,7 +14,7 @@
  *   layout      不传为竖向堆叠；scroll 为横向滑动（如当地特色菜）
  *
  * 事件：section-more（点击右侧入口）
- * 组件变量：--section-inset（左右内边距，默认 18）、--section-gap（默认 8）
+ * 组件变量：--section-inset（左右内边距，默认 18）、--section-gap（默认 8）、--section-row-gap（横向滑动时卡片间距，默认同 gap）
  */
 (() => {
   const esc = (s) =>
