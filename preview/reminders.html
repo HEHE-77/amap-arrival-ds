@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>限行与末班车 · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/primitives/primitives.css">
+  <link rel="stylesheet" href="../components/section/section.css">
+  <link rel="stylesheet" href="../components/restriction-card/restriction-card.css">
+  <link rel="stylesheet" href="../components/transit-list/transit-list.css">
+  <style>
+    body { margin: 0; padding: 24px 0; background: #fff; font-family: var(--ds-font-family-base); color: #191919; }
+    .label { font-size: 14px; font-weight: 500; color: #60636c; margin: 32px 16px 12px; }
+    .label:first-child { margin-top: 0; }
+    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin: 16px; font-family: ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body asset-base="../assets/">
+  <p class="label">限行 765:5302（实例 765:5303 相同）</p>
+  <amap-section heading="异地限行规则">
+    <amap-restriction-card plate="陕B·*****"
+      text="您当前绑定的车辆今日在目的地区域处于限行时段。建议合理规划出行路线，避免进入限行区域。"
+      tags='[{"text":"今日限行 7:00 - 20:00","tone":"danger"},{"text":"避开限行路线已规划","tone":"neutral"}]'></amap-restriction-card>
+  </amap-section>
+
+  <p class="label">末班车提醒 766:8338</p>
+  <amap-section heading="今晚末班车时间" more-label="查看更多">
+    <amap-transit-list items='[
+      {"line":"2 号线","color":"#C42D2A","title":"钟楼站 · B 口进站","subtitle":"往 北客站 方向 · 换乘 4 号线","time":"23:10"},
+      {"line":"N12","color":"#7A5BD6","title":"钟楼广场北 · 夜班公交","subtitle":"末班地铁错过也能到家 · 约 70 分钟","time":"00:40"}]'></amap-transit-list>
+  </amap-section>
+
+  <p class="label">实例 766:8339（线路「12路」）</p>
+  <amap-section heading="今晚末班车时间" more-label="查看更多">
+    <amap-transit-list items='[
+      {"line":"2 号线","color":"#C42D2A","title":"钟楼站 · B 口进站","subtitle":"往 北客站 方向 · 换乘 4 号线","time":"23:10"},
+      {"line":"12路","color":"#7A5BD6","title":"钟楼广场北 · 夜班公交","subtitle":"末班地铁错过也能到家 · 约 70 分钟","time":"00:40"}]'></amap-transit-list>
+  </amap-section>
+
+  <p class="label">边界情况</p>
+  <amap-section heading="无车牌、单个标签">
+    <amap-restriction-card heading="明日限行提醒" text="明日 7:00 - 20:00 尾号 3、8 限行。" tags='[{"text":"明日限行","tone":"danger"}]'></amap-restriction-card>
+  </amap-section>
+  <amap-section heading="超长文字与三条线路" style="margin-top:16px">
+    <amap-transit-list items='[
+      {"line":"14 号线","color":"#2E9C6A","title":"西安北站 · 超长的站点名称会省略显示超长的站点名称","subtitle":"往 贺韶 方向 · 超长的说明文字也会省略显示","time":"23:45"},
+      {"line":"游 8","color":"#E07B00","title":"大雁塔北广场","time":"22:30","timeLabel":"末班车"},
+      {"line":"N2","title":"无线路色时用默认灰","subtitle":"约 40 分钟","time":"01:15"}]'></amap-transit-list>
+  </amap-section>
+
+  <div id="log"></div>
+  <script src="../components/primitives/primitives.js"></script>
+  <script src="../components/section/section.js"></script>
+  <script src="../components/restriction-card/restriction-card.js"></script>
+  <script src="../components/transit-list/transit-list.js"></script>
+  <script>
+    const log = (t) => { document.getElementById('log').textContent = t; };
+    document.addEventListener('section-more', (e) => log('section-more → ' + e.target.getAttribute('heading')));
+    document.addEventListener('transit-select', (e) => log('transit-select → ' + e.detail.index + ' ' + e.detail.item.line));
+  </script>
+</body>
+</html>

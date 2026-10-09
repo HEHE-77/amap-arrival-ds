@@ -291,6 +291,8 @@ amap-button > .ds-btn { flex: 1 1 auto; }
 .ds-tag[data-tone="deal"]    { background: var(--ds-color-deal-surface); color: var(--ds-color-deal); font-weight: var(--ds-font-weight-semibold); }
 /* size m：18 高，左右 6（停车场 / 加油站标签） */
 .ds-tag[data-size="m"] { height: 18px; padding: 0 var(--ds-space-6); }
+/* size l：22 高，左右 8，11 号字（限行规则标签） */
+.ds-tag[data-size="l"] { height: 22px; padding: 0 var(--ds-space-8); font-size: 11px; line-height: 15px; }
 
 /* ── amap-quick-order：一键下单卡片（Figma 769:8974） ── */
 amap-quick-order { display: flex; }

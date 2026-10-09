@@ -13,7 +13,7 @@
  *   <amap-deal-tag type="团" price="98" discount="5.6折">  团购 / 代金券价格条
  *   <amap-media-pill text="1/12" [icon="star"] [muted]>    压在图片上的深色胶囊
  *   <amap-button label="看团购" variant="primary|secondary|tonal" [price="9.9"] [shape="pill"]>  按钮，原生 click；pill 为胶囊形
- *   <amap-tag text tone="neutral|tenure|promo|outline|danger|deal" [size="m"]>  小标签；m 为 18 高
+ *   <amap-tag text tone="neutral|tenure|promo|outline|danger|deal" [size="m|l"]>  小标签；m 为 18 高，l 为 22 高
  *   <amap-quick-order image title tag spec note price>  一键下单卡片，派发 order-buy / order-swap
  *   <amap-hot-review text="…" count="252 人在说">          热评条，原生 click
  *
@@ -257,7 +257,7 @@
     static get observedAttributes() { return ['text', 'tone', 'size']; }
     render() {
       const tone = ['neutral', 'tenure', 'promo', 'outline', 'danger', 'deal'].includes(this.attr('tone')) ? this.attr('tone') : 'neutral';
-      const size = this.attr('size') === 'm' ? 'm' : 's';
+      const size = ['m', 'l'].includes(this.attr('size')) ? this.attr('size') : 's';
       this.innerHTML = `<span class="ds-tag" data-tone="${tone}" data-size="${size}">${esc(this.attr('text'))}</span>`;
     }
   }

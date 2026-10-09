@@ -11,7 +11,7 @@ assets/      从 Figma 导出的素材
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）。事件会显示在页面上。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）、`reminders.html`（限行 / 末班车）。事件会显示在页面上。
 
 加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
 
@@ -42,7 +42,7 @@ assets/      从 Figma 导出的素材
 | `<amap-deal-tag type price discount>` | 团 / 券价格条 | 地点卡 |
 | `<amap-media-pill text [icon=star] [muted]>` | 图片上的深色胶囊（收藏数、页码） | 地点卡 |
 | `<amap-button label variant [price] [shape=pill]>` | `primary` 渐变 / `secondary` 描边 / `tonal` 浅底（34 高，13 Semibold），可带「\| ¥ 价格」，`pill` 为胶囊形，原生 click | 地点卡、一键下单、打车账单、服务卡 |
-| `<amap-tag text tone [size=m]>` | 小标签：`neutral` 灰底信息 / `tenure` 收录年限 / `promo` 商品促销 / `outline` 蓝描边 / `danger` 警示 / `deal` 优惠；`size="m"` 为 18 高 | 地点卡、一键下单、服务卡 |
+| `<amap-tag text tone [size=m\|l]>` | 小标签：`neutral` 灰底信息 / `tenure` 收录年限 / `promo` 商品促销 / `outline` 蓝描边 / `danger` 警示 / `deal` 优惠；`m` 18 高，`l` 22 高 11 号字 | 地点卡、一键下单、服务卡、限行卡 |
 | `<amap-quick-order image title tag spec note price>` | 一键下单卡片，派发 `order-buy` / `order-swap` | 地点卡（上班） |
 | `<amap-hot-review text count>` | 热评条，原生 click | 地点卡 |
 
@@ -295,7 +295,7 @@ assets/      从 Figma 导出的素材
 
 两个 component 结构相同：模块标题 + 两张服务卡。拆成两个组件：
 
-- `<amap-section heading [layout=scroll]>`：通用模块容器，标题 16 Semibold，左右内边距 `--section-inset`（默认 16），标题与内容、内容之间间距 8。子元素即内容。后续拼页面时所有模块都用它。
+- `<amap-section heading [more-label] [layout=scroll]>`：通用模块容器，标题 16 Semibold，可带右侧「查看更多 >」（派发 `section-more`），左右内边距 `--section-inset`（默认 18；停车场 / 加油站稿中为 16，预览按 16），标题与内容、内容之间间距 8。子元素即内容。后续拼页面时所有模块都用它。
 - `<amap-service-card>`：370 宽，左侧名称 / 说明行 / 标签，右侧浅底按钮。
 
 ```html
@@ -323,3 +323,24 @@ assets/      从 Figma 导出的素材
 基础组件扩展：`amap-tag` 新增 `size="m"` 与 `outline` / `danger` / `deal` 三种 tone；`amap-button` 新增 `variant="tonal"`；`amap-meta-line` 间距与分隔符颜色可调。新增 token：`--ds-color-action-tonal-surface`、`--ds-color-tag-danger-*`、`--ds-color-text-separator`、`--ds-radius-6`、`--ds-type-button-s-*`。
 
 与 Figma 的统一：「免费洗车」底色 `#F5F5F5` 并入已有灰色标签 `#EFEFEF`。
+
+### 9. 限行提醒（Figma `765:5302`，实例 `765:5303`）与末班车提醒（Figma `766:8338`，实例 `766:8339`）
+
+都放在 `<amap-section>` 里使用，卡片宽 366。
+
+```html
+<amap-section heading="异地限行规则">
+  <amap-restriction-card plate="陕B·*****" text="您当前绑定的车辆今日在目的地区域处于限行时段。…"
+    tags='[{"text":"今日限行 7:00 - 20:00","tone":"danger"},{"text":"避开限行路线已规划","tone":"neutral"}]'></amap-restriction-card>
+</amap-section>
+
+<amap-section heading="今晚末班车时间" more-label="查看更多">
+  <amap-transit-list items='[{"line":"2 号线","color":"#C42D2A","title":"钟楼站 · B 口进站","subtitle":"往 北客站 方向 · 换乘 4 号线","time":"23:10"}]'></amap-transit-list>
+</amap-section>
+```
+
+`<amap-restriction-card>`：`heading`（默认「今日限行提醒」）、`plate` 车牌、`text` 说明、`tags`（`amap-tag size="l"`）。纯展示，无事件。
+
+`<amap-transit-list>`：`items` 每项 `{ line, color, title, subtitle, time, timeLabel }`；`color` 为线路色，属于数据（不进 token），缺省为灰。事件 `transit-select`（`{ index, item }`）。实例 `766:8339` 中第二条线路为「12路」，预览已单列。
+
+与 Figma 的统一：限行图标底与「今日限行」标签底 `#FFF1F0` → `--ds-color-tag-danger-surface`（`#FFEDED`）；车辆图标 `#FF4D4F` → 警示红 `#FF3041`；车牌底 `#F0F0F2` 与「避开限行路线已规划」底 `#F5F5F5` → 灰色标签 `#EFEFEF`；两枚标签统一为 22 高、11 号字（Figma 中「今日限行」为 10 号字、另一枚 23 高）；末班车文字 `#222222` / `#111111` → 正文色；行分隔线 `#F3F3F3` → `--ds-color-divider`；「查看更多」`#5A5A5A` → 正文灰。

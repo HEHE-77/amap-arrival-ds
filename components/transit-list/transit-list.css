@@ -1,0 +1,83 @@
+/* <amap-transit-list> · 末班车列表（Figma 766:8338「末班车提醒」中的卡片）
+ * 依赖 tokens/tokens.css
+ */
+amap-transit-list {
+  --tr-pad-y: var(--ds-space-8);
+  --tr-pad-x: var(--ds-space-14);
+  --tr-border: 0.6px;
+  --tr-text-x: 58px;      /* 文字列起点（线路徽标列宽 48 + 间距 10） */
+  --tr-row-pad: 9px;
+  --tr-row-h: 31px;
+
+  display: block;
+  width: 100%;
+  font-family: var(--ds-font-family-base);
+}
+
+.amap-tr {
+  margin: 0;
+  padding: calc(var(--tr-pad-y) + var(--tr-border)) calc(var(--tr-pad-x) + var(--tr-border));
+  list-style: none;
+  border-radius: var(--ds-radius-16);
+  background: var(--ds-color-surface-card-neutral);
+  box-shadow: inset 0 0 0 var(--tr-border) var(--ds-color-border-card);
+}
+.amap-tr__item + .amap-tr__item { border-top: 1px solid var(--ds-color-divider); }
+
+.amap-tr__row {
+  display: grid;
+  grid-template-columns: calc(var(--tr-text-x) - 10px) minmax(0, 1fr) auto;
+  grid-template-rows: var(--tr-row-h);
+  align-items: center;
+  column-gap: 10px;
+  height: var(--tr-row-h);           /* 内容高 31，文字列略高于此，居中溢出（同 Figma） */
+  padding: var(--tr-row-pad) 0;
+  box-sizing: content-box;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.amap-tr__row:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; border-radius: var(--ds-radius-8); }
+.amap-tr__row:active { opacity: 0.7; }
+
+.amap-tr__badge {   /* 线路徽标，底色随线路 */
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: var(--ds-radius-4);
+  background: var(--line-color, var(--ds-color-text-muted));
+  color: var(--ds-white);
+  font-size: 11px;
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: 11px;
+  white-space: nowrap;
+}
+
+.amap-tr__text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.amap-tr__title,
+.amap-tr__sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.amap-tr__title {
+  font-size: var(--ds-type-subtitle-m-size);
+  font-weight: var(--ds-type-subtitle-m-weight);
+  line-height: 18.2px;
+  color: var(--ds-color-text-primary);
+}
+.amap-tr__sub { font-size: var(--ds-type-body-s-size); line-height: 15.6px; color: var(--ds-color-text-muted); }
+
+.amap-tr__time { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.amap-tr__clock {
+  font-size: var(--ds-type-subtitle-m-size);
+  font-weight: var(--ds-type-subtitle-m-weight);
+  line-height: 17px;
+  color: var(--ds-color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.amap-tr__label { font-size: 11px; line-height: 11px; color: var(--ds-color-text-muted); }
