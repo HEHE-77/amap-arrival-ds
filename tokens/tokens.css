@@ -21,7 +21,7 @@
   --ds-yellow-500: #ffb300;
 
   --ds-font-family-base: 'PingFang SC', -apple-system, BlinkMacSystemFont,
-    'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+    'Noto Sans SC', 'Noto Sans CJK SC', 'Source Han Sans SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif; /* 苹方 → 思源黑体 → 微软雅黑，全部无衬线 */
   --ds-font-weight-regular: 400;
   --ds-font-weight-medium: 500;
   --ds-font-weight-semibold: 600;
