@@ -15,7 +15,8 @@
   --header-thumb-width: 212px; /* 地图缩略图 = header 内可见区域，素材按此尺寸 @3x 裁好 */
   --header-eco-icon-w: 18px;
   --header-eco-icon-h: 17px;
-  --header-chevron-size: 17px;
+  --header-chevron-w: 16px; /* 全局统一箭头 icon-chevron-right.svg */
+  --header-chevron-h: 18px;
   --header-gap-inline: var(--ds-space-2);
   --header-dot-width: 6px; /* 「·」固定宽度，避免不同字体下位移 */
   --header-content-align: flex-start;
@@ -147,8 +148,8 @@
 .amap-header__chevron {
   display: block;
   flex: none;
-  width: var(--header-chevron-size);
-  height: var(--header-chevron-size);
+  width: var(--header-chevron-w);
+  height: var(--header-chevron-h);
 }
 
 /* ── 变体：打车到达（Figma 849:2938） ── */

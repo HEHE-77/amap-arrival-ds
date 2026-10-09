@@ -25,8 +25,8 @@
 const ASSETS = {
   regular: { thumb: 'header-map-thumb.png', w: 212, h: 72 },
   taxi: { thumb: 'header-map-thumb-taxi.png', w: 319, h: 84 },
-  eco: 'icon-green-energy.png',
-  chevron: 'icon-arrow-right.png',
+  eco: 'icon-green-energy.svg',
+  chevron: 'icon-chevron-right.svg',
 };
 
 const esc = (s) =>
@@ -48,7 +48,7 @@ class AmapArrivalHeader extends HTMLElement {
     return `
       <button type="button" class="amap-header__trip">
         <span>${esc(this.attr('trip-label', '行程回溯'))}</span>
-        <img class="amap-header__chevron" src="${base}${ASSETS.chevron}" alt="" width="17" height="17">
+        <img class="amap-header__chevron" src="${base}${ASSETS.chevron}" alt="" width="16" height="18">
       </button>`;
   }
 

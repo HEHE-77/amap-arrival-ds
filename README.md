@@ -55,14 +55,14 @@ assets/      从 Figma 导出的素材
 
 事件：`trip-replay`（点击行程回溯）。
 
-素材（`assets/`，均为 @3x PNG；地图只导出 header 内可见的那块）：
+素材（`assets/`；矢量导出 SVG，位图导出 @3x PNG，地图只导出 header 内可见的那块）：
 
 | 文件名 | Figma 节点 | 尺寸 |
 |---|---|---|
 | `header-map-thumb.png` | `849:2921` image 8（可见区域） | 212×72 |
 | `header-map-thumb-taxi.png` | `849:2939` image 7（可见区域） | 319×84 |
-| `icon-green-energy.png` | `849:2986` Frame | 18×17 |
-| `icon-arrow-right.png` | `849:2992` ic:baseline-keyboard-arrow-right | 17×17 |
+| `icon-green-energy.svg` | `849:2986` Frame | 18×17 |
+| `icon-chevron-right.svg` | 全局统一箭头，所有组件共用 | 16×18 |
 
 ### 2. POI 榜单卡片（Figma `853:4824` poi/secondary）
 
@@ -89,15 +89,15 @@ assets/      从 Figma 导出的素材
 
 事件：`poi-more`、`poi-select`（`{ index, item }`）、`poi-favorite`（`{ index, item, favorited }`，组件内已切换状态）。排名序号按顺序自动生成 01、02…
 
-素材（`assets/poi/`，@3x PNG）：
+素材（`assets/poi/`；矢量 SVG，照片 PNG）：
 
 | 文件名 | Figma 节点 | 尺寸 |
 |---|---|---|
-| `poi-watermark.png` | `853:4827` Group 18 | 73×70 |
-| `saojiebang-logo.png` | `853:4834` image 21 | 34×12 |
-| `icon-chevron-right-muted.png` | `853:4838` | 16×18 |
-| `rank-badge-1.png` | `853:4845` | 29×29 |
-| `rank-badge-2.png` | `853:4860` | 29×29 |
-| `icon-star-outline.png` | `853:4854` | 26×25 |
-| `icon-star-filled.png` | 收藏态（Figma 中未见） | 26×25 |
-| `sample-poi-1.png` / `sample-poi-2.png` | `853:4844` / `853:4859`（仅预览用） | 50×50 |
+| `poi-watermark.svg` | `853:4827` Group 18（已按卡片上沿裁切） | 73×61 |
+| `saojiebang-logo.svg` | `853:4834` image 21 · **待提供** | 34×12 |
+| — | 箭头用全局 `icon-chevron-right.svg` | |
+| `rank-badge-1.svg` | `853:4845` · **待提供** | 29×29 |
+| `rank-badge-2.svg` | `853:4860` · **待提供** | 29×29 |
+| `icon-star-outline.svg` | `853:4854` | 26×25 |
+| `icon-star-filled.svg` | 收藏态 · **待确认** | 26×25 |
+| `sample-poi-1.png` / `sample-poi-2.png` | `853:4844` / `853:4859`（仅预览用） | 50×50 @3x |

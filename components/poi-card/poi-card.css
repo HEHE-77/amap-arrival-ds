@@ -14,8 +14,8 @@
   --poi-head-inset-start: 6.8px;
   --poi-gap-title-sub: var(--ds-space-4);
   --poi-watermark-w: 73px;
-  --poi-watermark-h: 69.68px;
-  --poi-watermark-top: -24px;
+  --poi-watermark-h: 61px;   /* 导出的 SVG 已按卡片上沿裁切 */
+  --poi-watermark-top: -14px; /* 贴卡片内容区上沿 */
   --poi-watermark-end: 10px;
   --poi-tag-h: 16px;
   --poi-tag-radius: var(--ds-radius-3);

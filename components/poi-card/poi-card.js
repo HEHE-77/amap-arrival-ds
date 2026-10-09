@@ -23,12 +23,12 @@
  */
 (() => {
   const ASSETS = {
-    watermark: 'poi/poi-watermark.png',
-    logo: 'poi/saojiebang-logo.png',
-    chevron: 'poi/icon-chevron-right-muted.png',
-    rank: (n) => (n === 1 ? 'poi/rank-badge-1.png' : 'poi/rank-badge-2.png'),
-    star: 'poi/icon-star-outline.png',
-    starOn: 'poi/icon-star-filled.png',
+    watermark: 'poi/poi-watermark.svg',
+    logo: 'poi/saojiebang-logo.svg',
+    chevron: 'icon-chevron-right.svg',
+    rank: (n) => (n === 1 ? 'poi/rank-badge-1.svg' : 'poi/rank-badge-2.svg'),
+    star: 'poi/icon-star-outline.svg',
+    starOn: 'poi/icon-star-filled.svg',
   };
 
   const esc = (s) =>
@@ -100,7 +100,7 @@
         <section class="amap-poi amap-poi--secondary" aria-label="${esc(heading)}">
           <div class="amap-poi__head">
             <h2 class="amap-poi__title">${esc(heading)}</h2>
-            <img class="amap-poi__watermark" src="${base}${ASSETS.watermark}" alt="" width="73" height="70">
+            <img class="amap-poi__watermark" src="${base}${ASSETS.watermark}" alt="" width="73" height="61">
             <div class="amap-poi__sub">
               <span class="amap-poi__tag">
                 <span class="amap-poi__tag-plate">
