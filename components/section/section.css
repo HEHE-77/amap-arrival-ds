@@ -3,7 +3,7 @@
  */
 amap-section {
   /* 组件变量，可覆盖 */
-  --section-inset: 18px;          /* 左右内边距（多数模块为 18；停车场 / 加油站稿中为 16，待统一） */
+  --section-inset: 18px;          /* 页面左右边距，全页统一 18（已确认） */
   --section-gap: var(--ds-space-8);  /* 标题与内容、内容各项之间 */
 
   display: block;

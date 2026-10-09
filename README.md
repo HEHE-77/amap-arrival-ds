@@ -295,8 +295,8 @@ assets/      从 Figma 导出的素材
 
 两个 component 结构相同：模块标题 + 两张服务卡。拆成两个组件：
 
-- `<amap-section heading [more-label] [layout=scroll]>`：通用模块容器，标题 16 Semibold，可带右侧「查看更多 >」（派发 `section-more`），左右内边距 `--section-inset`（默认 18；停车场 / 加油站稿中为 16，预览按 16），标题与内容、内容之间间距 8。子元素即内容。后续拼页面时所有模块都用它。
-- `<amap-service-card>`：370 宽，左侧名称 / 说明行 / 标签，右侧浅底按钮。
+- `<amap-section heading [more-label] [layout=scroll]>`：通用模块容器，标题 16 Semibold，可带右侧「查看更多 >」（派发 `section-more`），左右内边距 `--section-inset`（全页统一 18，已确认；停车场 / 加油站原稿的 16 已改为 18），标题与内容、内容之间间距 8。子元素即内容。后续拼页面时所有模块都用它。
+- `<amap-service-card>`：随容器撑满（统一边距后为 366 宽，原稿 370），左侧名称 / 说明行 / 标签，右侧浅底按钮。
 
 ```html
 <link rel="stylesheet" href="components/section/section.css">
