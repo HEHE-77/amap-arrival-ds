@@ -173,4 +173,4 @@ assets/      从 Figma 导出的素材
 | `score-glow.svg` | `765:3889` Ellipse 11 | 26×10 |
 | `icon-fire.svg` | `853:5096` ic:round-whatshot | 16×16 |
 | `icon-star-white.svg` | `853:5072` Star 3 | 15×14 |
-| `samples/huda-fanguan.jpg` | `853:5070` 主图（仅预览，1x） | 284×156 |
+| `samples/*.jpg` | 主图 284×156 与一键下单商品图 48×48，仅预览用（按像素比对 Figma 对应到卡片；huda-fanguan 为 1x，其余 @3x） | — |
