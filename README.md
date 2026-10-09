@@ -44,5 +44,5 @@ assets/      从 Figma 导出的素材
 | 文件名 | Figma 节点 | 尺寸 |
 |---|---|---|
 | `header-map-thumb.png` | `849:2977` image 6 | 216×216，导出 @2x/@3x |
-| `icon-green-energy.svg` | `849:2986` Frame | 18×17 |
-| `icon-arrow-right.svg` | `849:2992` ic:baseline-keyboard-arrow-right | 17×17 |
+| `icon-green-energy.png` | `849:2986` Frame | 18×17 |
+| `icon-arrow-right.png` | `849:2992` ic:baseline-keyboard-arrow-right | 17×17 |

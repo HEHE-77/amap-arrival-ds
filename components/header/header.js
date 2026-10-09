@@ -13,8 +13,8 @@
  */
 const TEMPLATE_ASSETS = {
   thumb: 'header-map-thumb.png',
-  eco: 'icon-green-energy.svg',
-  chevron: 'icon-arrow-right.svg',
+  eco: 'icon-green-energy.png',
+  chevron: 'icon-arrow-right.png',
 };
 
 const esc = (s) =>
