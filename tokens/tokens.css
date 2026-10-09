@@ -48,6 +48,8 @@
   --ds-coral-500: #fe5e33;
   --ds-sky-25: #f6f9fd;
   --ds-sky-75: #edf3fd;
+  --ds-gray-10: #f8f8f8;
+  --ds-gray-300: #cdcdcd;
 
   --ds-font-family-numeral: 'Khand', var(--ds-font-family-base); /* TOP 排名数字，字体随包 assets/fonts */
   --ds-font-family-price: 'Helvetica Neue', Helvetica, Arial, var(--ds-font-family-base); /* 按钮内价格数字（Figma: Helvetica Bold） */
@@ -92,7 +94,7 @@
   --ds-color-surface-ranking-tag: rgba(255, 227, 201, 0.4); /* peach-100 @40% */
   --ds-color-surface-media-placeholder: var(--ds-gray-700);
   --ds-color-focus-ring: var(--ds-gray-900);           /* 键盘焦点框 */
-  --ds-color-favorite: var(--ds-yellow-500);
+  --ds-color-favorite: var(--ds-yellow-500);          /* 收藏态（暂定，Figma 无对应） */
   --ds-color-surface-card-neutral: var(--ds-gray-25); /* 饭店到达卡片底色 */
   --ds-color-text-ranking-strong: var(--ds-brown-900); /* TOP 排名飘带文字 */
   --ds-color-action-primary-start: var(--ds-blue-700); /* 主按钮渐变起点 */
@@ -109,13 +111,18 @@
   --ds-color-hot-surface: var(--ds-rose-50); /* 热评条渐变起色 */
   --ds-color-hot-count-surface: var(--ds-rose-75); /* 热评人数胶囊底色 */
   --ds-color-overlay-media: rgba(19,19,19,0.8); /* 压在图片上的深色胶囊 */
-  --ds-color-text-on-overlay: var(--ds-gray-25);
+  --ds-color-text-on-overlay: var(--ds-gray-25);     /* 深色胶囊上的文字 */
   --ds-color-tag-neutral-surface: var(--ds-gray-100); /* 灰色信息标签底（如「西安的市中心」） */
   --ds-color-tag-tenure-surface: var(--ds-apricot-100); /* 「收录 N 年」标签底 */
   --ds-color-tag-tenure-text: var(--ds-apricot-700); /* 「收录 N 年」标签文字 */
   --ds-color-tag-promo-text: var(--ds-coral-500); /* 商品促销标签文字（如「上次那杯」），底色同 deal-surface */
   --ds-color-order-surface: var(--ds-sky-25); /* 一键下单卡片底 */
-  --ds-color-order-border: var(--ds-sky-75); /* 一键下单卡片描边 */ /* 深色胶囊上的文字 */           /* 收藏态（暂定，Figma 无对应） */
+  --ds-color-order-border: var(--ds-sky-75); /* 一键下单卡片描边 */
+  --ds-color-text-on-photo: var(--ds-gray-10); /* 照片上的主文字（推荐卡名称） */
+  --ds-color-text-on-photo-muted: rgba(248,248,248,0.9); /* 照片上的次要文字（收藏人数） */
+  --ds-color-glass-surface: rgba(36,40,43,0.6); /* 照片上的玻璃按钮底（配合 backdrop-blur 2.5px） */
+  --ds-color-glass-border: var(--ds-gray-300); /* 玻璃按钮描边 0.8px */
+  --ds-color-surface-ranking-tag-on-photo: rgba(226,200,176,0.4); /* 照片上的扫街榜标签底 */
 
   --ds-shadow-card: var(--ds-shadow-card-raw);        /* [figma] 卡片 */
 

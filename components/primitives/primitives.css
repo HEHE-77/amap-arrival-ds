@@ -70,6 +70,10 @@ amap-tag, amap-quick-order {
   text-overflow: ellipsis;
 }
 
+/* 照片上的扫街榜标签（Figma 762:3747）：半透明暖底 + 白字 */
+.ds-ranking-tag.is-on-photo { background: var(--ds-color-surface-ranking-tag-on-photo); }
+.ds-ranking-tag.is-on-photo .ds-ranking-tag__text { color: var(--ds-color-text-on-photo); }
+
 /* ── amap-rank-thumb：图片 + 排名角标 ── */
 .ds-rank-thumb {
   --thumb-size: 50px;

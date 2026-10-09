@@ -11,7 +11,7 @@ assets/      从 Figma 导出的素材
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）。事件会显示在页面上。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）。事件会显示在页面上。
 
 加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
 
@@ -32,7 +32,7 @@ assets/      从 Figma 导出的素材
 | 组件 | 用法 | 用在 |
 |---|---|---|
 | `<amap-link label>` | 文字 + 全局箭头，原生 click | Header「行程回溯」、POI「完整榜单」 |
-| `<amap-ranking-tag text>` | 扫街榜标签 | POI 标题区 |
+| `<amap-ranking-tag text [on-photo]>` | 扫街榜标签；`on-photo` 为照片上的半透明暖底白字版 | POI 标题区、推荐卡 |
 | `<amap-rank-thumb rank src>` | 图片 + 排名角标，无图显示占位底色 | POI 列表行 |
 | `<amap-fav-button pressed label>` | 收藏星标，切换后派发 `fav-change { favorited }` | POI 列表行 |
 | `<amap-meta-line items sep accent-first>` | 分隔符串联的说明行，首段可强调 | POI 列表行、饭店卡 |
@@ -182,3 +182,33 @@ assets/      从 Figma 导出的素材
 | `icon-fire.svg` | `853:5096` ic:round-whatshot | 16×16 |
 | `icon-star-white.svg` | `853:5072` Star 3 | 15×14 |
 | `samples/*.jpg` | 主图 284×156 与一键下单商品图 48×48，仅预览用（按像素比对 Figma 对应到卡片；huda-fanguan 与 huda-fanguan-wide 为 1x，其余 @3x） | — |
+
+### 4. 单 POI 推荐卡（Figma `858:6713`，实例在 `858:6809`）
+
+168×168 的图片卡：渐进模糊 + 底部主色渐变 + 名称 / 扫街榜标签 / 收藏人数 + 右上玻璃收藏按钮。
+
+```html
+<link rel="stylesheet" href="components/poi-recommend/poi-recommend.css">
+<script src="components/poi-recommend/poi-recommend.js"></script>
+
+<amap-poi-recommend name="大唐不夜城" tag="特色街区" saves="44.6w+人收藏"
+  tint="#936B3B" tint-end="#93543B" image="…/datang-buyecheng.jpg"></amap-poi-recommend>
+```
+
+| 属性 | 说明 |
+|---|---|
+| `name` | 地点名，超长省略 |
+| `tag` | 扫街榜标签文案（如「特色街区」「文物古迹」），不传则隐藏 |
+| `saves` | 收藏人数文案，如「44.6w+人收藏」 |
+| `image` | **原图**（未模糊），渐进模糊由组件生成；缺图或加载失败显示 `tint` 底色 |
+| `tint` / `tint-end` | 底部渐变颜色（取自图片主色），渐变为 tint α0 → tint-end α0.8；`tint-end` 不传同 `tint` |
+| `fav-label` | 默认「收藏」 |
+| `favorited` | 收藏态，星标填充 `--ds-color-favorite` |
+
+事件：`recommend-select`（点击卡片）、`recommend-favorite`（`{ favorited }`，组件自行切换 `favorited`）。
+
+渐进模糊：清晰图 + 一层 `blur(7.7px)` 的副本，副本用 `mask-image` 从 42.8% 渐入到 123.4%（对应 Figma progressive blur 15.4 的起止点）。图片外扩到 189×189（上 6 / 左 15），与 Figma 一致。可用组件变量 `--rec-blur` `--rec-blur-start` `--rec-blur-end` 微调。
+
+各实例渐变色记录在 `tokens.json` → `component.poi-recommend.tints`。
+
+素材：`assets/poi-recommend/samples/*.jpg`，仅预览用，待补（需未模糊的原图，189×189 @3x）。

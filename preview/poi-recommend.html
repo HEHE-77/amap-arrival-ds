@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>单 POI 推荐卡 · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/primitives/primitives.css">
+  <link rel="stylesheet" href="../components/poi-recommend/poi-recommend.css">
+  <style>
+    body { margin: 0; padding: 24px 16px; background: #fff; font-family: var(--ds-font-family-base); color: #191919; }
+    h2 { font-size: 14px; font-weight: 500; color: #60636c; margin: 28px 0 12px; }
+    h2:first-child { margin-top: 0; }
+    .grid { display: flex; flex-wrap: wrap; gap: 12px; }
+    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin-top: 16px; padding: 6px 0; background: #fff;
+      font-family: ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body asset-base="../assets/">
+  <h2>Figma 实例（858:6713、858:6809）</h2>
+  <div class="grid">
+    <amap-poi-recommend name="大唐不夜城" tag="特色街区" saves="44.6w+人收藏" tint="#936B3B" tint-end="#93543B" image="../assets/poi-recommend/samples/datang-buyecheng.jpg"></amap-poi-recommend>
+    <amap-poi-recommend name="西影电影园区" tag="特色街区" saves="10.2w+人收藏" tint="#23406D" image="../assets/poi-recommend/samples/xiying-film-park.jpg"></amap-poi-recommend>
+    <amap-poi-recommend name="陕西历史博物馆" tag="文物古迹" saves="30.9w+人收藏" tint="#3A4A4C" image="../assets/poi-recommend/samples/shaanxi-history-museum.jpg"></amap-poi-recommend>
+    <amap-poi-recommend name="洒金桥美食街" tag="特色街区" saves="40.6w+人收藏" tint="#23406D" image="../assets/poi-recommend/samples/sajinqiao-food-street.jpg"></amap-poi-recommend>
+    <amap-poi-recommend name="永宁门" tag="文物古迹" saves="36.1w+人收藏" tint="#892929" tint-end="#894129" image="../assets/poi-recommend/samples/yongningmen.jpg"></amap-poi-recommend>
+    <amap-poi-recommend name="回民街" tag="文化街区" saves="20.7w+人收藏" tint="#2D3157" tint-end="#2D3A57" image="../assets/poi-recommend/samples/huimin-street.jpg"></amap-poi-recommend>
+    <amap-poi-recommend name="拓得时代训练馆" tag="运动健身" saves="1.1k+人收藏" tint="#202C50" image="../assets/poi-recommend/samples/tuode-gym.jpg"></amap-poi-recommend>
+    <amap-poi-recommend name="易俗社文化街区" tag="文化街区" saves="2.7w+人收藏" tint="#915C5C" image="../assets/poi-recommend/samples/yisushe.jpg"></amap-poi-recommend>
+    <amap-poi-recommend name="长安书院" tag="文化街区" saves="4.1w+人收藏" tint="#6D5023" image="../assets/poi-recommend/samples/changan-academy.jpg"></amap-poi-recommend>
+  </div>
+
+  <h2>状态与边界</h2>
+  <div class="grid">
+    <amap-poi-recommend name="已收藏态" tag="特色街区" saves="44.6w+人收藏" tint="#23406D" favorited></amap-poi-recommend>
+    <amap-poi-recommend name="无扫街榜标签" saves="10.2w+人收藏" tint="#3A4A4C"></amap-poi-recommend>
+    <amap-poi-recommend name="超长地点名称会省略显示的示例" tag="超长的扫街榜标签文案示例" saves="1234.5w+人收藏" tint="#892929"></amap-poi-recommend>
+    <amap-poi-recommend name="图片加载失败" tag="文化街区" saves="2.7w+人收藏" tint="#6D5023" image="../assets/poi-recommend/samples/__missing__.jpg"></amap-poi-recommend>
+  </div>
+
+  <div id="log"></div>
+  <script src="../components/primitives/primitives.js"></script>
+  <script src="../components/poi-recommend/poi-recommend.js"></script>
+  <script>
+    const log = (t) => { document.getElementById('log').textContent = t; };
+    document.addEventListener('recommend-select', (e) => log('recommend-select → ' + e.target.getAttribute('name')));
+    document.addEventListener('recommend-favorite', (e) => log('recommend-favorite → ' + e.target.getAttribute('name') + ' ' + e.detail.favorited));
+  </script>
+</body>
+</html>

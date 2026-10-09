@@ -3,7 +3,7 @@
  * 需在复合组件之前加载。
  *
  *   <amap-link label="完整榜单">              文字 + 全局箭头，点击派发原生 click
- *   <amap-ranking-tag text="精选 13 个热门店铺"> 扫街榜标签（底板 + logo + 文案）
+ *   <amap-ranking-tag text="精选 13 个热门店铺" [on-photo]> 扫街榜标签（底板 + logo + 文案）；on-photo 为照片上的半透明白字版
  *   <amap-rank-thumb rank="1" src="…">         方形图片 + 左上排名角标
  *   <amap-fav-button pressed label="店名">     收藏星标，切换后派发 fav-change { favorited }
  *   <amap-meta-line sep="|" items='[…]' accent-first>  分隔符串联的一行说明，首段可强调（距离）
@@ -56,11 +56,11 @@
 
   /* ── amap-ranking-tag ── */
   class AmapRankingTag extends Base {
-    static get observedAttributes() { return ['text']; }
+    static get observedAttributes() { return ['text', 'on-photo']; }
     render() {
       const text = this.attr('text');
       this.innerHTML = `
-        <span class="ds-ranking-tag">
+        <span class="ds-ranking-tag${this.hasAttribute('on-photo') ? ' is-on-photo' : ''}">
           <span class="ds-ranking-tag__plate">
             <img class="ds-ranking-tag__logo" src="${assetBase(this)}${ASSETS.rankingLogo}" alt="扫街榜" width="34" height="12">
           </span>

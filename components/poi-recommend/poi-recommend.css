@@ -1,0 +1,154 @@
+/* <amap-poi-recommend> · 单 POI 推荐卡（Figma 858:6713 及实例）
+ * 依赖 tokens/tokens.css、components/primitives/primitives.css
+ */
+amap-poi-recommend {
+  /* 组件变量，可覆盖 */
+  --rec-size: 168px;
+  --rec-radius: var(--ds-radius-16);
+  --rec-image-inset: -6px -6px -15px -15px;  /* 图片外扩 top right bottom left（189×189） */
+  --rec-image-radius: 12px;
+  --rec-blur: 7.7px;                          /* Figma progressive blur 15.4 */
+  --rec-blur-start: 42.8%;
+  --rec-blur-end: 123.4%;
+  --rec-overlay-top: 79px;
+  --rec-tint: #3a4a4c;                         /* 由 tint 属性写入 */
+  --rec-tint-end: var(--rec-tint);
+  --rec-pad: var(--ds-space-8);
+  --rec-fav-w: 51.6px;
+  --rec-fav-h: 26.6px;
+
+  display: block;
+  width: var(--rec-size);
+  height: var(--rec-size);
+  font-family: var(--ds-font-family-base);
+}
+
+.amap-rec {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--rec-radius);
+  background: var(--rec-tint);   /* 无图时的占位色 */
+}
+
+/* ── 图片：清晰底图 + 遮罩渐入的模糊副本 = 渐进模糊 ── */
+.amap-rec__media {
+  position: absolute;
+  inset: var(--rec-image-inset);
+  border-radius: var(--rec-image-radius);
+  overflow: hidden;
+}
+.amap-rec__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.amap-rec__photo--blur {
+  filter: blur(var(--rec-blur));
+  transform: scale(1.06);   /* 防止模糊边缘透出 */
+  -webkit-mask-image: linear-gradient(to bottom, transparent var(--rec-blur-start), #000 var(--rec-blur-end));
+          mask-image: linear-gradient(to bottom, transparent var(--rec-blur-start), #000 var(--rec-blur-end));
+}
+
+/* ── 底部主色渐变：tint α0 → tint-end α0.8 ── */
+.amap-rec__overlay {
+  position: absolute;
+  inset: var(--rec-overlay-top) 0 0 0;
+  background: linear-gradient(to bottom,
+    color-mix(in srgb, var(--rec-tint) 0%, transparent),
+    color-mix(in srgb, var(--rec-tint-end) 80%, transparent));
+  pointer-events: none;
+}
+
+/* ── 整卡点击 ── */
+.amap-rec__cover {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  margin: 0; padding: 0; border: 0;
+  background: none;
+  border-radius: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.amap-rec__cover:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: -2px; }
+
+/* ── 文字区：贴底 ── */
+.amap-rec__body {
+  position: absolute;
+  left: var(--rec-pad);
+  right: var(--rec-pad);
+  bottom: var(--rec-pad);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ds-space-4);
+  pointer-events: none;
+}
+.amap-rec__name {
+  margin: 0;
+  max-width: 100%;
+  font-size: var(--ds-type-subtitle-m-size);
+  font-weight: var(--ds-type-subtitle-m-weight);
+  line-height: var(--ds-type-subtitle-m-line);
+  color: var(--ds-color-text-on-photo);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.amap-rec__tag { max-width: 100%; }
+.amap-rec__saves {
+  max-width: 100%;
+  font-size: var(--ds-font-size-12);
+  line-height: 16.8px;
+  color: var(--ds-color-text-on-photo-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── 玻璃收藏按钮 ── */
+.amap-rec__fav {
+  position: absolute;
+  top: var(--rec-pad);
+  right: 7.4px;
+  z-index: 3;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-4);
+  min-width: var(--rec-fav-w);
+  height: var(--rec-fav-h);
+  margin: 0;
+  padding: 0 var(--ds-space-4);
+  border: 0.8px solid var(--ds-color-glass-border);
+  border-radius: var(--ds-radius-16);
+  background: var(--ds-color-glass-surface);
+  -webkit-backdrop-filter: blur(2.5px);
+          backdrop-filter: blur(2.5px);
+  font: inherit;
+  font-size: var(--ds-font-size-12);
+  line-height: 16.8px;
+  color: var(--ds-color-text-on-photo);
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.amap-rec__fav:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; }
+.amap-rec__star {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  fill: none;
+  stroke: var(--ds-color-text-on-photo);
+  transition: fill 0.15s ease, stroke 0.15s ease, transform 0.15s ease;
+}
+.amap-rec__fav[aria-pressed="true"] .amap-rec__star { fill: var(--ds-color-favorite); stroke: var(--ds-color-favorite); }
+.amap-rec__fav:active .amap-rec__star { transform: scale(0.85); }
