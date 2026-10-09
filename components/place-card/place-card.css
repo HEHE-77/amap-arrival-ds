@@ -1,0 +1,126 @@
+/* 到达地点卡片 · Figma 853:5068 及实例 853:6420（饭店 / 景点 / 上班）
+ * 依赖 tokens/tokens.css、components/primitives/primitives.css
+ */
+.amap-place {
+  /* ── Component tokens ── */
+  --place-width: 301px;
+  --place-radius: var(--ds-radius-16);
+  --place-border-width: 0.6px;
+  --place-pad: var(--ds-space-8);
+  --place-gap: var(--ds-space-8);
+  --place-media-h: 156px;
+  --place-media-radius: var(--ds-radius-8);
+  --place-pill-end: 11.8px;
+  --place-pill-top: 12px;
+  --place-pill-bottom: 10px;
+  --place-body-gap: var(--ds-space-6);
+  --place-ribbon-start: 24.4px;
+  --place-ribbon-top: -1.6px;
+  --place-actions-gap: 8.8px;
+
+  position: relative;
+  box-sizing: border-box;
+  width: var(--place-width);
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--place-gap);
+  padding: var(--place-pad);
+  border: var(--place-border-width) solid var(--ds-color-border-card);
+  border-radius: var(--place-radius);
+  background: var(--ds-color-surface-card-neutral);
+  box-shadow: var(--ds-shadow-card);
+  font-family: var(--ds-font-family-base);
+  color: var(--ds-color-text-primary);
+}
+
+/* 排名飘带：压在卡片上沿，允许溢出 */
+.amap-place__ribbon {
+  position: absolute;
+  z-index: 2;
+  top: var(--place-ribbon-top);
+  left: var(--place-ribbon-start);
+}
+
+/* ── 图片区 ── */
+.amap-place__media {
+  position: relative;
+  height: var(--place-media-h);
+  overflow: hidden;
+  border-radius: var(--place-media-radius);
+  background: var(--ds-color-surface-media-placeholder);
+}
+.amap-place__photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.amap-place__saves { position: absolute; top: var(--place-pill-top); right: var(--place-pill-end); }
+.amap-place__page { position: absolute; bottom: var(--place-pill-bottom); right: var(--place-pill-end); }
+
+/* ── 信息区 ── */
+.amap-place__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--place-body-gap);
+  min-width: 0;
+}
+.amap-place__row { display: flex; align-items: center; min-width: 0; }
+
+.amap-place__title { justify-content: space-between; gap: var(--ds-space-8); }
+.amap-place__name {
+  margin: 0;
+  min-width: 0;
+  font-size: var(--ds-type-title-m-size);
+  font-weight: var(--ds-type-title-m-weight);
+  line-height: var(--ds-type-title-m-line);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.amap-place__distance {
+  flex: none;
+  font-size: var(--ds-type-body-s-size);
+  line-height: var(--ds-type-body-s-line);
+  white-space: nowrap;
+}
+
+.amap-place__details { gap: var(--ds-space-8); }
+.amap-place__details amap-score-badge { flex: none; display: flex; }
+.amap-place__details amap-meta-line { flex: 1 1 0; min-width: 0; display: flex; }
+/* 「·」分隔：段距 2，分隔符固定 6 宽（与 Header 一致） */
+.amap-place__details .ds-meta-line { gap: var(--ds-space-2); }
+.amap-place__details .ds-meta-line__sep { width: 6px; display: flex; justify-content: center; } /* 字形宽于 6px 时向两侧对称溢出（思源黑体的「·」为全角） */
+
+.amap-place__badges { gap: var(--ds-space-6); align-items: flex-start; }
+.amap-place__badges amap-ranking-tag { flex: 0 1 auto; display: flex; }
+.amap-place__badges amap-status-tag,
+.amap-place__badges amap-tag { flex: none; display: flex; }
+
+.amap-place__deal-row { justify-content: space-between; gap: var(--ds-space-8); }
+.amap-place__more { flex: none; }
+.amap-place__deal {
+  flex: 1 1 auto;
+  gap: var(--ds-space-6);
+  margin: 0; padding: 0; border: 0; background: none;
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.amap-place__deal:active { opacity: 0.7; }
+.amap-place__deal:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; border-radius: 4px; }
+.amap-place__deal amap-deal-tag { flex: none; display: flex; }
+.amap-place__deal-title {
+  min-width: 0;
+  font-size: var(--ds-type-body-s-size);
+  line-height: var(--ds-type-body-s-line);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── 按钮区（Figma 宽 136 / 139，间距 8.8） ── */
+.amap-place__actions { display: flex; gap: var(--place-actions-gap); }
+.amap-place__actions amap-button { flex: 1 1 0; min-width: 0; }
+
+/* ── 场景差异（读自 Figma 实例） ── */
+.amap-place[data-scene="attraction"] .amap-place__badges { gap: var(--ds-space-4); }
+.amap-place[data-scene="commute"] .amap-place__body { gap: var(--ds-space-8); }
+
+/* 一键下单卡片（上班到达）替代底部按钮 */
+.amap-place__order { width: 100%; }

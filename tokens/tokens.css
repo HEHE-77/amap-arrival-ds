@@ -42,8 +42,15 @@
   --ds-peach-125: #ffdec8;
   --ds-rose-50: #ffe9e7;
   --ds-rose-75: #fcedeb;
+  --ds-gray-100: #efefef;
+  --ds-apricot-100: #ffecdc;
+  --ds-apricot-700: #bd581a;
+  --ds-coral-500: #fe5e33;
+  --ds-sky-25: #f6f9fd;
+  --ds-sky-75: #edf3fd;
 
   --ds-font-family-numeral: 'Khand', var(--ds-font-family-base); /* TOP 排名数字，字体随包 assets/fonts */
+  --ds-font-family-price: 'Helvetica Neue', Helvetica, Arial, var(--ds-font-family-base); /* 按钮内价格数字（Figma: Helvetica Bold） */
   --ds-font-family-base: 'PingFang SC', -apple-system, BlinkMacSystemFont,
     'Noto Sans SC', 'Noto Sans CJK SC', 'Source Han Sans SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif; /* 苹方 → 思源黑体 → 微软雅黑，全部无衬线 */
   --ds-font-weight-regular: 400;
@@ -102,7 +109,13 @@
   --ds-color-hot-surface: var(--ds-rose-50); /* 热评条渐变起色 */
   --ds-color-hot-count-surface: var(--ds-rose-75); /* 热评人数胶囊底色 */
   --ds-color-overlay-media: rgba(19,19,19,0.8); /* 压在图片上的深色胶囊 */
-  --ds-color-text-on-overlay: var(--ds-gray-25); /* 深色胶囊上的文字 */           /* 收藏态（暂定，Figma 无对应） */
+  --ds-color-text-on-overlay: var(--ds-gray-25);
+  --ds-color-tag-neutral-surface: var(--ds-gray-100); /* 灰色信息标签底（如「西安的市中心」） */
+  --ds-color-tag-tenure-surface: var(--ds-apricot-100); /* 「收录 N 年」标签底 */
+  --ds-color-tag-tenure-text: var(--ds-apricot-700); /* 「收录 N 年」标签文字 */
+  --ds-color-tag-promo-text: var(--ds-coral-500); /* 商品促销标签文字（如「上次那杯」），底色同 deal-surface */
+  --ds-color-order-surface: var(--ds-sky-25); /* 一键下单卡片底 */
+  --ds-color-order-border: var(--ds-sky-75); /* 一键下单卡片描边 */ /* 深色胶囊上的文字 */           /* 收藏态（暂定，Figma 无对应） */
 
   --ds-shadow-card: var(--ds-shadow-card-raw);        /* [figma] 卡片 */
 
@@ -150,4 +163,9 @@
   --ds-theme-blue-surface: #e5f2ff; --ds-theme-blue-accent: #dfebfb; --ds-theme-blue-accent-soft: #f1f7fd; /* 853:4877 */
   --ds-theme-green-surface: #e5fff0; --ds-theme-green-accent: #d8fde4; --ds-theme-green-accent-soft: #f1fff7; /* 853:4939 */
   --ds-theme-lime-surface: #f3ffe5; --ds-theme-lime-accent: #ddffd8; --ds-theme-lime-accent-soft: #f7fdf1; /* 853:4765 */
+
+  /* ── Rank tier · 排名飘带（底板渐变 3 色 / 数字 / 麦穗渐变 2 色）── */
+  --ds-rank-gold-bg-1: #fee495; --ds-rank-gold-bg-2: #fef6e2; --ds-rank-gold-bg-3: #fee493; --ds-rank-gold-num: #4a240a; --ds-rank-gold-laurel-1: #f4bd8d; --ds-rank-gold-laurel-2: #bf8249;
+  --ds-rank-silver-bg-1: #dfe4ed; --ds-rank-silver-bg-2: #f7f8fe; --ds-rank-silver-bg-3: #dfe4ed; --ds-rank-silver-num: #4f5568; --ds-rank-silver-laurel-1: #dbdbdb; --ds-rank-silver-laurel-2: #b1b1b3;
+  --ds-rank-bronze-bg-1: #f9dcc8; --ds-rank-bronze-bg-2: #fcf3ee; --ds-rank-bronze-bg-3: #f9dcc8; --ds-rank-bronze-num: #7a4137; --ds-rank-bronze-laurel-1: #eacab5; --ds-rank-bronze-laurel-2: #d99d89;
 }

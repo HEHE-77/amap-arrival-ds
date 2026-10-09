@@ -11,7 +11,7 @@ assets/      从 Figma 导出的素材
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`restaurant-card.html`。事件会显示在页面上。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）。事件会显示在页面上。
 
 加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
 
@@ -36,13 +36,15 @@ assets/      从 Figma 导出的素材
 | `<amap-rank-thumb rank src>` | 图片 + 排名角标，无图显示占位底色 | POI 列表行 |
 | `<amap-fav-button pressed label>` | 收藏星标，切换后派发 `fav-change { favorited }` | POI 列表行 |
 | `<amap-meta-line items sep accent-first>` | 分隔符串联的说明行，首段可强调 | POI 列表行、饭店卡 |
-| `<amap-rank-ribbon rank>` | TOP 排名飘带（Khand 字体随包） | 饭店卡 |
-| `<amap-score-badge score label>` | 评分徽标「4.8 超棒」 | 饭店卡 |
-| `<amap-status-tag text>` | 营业状态 | 饭店卡 |
-| `<amap-deal-tag type price discount>` | 团 / 券价格条 | 饭店卡 |
-| `<amap-media-pill text [icon=star] [muted]>` | 图片上的深色胶囊（收藏数、页码） | 饭店卡 |
-| `<amap-button label variant>` | 主按钮（渐变）/ 次按钮（描边），原生 click | 饭店卡 |
-| `<amap-hot-review text count>` | 热评条，原生 click | 饭店卡 |
+| `<amap-rank-ribbon rank [tier]>` | TOP 排名飘带，1 金 / 2 银 / 3 铜（Khand 字体随包） | 地点卡 |
+| `<amap-score-badge score label>` | 评分徽标「4.8 超棒」 | 地点卡 |
+| `<amap-status-tag text>` | 营业状态 | 地点卡 |
+| `<amap-deal-tag type price discount>` | 团 / 券价格条 | 地点卡 |
+| `<amap-media-pill text [icon=star] [muted]>` | 图片上的深色胶囊（收藏数、页码） | 地点卡 |
+| `<amap-button label variant [price]>` | 主按钮（渐变）/ 次按钮（描边），可带「\| ¥ 价格」，原生 click | 地点卡、一键下单 |
+| `<amap-tag text tone>` | 小标签：`neutral` 灰底信息 / `tenure` 收录年限 / `promo` 商品促销 | 地点卡、一键下单 |
+| `<amap-quick-order image title tag spec note price>` | 一键下单卡片，派发 `order-buy` / `order-swap` | 地点卡（上班） |
+| `<amap-hot-review text count>` | 热评条，原生 click | 地点卡 |
 
 ## 组件
 
@@ -125,42 +127,49 @@ assets/      从 Figma 导出的素材
 
 箭头用全局 `icon-chevron-right.svg`；星标与水印内联在组件中。收藏态填充 `--ds-color-favorite`（暂定 `#FFB300`）。
 
-### 3. 饭店到达卡片（Figma `853:5068`「饭店到达-1」）
+### 3. 到达地点卡片（Figma `853:5068`，实例 `853:6420`）
 
-由 `amap-rank-ribbon` · `amap-media-pill` · `amap-score-badge` · `amap-meta-line` · `amap-ranking-tag` · `amap-status-tag` · `amap-hot-review` · `amap-deal-tag` · `amap-button` 组成。
+`<amap-place-card scene>`，三种场景共用一个组件；`<amap-restaurant-card>` 保留为别名（等同 `scene="restaurant"`）。
+
+| 场景 | `scene` | 特有内容 | 高度 |
+|---|---|---|---|
+| 饭店到达 | `restaurant`（默认） | 热评、多条团购、看团购 / 查看路线 | 370 |
+| 景点到达 | `attraction` | 灰色信息标签、门票（票 / 省 N 元 / 起）、订门票 / 查看路线 | 370 |
+| 上班到达 | `commute` | 收录年限、单条团购 + 查看更多、一键下单卡片 | 390 |
 
 ```html
-<link rel="stylesheet" href="components/restaurant-card/restaurant-card.css">
-<script src="components/restaurant-card/restaurant-card.js"></script>
+<link rel="stylesheet" href="components/place-card/place-card.css">
+<script src="components/place-card/place-card.js"></script>
 
-<amap-restaurant-card rank="1" name="胡大饭馆 24h (砺街总店)" distance="<100 米"
-  score="4.8" score-label="超棒" details='["川菜","￥150/人","3652 人导航过"]'
-  ranking="碑林区回头客榜单·第 1 名" status="营业中"
-  review="关晓彤推荐来的! 冲他家的蒜蓉酸辣螃蟹..." review-count="252 人在说"
-  deals='[{"type":"团","price":"98","discount":"5.6折","title":"夏宫双人招牌套餐 (需提前预约)"}]'
-  image="…" saves="10.7w+" image-index="1/12"></amap-restaurant-card>
+<amap-place-card scene="commute" rank="1" name="Grid Coffee(万象城店)" distance="<100 米"
+  score="4.8" score-label="超棒" details='["奶茶/甜品","￥27/人","662 人导航过"]'
+  ranking="雁塔区咖啡榜·第 2 名" tenure="收录 2 年" status="正在营业"
+  deals='[{"type":"团","price":"9.9","discount":"6.7折","title":"大杯葡萄冷萃美式"}]' deal-more="查看更多"
+  order='{"title":"燕麦拿铁","tag":"上次那杯","spec":"大杯·少冰·标准糖","note":"｜随时退｜不限购","price":"9.9"}'
+  saves="4.7k+" image-index="1/12"></amap-place-card>
 ```
 
 | 属性 | 说明 |
 |---|---|
-| `rank` | 排名，生成 TOP 飘带；不传不显示 |
+| `scene` | `restaurant` / `attraction` / `commute`，决定默认按钮文案与间距 |
+| `rank` | 排名 → 飘带，1 金 / 2 银 / 3 铜（第 4 名起暂用铜） |
 | `name` / `distance` | 店名（超长省略）/ 距离 |
 | `score` / `score-label` | 评分徽标 |
 | `details` | JSON 数组，「·」串联 |
-| `ranking` / `status` | 扫街榜标签 / 营业状态，均可不传 |
+| `ranking` / `info-tag` / `tenure` / `status` | 扫街榜 / 灰色信息 / 收录年限 / 营业状态，均可不传 |
 | `review` / `review-count` | 热评条 |
-| `deals` | JSON 数组 `[{ type: '团'\|'券', price, discount, title }]`，条数不限 |
-| `image` / `saves` / `image-index` | 主图 / 右上收藏数 / 右下页码 |
-| `primary-label` / `secondary-label` | 默认「看团购」/「查看路线」 |
+| `deals` | JSON 数组 `[{ type: '团'\|'券'\|'票', price, discount, title }]`；`price` 可带「起」，`discount` 可写「省 2 元」 |
+| `deal-more` | 第一条团购右侧入口，如「查看更多」 |
+| `image` / `saves` / `image-index` | 主图 / 收藏数 / 页码 |
+| `primary-label` / `secondary-label` | 底部按钮，默认 看团购（景点：订门票）/ 查看路线 |
+| `order` | JSON `{ image, title, tag, spec, note, price, actionLabel, swapLabel }`；有它时替代底部按钮 |
 
-事件：`restaurant-primary`、`restaurant-route`、`restaurant-review`、`restaurant-deal`（`{ index, deal }`）。
+事件：`card-primary`、`card-route`、`card-review`、`card-deal`（`{ index, deal }`）、`card-more`、`card-order-buy`、`card-order-swap`。
 
-素材（`assets/restaurant/`，SVG 由 Figma 插件 API 直接导出）：
+素材（`assets/restaurant/`，SVG 由 Figma 插件 API 直接导出；飘带与麦穗改为组件内联 SVG，颜色走 `--ds-rank-{gold|silver|bronze}-*`）：
 
 | 文件名 | Figma 节点 | 尺寸 |
 |---|---|---|
-| `ribbon-bg.svg` | `764:3782` Rectangle 95 | 49×57 |
-| `laurel.svg` | `764:3785` Group 17 | 37×14 |
 | `score-glow.svg` | `765:3889` Ellipse 11 | 26×10 |
 | `icon-fire.svg` | `853:5096` ic:round-whatshot | 16×16 |
 | `icon-star-white.svg` | `853:5072` Star 3 | 15×14 |

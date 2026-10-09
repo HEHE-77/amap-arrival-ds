@@ -2,7 +2,8 @@
  * 每个组件的尺寸都是可覆盖的组件变量，复合组件按需改写。
  */
 amap-link, amap-ranking-tag, amap-rank-thumb, amap-fav-button, amap-meta-line,
-amap-rank-ribbon, amap-score-badge, amap-status-tag, amap-deal-tag, amap-media-pill, amap-button, amap-hot-review {
+amap-rank-ribbon, amap-score-badge, amap-status-tag, amap-deal-tag, amap-media-pill, amap-button, amap-hot-review,
+amap-tag, amap-quick-order {
   /* 宿主用 flex，避免行内排版多出行高 */
   display: inline-flex;
   vertical-align: top;
@@ -141,7 +142,7 @@ amap-rank-ribbon, amap-score-badge, amap-status-tag, amap-deal-tag, amap-media-p
   border-radius: 2px 2px 0 0;
   font-family: var(--ds-font-family-numeral);
   font-weight: 600;
-  color: var(--ds-color-text-ranking-strong);
+  /* 颜色按档位由组件内联 var(--ds-rank-{tier}-num) 设置 */
 }
 .ds-ribbon__bg { position: absolute; top: 0; left: 0; width: 49px; height: 57px; }
 .ds-ribbon__label { position: absolute; top: 5px; left: 15px; font-size: 12px; line-height: 13.44px; letter-spacing: 1px; }
@@ -249,7 +250,76 @@ amap-button > .ds-btn { flex: 1 1 auto; }
 }
 .ds-btn--primary { background: linear-gradient(to right, var(--ds-color-action-primary-start), var(--ds-color-action-primary-end)); color: var(--ds-white); }
 .ds-btn--secondary { border: 1px solid var(--ds-color-action-secondary); color: var(--ds-color-action-secondary); }
+.ds-btn { gap: var(--ds-space-8); }
+.ds-btn__divider { flex: none; width: 1px; height: 20px; background: rgba(255, 255, 255, 0.8); }
+.ds-btn__price { font-family: var(--ds-font-family-price); font-size: var(--ds-font-size-16); font-weight: 700; line-height: 1; }
+.ds-btn__currency { font-family: var(--ds-font-family-base); font-size: var(--ds-font-size-12); font-weight: var(--ds-font-weight-semibold); }
 .ds-btn:active { opacity: 0.8; }
+
+/* ── amap-tag：小标签 ── */
+.ds-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  padding: 0 3px;
+  box-sizing: border-box;
+  border-radius: var(--ds-radius-4);
+  font-size: var(--ds-type-caption-xs-size);
+  line-height: var(--ds-type-caption-xs-line);
+  white-space: nowrap;
+}
+.ds-tag[data-tone="neutral"] { background: var(--ds-color-tag-neutral-surface); color: var(--ds-color-text-muted); }
+.ds-tag[data-tone="tenure"]  { background: var(--ds-color-tag-tenure-surface); color: var(--ds-color-tag-tenure-text); border-radius: var(--ds-radius-3); }
+.ds-tag[data-tone="promo"]   { height: auto; padding: 0 2px; background: var(--ds-color-deal-surface); color: var(--ds-color-tag-promo-text); backdrop-filter: blur(2px); }
+
+/* ── amap-quick-order：一键下单卡片（Figma 769:8974） ── */
+amap-quick-order { display: flex; }
+amap-quick-order > .ds-order { flex: 1 1 auto; }
+.ds-order {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-6);
+  padding: var(--ds-space-6);
+  min-width: 0;
+  border: 1px solid var(--ds-color-order-border);
+  border-radius: var(--ds-radius-8);
+  background: var(--ds-color-order-surface);
+}
+.ds-order__item { display: flex; align-items: center; gap: var(--ds-space-8); min-width: 0; }
+.ds-order__thumb {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--ds-color-surface-media-placeholder);
+}
+.ds-order__thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ds-order__info { display: flex; flex-direction: column; gap: var(--ds-space-4); min-width: 0; }
+.ds-order__head { display: flex; align-items: center; gap: var(--ds-space-4); min-width: 0; }
+.ds-order__head amap-tag { flex: none; }
+.ds-order__title {
+  min-width: 0;
+  font-size: var(--ds-type-subtitle-m-size);
+  font-weight: var(--ds-type-subtitle-m-weight);
+  line-height: var(--ds-type-subtitle-m-line);
+  color: var(--ds-color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ds-order__desc {
+  font-size: var(--ds-type-body-s-size);
+  line-height: var(--ds-type-body-s-line);
+  color: var(--ds-color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ds-order__spec { color: var(--ds-color-text-distance); }
+.ds-order__actions { display: flex; justify-content: space-between; gap: var(--ds-space-8); }
+.ds-order__buy { flex: 0 1 165px; min-width: 0; }   /* Figma 165 / 94 */
+.ds-order__swap { flex: 0 1 94px; min-width: 0; }
 
 /* ── amap-hot-review：热评条（Figma 853:5095） ── */
 amap-hot-review { display: flex; }

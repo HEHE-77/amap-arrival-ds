@@ -7,12 +7,14 @@
  *   <amap-rank-thumb rank="1" src="…">         方形图片 + 左上排名角标
  *   <amap-fav-button pressed label="店名">     收藏星标，切换后派发 fav-change { favorited }
  *   <amap-meta-line sep="|" items='[…]' accent-first>  分隔符串联的一行说明，首段可强调（距离）
- *   <amap-rank-ribbon rank="1">               TOP 排名飘带
+ *   <amap-rank-ribbon rank="1">               TOP 排名飘带，1 金 / 2 银 / 3 铜（tier 可覆盖）
  *   <amap-score-badge score="4.8" label="超棒"> 评分徽标
  *   <amap-status-tag text="营业中">            营业状态
  *   <amap-deal-tag type="团" price="98" discount="5.6折">  团购 / 代金券价格条
  *   <amap-media-pill text="1/12" [icon="star"] [muted]>    压在图片上的深色胶囊
- *   <amap-button label="看团购" variant="primary|secondary">  按钮，原生 click
+ *   <amap-button label="看团购" variant="primary|secondary" [price="9.9"]>  按钮，原生 click
+ *   <amap-tag text tone="neutral|tenure|promo">  小标签
+ *   <amap-quick-order image title tag spec note price>  一键下单卡片，派发 order-buy / order-swap
  *   <amap-hot-review text="…" count="252 人在说">          热评条，原生 click
  *
  * 素材目录：读取自身或最近祖先的 asset-base 属性，默认 ../../assets/
@@ -128,20 +130,58 @@
     }
   }
 
-  /* ── amap-rank-ribbon：TOP 排名飘带 ── */
+  /* ── amap-rank-ribbon：TOP 排名飘带，1 金 / 2 银 / 3 铜（Figma 764:3788 及实例） ──
+   * 底板与麦穗路径取自 Figma 导出；颜色走 --ds-rank-{tier}-* token，渐变断点按各档原稿 */
+  const RIBBON_STOPS = { gold: [0.0192, 0.4808, 1], silver: [0, 0.43, 1], bronze: [0, 0.49, 1] };
+  const RIBBON_BG = 'M0 0H49V42.5503C49 44.0537 48.157 45.4301 46.8179 46.1133L26.3179 56.5725C25.176 57.1551 23.824 57.1551 22.6821 56.5725L2.18212 46.1133C0.842968 45.4301 0 44.0537 0 42.5503V0Z';
+  const LAUREL_L = [
+    'M2.47935 11.3801C3.24524 10.7146 4.24008 10.4463 5.21482 10.6288C6.1696 10.8221 7.04523 11.4659 7.76134 12.4964L8 12.8408L7.68179 13.0984C6.92587 13.6996 6.17956 14 5.45348 14H5.27448C4.24996 13.9248 3.28507 13.2481 2.3998 11.9812L2.16114 11.6377L2.47935 11.3801Z',
+    'M0.638862 5.72182C1.6037 5.52857 2.59847 5.79768 3.37432 6.45259C4.13026 7.10751 4.61812 8.12759 4.79716 9.39445L4.85683 9.82379L4.45906 9.88819C4.21039 9.93114 3.95115 9.95259 3.69254 9.95259C3.07605 9.974 2.46941 9.79151 1.94237 9.45885C1.07706 8.87913 0.519623 7.78379 0.300762 6.21646L0.241097 5.78623L0.638862 5.72182Z',
+    'M0.479756 0.0429338C2.61829 0.289866 3.89144 2.17915 3.64282 4.73435L3.60304 5.16368L3.20527 5.12075C0.867902 4.8523 -0.236242 3.23139 0.0422147 0.429338L0.0819912 0L0.479756 0.0429338Z',
+  ];
+  const LAUREL_R = [
+    'M34.5206 11.3801C33.7548 10.7146 32.7599 10.4463 31.7852 10.6288C30.8304 10.8221 29.9548 11.4659 29.2387 12.4964L29 12.8408L29.3182 13.0984C30.0741 13.6996 30.8204 14 31.5465 14H31.7255C32.75 13.9248 33.7149 13.2481 34.6002 11.9812L34.8389 11.6377L34.5206 11.3801Z',
+    'M36.3611 5.72182C35.3963 5.52857 34.4015 5.79768 33.6257 6.45259C32.8697 7.10751 32.3819 8.12759 32.2028 9.39445L32.1432 9.82379L32.5409 9.88819C32.7896 9.93114 33.0488 9.95259 33.3075 9.95259C33.924 9.974 34.5306 9.79151 35.0576 9.45885C35.9229 8.87913 36.4804 7.78379 36.6992 6.21646L36.7589 5.78623L36.3611 5.72182Z',
+    'M36.5202 0.0429338C34.3817 0.289866 33.1086 2.17915 33.3572 4.73435L33.397 5.16368L33.7947 5.12075C36.1321 4.8523 37.2362 3.23139 36.9578 0.429338L36.918 0L36.5202 0.0429338Z',
+  ];
+  let ribbonUid = 0;
+  const tierOf = (rank) => (rank === 1 ? 'gold' : rank === 2 ? 'silver' : 'bronze');
+
   class AmapRankRibbon extends Base {
-    static get observedAttributes() { return ['rank', 'label']; }
+    static get observedAttributes() { return ['rank', 'label', 'tier']; }
     render() {
-      const base = assetBase(this);
       const rank = Number(this.attr('rank', '1'));
+      const tier = ['gold', 'silver', 'bronze'].includes(this.attr('tier')) ? this.attr('tier') : tierOf(rank);
+      const id = `ds-rib-${++ribbonUid}`;
+      const [o1, o2, o3] = RIBBON_STOPS[tier];
+      const v = (k) => `var(--ds-rank-${tier}-${k})`;
       this.innerHTML = `
-        <span class="ds-ribbon" aria-label="第 ${rank} 名">
-          <img class="ds-ribbon__bg" src="${base}restaurant/ribbon-bg.svg" alt="" width="49" height="57">
+        <span class="ds-ribbon" data-tier="${tier}" style="color:${v('num')}" aria-label="第 ${rank} 名">
+          <svg class="ds-ribbon__bg" width="49" height="57" viewBox="0 0 49 57" aria-hidden="true">
+            <defs>
+              <linearGradient id="${id}-bg" x1="10.5" y1="0" x2="32" y2="52.5" gradientUnits="userSpaceOnUse">
+                <stop offset="${o1}" style="stop-color:${v('bg-1')}"/><stop offset="${o2}" style="stop-color:${v('bg-2')}"/><stop offset="${o3}" style="stop-color:${v('bg-3')}"/>
+              </linearGradient>
+              <filter id="${id}-in" x="0" y="0" width="49" height="57.0095" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                <feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+                <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                <feOffset dy="-1"/><feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+                <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.25 0"/><feBlend in2="shape"/>
+              </filter>
+            </defs>
+            <path d="${RIBBON_BG}" fill="url(#${id}-bg)" filter="url(#${id}-in)"/>
+          </svg>
           <span class="ds-ribbon__label" aria-hidden="true">${esc(this.attr('label', 'TOP'))}</span>
           <span class="ds-ribbon__num" aria-hidden="true">${String(rank).padStart(2, '0')}</span>
-          <img class="ds-ribbon__laurel" src="${base}restaurant/laurel.svg" alt="" width="37" height="14">
+          <svg class="ds-ribbon__laurel" width="37" height="14" viewBox="0 0 37 14" aria-hidden="true">
+            <defs>
+              <linearGradient id="${id}-l" x1="0.296" y1="-0.086" x2="7.741" y2="13.669" gradientUnits="userSpaceOnUse"><stop style="stop-color:${v('laurel-1')}"/><stop offset="1" style="stop-color:${v('laurel-2')}"/></linearGradient>
+              <linearGradient id="${id}-r" x1="36.704" y1="-0.086" x2="29.259" y2="13.669" gradientUnits="userSpaceOnUse"><stop style="stop-color:${v('laurel-1')}"/><stop offset="1" style="stop-color:${v('laurel-2')}"/></linearGradient>
+            </defs>
+            ${LAUREL_L.map((d) => `<path d="${d}" fill="url(#${id}-l)"/>`).join('')}
+            ${LAUREL_R.map((d) => `<path d="${d}" fill="url(#${id}-r)"/>`).join('')}
+          </svg>
         </span>`;
-      markMissing(this);
     }
   }
 
@@ -198,12 +238,56 @@
     }
   }
 
-  /* ── amap-button：主按钮（渐变）/ 次按钮（描边） ── */
+  /* ── amap-button：主按钮（渐变）/ 次按钮（描边）；可带价格「一键下单 | ¥ 9.9」 ── */
   class AmapButton extends Base {
-    static get observedAttributes() { return ['label', 'variant']; }
+    static get observedAttributes() { return ['label', 'variant', 'price']; }
     render() {
       const variant = this.attr('variant', 'primary') === 'secondary' ? 'secondary' : 'primary';
-      this.innerHTML = `<button type="button" class="ds-btn ds-btn--${variant}">${esc(this.attr('label'))}</button>`;
+      const price = this.attr('price');
+      this.innerHTML = `<button type="button" class="ds-btn ds-btn--${variant}">
+        <span>${esc(this.attr('label'))}</span>
+        ${price ? `<span class="ds-btn__divider" aria-hidden="true"></span><span class="ds-btn__price"><span class="ds-btn__currency">¥ </span>${esc(price)}</span>` : ''}
+      </button>`;
+    }
+  }
+
+  /* ── amap-tag：小标签，tone = neutral（灰底信息）| tenure（收录 N 年）| promo（商品促销） ── */
+  class AmapTag extends Base {
+    static get observedAttributes() { return ['text', 'tone']; }
+    render() {
+      const tone = ['neutral', 'tenure', 'promo'].includes(this.attr('tone')) ? this.attr('tone') : 'neutral';
+      this.innerHTML = `<span class="ds-tag" data-tone="${tone}">${esc(this.attr('text'))}</span>`;
+    }
+  }
+
+  /* ── amap-quick-order：一键下单卡片（Figma 769:8974） ──
+   * 属性 image title tag spec note price action-label swap-label
+   * 事件 order-buy / order-swap */
+  class AmapQuickOrder extends Base {
+    static get observedAttributes() { return ['image', 'title', 'tag', 'spec', 'note', 'price', 'action-label', 'swap-label']; }
+    render() {
+      const a = (n, d) => this.attr(n, d);
+      this.innerHTML = `
+        <div class="ds-order">
+          <div class="ds-order__item">
+            <span class="ds-order__thumb">${a('image') ? `<img src="${esc(a('image'))}" alt="">` : ''}</span>
+            <span class="ds-order__info">
+              <span class="ds-order__head">
+                <span class="ds-order__title">${esc(a('title'))}</span>
+                ${a('tag') ? `<amap-tag tone="promo" text="${esc(a('tag'))}"></amap-tag>` : ''}
+              </span>
+              <span class="ds-order__desc">${a('spec') ? `<span class="ds-order__spec">${esc(a('spec'))}</span>` : ''}${esc(a('note'))}</span>
+            </span>
+          </div>
+          <div class="ds-order__actions">
+            <amap-button class="ds-order__buy" label="${esc(a('action-label', '一键下单'))}" price="${esc(a('price'))}"></amap-button>
+            <amap-button class="ds-order__swap" variant="secondary" label="${esc(a('swap-label', '换一杯'))}"></amap-button>
+          </div>
+        </div>`;
+      markMissing(this);
+      const fire = (t) => this.dispatchEvent(new CustomEvent(t, { bubbles: true, composed: true }));
+      this.querySelector('.ds-order__buy').addEventListener('click', () => fire('order-buy'));
+      this.querySelector('.ds-order__swap').addEventListener('click', () => fire('order-swap'));
     }
   }
 
@@ -236,6 +320,8 @@
     'amap-media-pill': AmapMediaPill,
     'amap-button': AmapButton,
     'amap-hot-review': AmapHotReview,
+    'amap-tag': AmapTag,
+    'amap-quick-order': AmapQuickOrder,
   };
   for (const [tag, cls] of Object.entries(defs)) if (!customElements.get(tag)) customElements.define(tag, cls);
 

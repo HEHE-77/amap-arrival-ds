@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>到达地点卡片 · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/primitives/primitives.css">
+  <link rel="stylesheet" href="../components/place-card/place-card.css">
+  <style>
+    body { margin: 0; padding: 24px 16px; background: #eef0f2; font-family: var(--ds-font-family-base); color: #191919; }
+    h2.label { font-size: 13px; font-weight: 500; color: #60636c; margin: 36px 0 18px; }
+    h2.label:first-of-type { margin-top: 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, 301px); gap: 30px 12px; align-items: start; }
+    .cap { display: block; font-size: 12px; color: #60636c; font-family: ui-monospace, Menlo, monospace; margin-bottom: 8px; }
+    #log { margin-top: 24px; font-size: 12px; color: #00a27f; min-height: 16px; font-family: ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body>
+  <h2 class="label">上班到达 · scene="commute"</h2>
+  <div class="grid" data-group="commute"></div>
+  <h2 class="label">饭店到达 · scene="restaurant"（默认）</h2>
+  <div class="grid" data-group="restaurant"></div>
+  <h2 class="label">景点到达 · scene="attraction"</h2>
+  <div class="grid" data-group="attraction"></div>
+  <h2 class="label">边界情况：无排名、无营业状态、第 4 名之后、超长文案、无图</h2>
+  <div class="grid" data-group="edge"></div>
+  <div id="log">点击按钮 / 热评 / 团购 / 查看更多 / 一键下单，事件显示在这里</div>
+
+  <script src="../components/primitives/primitives.js"></script>
+  <script src="../components/place-card/place-card.js"></script>
+  <script>
+    // 文案逐字取自 Figma 各实例；店铺图待导出，缺失时显示占位底色
+    const CARDS = [
+      { g: 'commute', node: '853:5773', scene: 'commute', rank: 1, name: 'Grid Coffee(万象城店)', distance: '<100 米', score: '4.8', scoreLabel: '超棒',
+        details: ['奶茶/甜品', '￥27/人', '662 人导航过'], ranking: '雁塔区咖啡榜·第 2 名', tenure: '收录 2 年', status: '正在营业',
+        deals: [{ type: '团', price: '9.9', discount: '6.7折', title: '大杯葡萄冷萃美式' }], dealMore: '查看更多', saves: '4.7k+', page: '1/12',
+        order: { title: '燕麦拿铁', tag: '上次那杯', spec: '大杯·少冰·标准糖', note: '｜随时退｜不限购', price: '9.9' } },
+      { g: 'commute', node: '853:5774', scene: 'commute', rank: 2, name: '早安山丘（银泰B座 B1）', distance: '<100 米', score: '4.7', scoreLabel: '很棒',
+        details: ['奶茶/甜品', '￥27/人', '462 人导航过'], ranking: '雁塔区面包榜·第 8 名', tenure: '收录 2 年', status: '正在营业',
+        deals: [{ type: '团', price: '21', discount: '7.6折', title: '可颂两件 + 现磨豆浆' }], dealMore: '查看更多', saves: '3.7k+', page: '1/12',
+        order: { title: '三明治 + 中杯拿铁', tag: '最多人购买', spec: '含推荐菜', note: '｜随时退｜不限购', price: '12.9' } },
+      { g: 'commute', node: '853:5775', scene: 'commute', rank: 3, name: '小面日记（万象天地店）', distance: '150 米', score: '4.6', scoreLabel: '很棒',
+        details: ['当地小吃', '￥27/人', '462 人导航过'], ranking: '雁塔区小吃榜·第 3 名', tenure: '收录 2 年', status: '正在营业',
+        deals: [{ type: '团', price: '15', discount: '4.6折', title: '招牌小面 + 卤蛋' }], dealMore: '查看更多', saves: '1.6k+', page: '1/10',
+        order: { title: '小面 + 豆腐脑早餐组', tag: '最多收藏', spec: '含推荐菜', note: '｜随时退｜不限购', price: '18.9' } },
+
+      { g: 'restaurant', node: '853:5068', rank: 1, name: '胡大饭馆 24h (砺街总店)', distance: '<100 米', score: '4.8', scoreLabel: '超棒',
+        details: ['川菜', '￥150/人', '3652 人导航过'], ranking: '碑林区回头客榜单·第 1 名', status: '营业中',
+        review: '关晓彤推荐来的! 冲他家的蒜蓉酸辣螃蟹...', reviewCount: '252 人在说',
+        deals: [{ type: '团', price: '98', discount: '5.6折', title: '夏宫双人招牌套餐 (需提前预约)' }, { type: '券', price: '88', discount: '8.8折', title: '100 元代金券' }],
+        image: '../assets/restaurant/samples/huda-fanguan.jpg', saves: '10.7w+', page: '1/12' },
+      { g: 'restaurant', node: '853:5777', rank: 2, name: '巷子口砂锅居', distance: '180 米', score: '4.8', scoreLabel: '超棒',
+        details: ['砂锅菜', '￥52/人', '1287 人导航过'], ranking: '专程前往家常菜榜·第 1 名', status: '营业中',
+        review: '汤清如水却滋味十足，羊肉炖得软...', reviewCount: '210 人在说',
+        deals: [{ type: '团', price: '151', discount: '4.6折', title: '双人招牌套餐（提前一天预约）' }, { type: '团', price: '68', discount: '7.8折', title: '工作日午市单人套餐' }],
+        saves: '3.6w+', page: '1/18' },
+      { g: 'restaurant', node: '853:5776', rank: 3, name: '南门口卤味小馆', distance: '450 米', score: '4.7', scoreLabel: '超棒',
+        details: ['卤味熟食', '￥45/人', '986 人导航过'], ranking: '烟火小店榜·第 2 名', status: '营业中',
+        review: '打包回家当宵夜刚好，卤大肠和鸭货必点，老板给的量很实在！', reviewCount: '198 人在说',
+        deals: [{ type: '团', price: '88', discount: '4.8折', title: '招牌卤味拼盘' }, { type: '团', price: '45', discount: '6.6折', title: '四人份宵夜打包装' }],
+        saves: '1.2w+', page: '1/10' },
+
+      { g: 'attraction', node: '853:5770', scene: 'attraction', rank: 1, name: '西安钟楼', distance: '<100 米', score: '4.8', scoreLabel: '超棒',
+        details: ['古建登楼', '￥40/人', '4.5w+ 人导航过'], ranking: '2026 上榜景区', infoTag: '西安的市中心', status: '正在开放',
+        review: '中国现存最大且保存最完整的明代钟楼，全木构架靠榫卯咬合未用一颗铁钉，登楼俯瞰...', reviewCount: '198 人在说',
+        deals: [{ type: '票', price: '40', discount: '省 2 元', title: '钟楼成人票（当日有效，刷身份证入园）' }, { type: '票', price: '50', discount: '8.0折', title: '钟鼓楼联票｜两天内分次使用' }],
+        saves: '34.7w+', page: '1/12' },
+      { g: 'attraction', node: '853:5771', scene: 'attraction', rank: 2, name: '西安鼓楼', distance: '350 米', score: '4.8', scoreLabel: '超棒',
+        details: ['古建登楼', '￥35/人', '2.3w+ 人导航过'], ranking: '2026 上榜景区', infoTag: '晨钟暮鼓', status: '正在开放',
+        review: '中国现存最大的明代鼓楼，屹立六百余年，历史地位无可代替。', reviewCount: '252 人在说',
+        deals: [{ type: '票', price: '30', discount: '7.5折', title: '鼓楼成人票（当日有效，刷身份证入园）' }, { type: '票', price: '50', discount: '8.0折', title: '钟鼓楼联票｜两天内分次使用' }],
+        saves: '26.5w+', page: '1/12' },
+      { g: 'attraction', node: '853:5772', scene: 'attraction', rank: 3, name: '西安碑林博物馆', distance: '859 米', score: '4.5', scoreLabel: '很好',
+        details: ['千年碑文', '￥35/人', '2.3w+ 人导航过'], ranking: '2026 上榜景区', infoTag: '国家一级博物馆', status: '正在开放',
+        review: '北院门街穿过鼓楼门洞就是，进街后靠右走人少一些', reviewCount: '252 人在说',
+        deals: [{ type: '团', price: '78', discount: '省 2 元', title: '景区门票(成人票）' }, { type: '团', price: '21 起', discount: '6.7折', title: '拼团人工讲解服务(不限人群票)' }],
+        saves: '13.6w+', page: '1/10' },
+
+      { g: 'edge', node: '—', scene: 'restaurant', rank: 4, name: '老孙家羊肉泡馍（钟楼东大街总店·百年老字号）', distance: '1.2 公里', score: '4.6', scoreLabel: '很好',
+        details: ['清真', '￥58/人', '1.2w 人导航过'], ranking: '新城区老字号榜单·第 12 名',
+        review: '外地朋友来西安必带的一家，掰馍要自己掰才有灵魂，汤头浓郁不腻', reviewCount: '1.3k 人在说',
+        deals: [{ type: '券', price: '45', discount: '9折', title: '50 元代金券，全场通用不限时段' }] },
+      { g: 'edge', node: '—', scene: 'commute', name: '没有排名的咖啡店（超长店名测试用例）', distance: '2.1 公里', score: '4.3', scoreLabel: '不错',
+        details: ['咖啡', '￥32/人'], tenure: '收录 1 年',
+        deals: [{ type: '团', price: '19.9', discount: '5.9折', title: '任意两杯手冲咖啡 + 可颂套餐超长标题' }], dealMore: '查看更多',
+        order: { title: '超长商品名称用于测试省略号是否生效', tag: '上次那杯', spec: '中杯·去冰·少糖', note: '｜随时退｜不限购', price: '128.8' } },
+    ];
+
+    const log = (t) => { document.getElementById('log').textContent = t + ' · ' + new Date().toLocaleTimeString(); };
+    for (const c of CARDS) {
+      const cell = document.createElement('div');
+      cell.innerHTML = `<span class="cap">${c.scene || 'restaurant'} · ${c.node}</span>`;
+      const el = document.createElement('amap-place-card');
+      const set = (k, v) => v != null && el.setAttribute(k, typeof v === 'string' || typeof v === 'number' ? v : JSON.stringify(v));
+      set('asset-base', '../assets/'); set('scene', c.scene); set('rank', c.rank); set('name', c.name); set('distance', c.distance);
+      set('score', c.score); set('score-label', c.scoreLabel); set('details', c.details); set('ranking', c.ranking);
+      set('info-tag', c.infoTag); set('tenure', c.tenure); set('status', c.status); set('review', c.review); set('review-count', c.reviewCount);
+      set('deals', c.deals); set('deal-more', c.dealMore); set('image', c.image); set('saves', c.saves); set('image-index', c.page); set('order', c.order);
+      cell.appendChild(el);
+      document.querySelector(`[data-group="${c.g}"]`).appendChild(cell);
+      ['card-primary', 'card-route', 'card-review', 'card-more', 'card-order-buy', 'card-order-swap'].forEach((ev) => el.addEventListener(ev, () => log(`${c.name} · ${ev}`)));
+      el.addEventListener('card-deal', (e) => log(`${c.name} · card-deal #${e.detail.index + 1} ${e.detail.deal.title}`));
+    }
+  </script>
+</body>
+</html>
