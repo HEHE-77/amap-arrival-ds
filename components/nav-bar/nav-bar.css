@@ -1,0 +1,55 @@
+/* <amap-nav-bar> · 顶部导航栏（Figma 777:3440）
+ * 依赖 tokens/tokens.css
+ */
+amap-nav-bar {
+  --nav-inset: 18px;
+  --nav-border: 0.6px;
+
+  display: block;
+  width: var(--nav-width, 402px);
+  max-width: 100%;
+}
+
+.amap-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 37px;
+  padding: 0 var(--nav-inset);
+}
+
+.amap-nav__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ds-color-text-primary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.amap-nav__btn:active { opacity: 0.6; }
+.amap-nav__btn:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; border-radius: var(--ds-radius-pill); }
+.amap-nav__btn svg { display: block; }
+
+.amap-nav__back,
+.amap-nav__group {
+  background: var(--ds-color-surface-card-neutral);
+  box-shadow: inset 0 0 0 var(--nav-border) var(--ds-color-border-card);
+}
+.amap-nav__back { width: 36px; height: 36px; border-radius: 50%; }
+.amap-nav__back svg { transform: translateX(-1.5px); }   /* 箭头视觉居中，同 Figma（x 11） */
+
+.amap-nav__group {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-8);
+  height: 37px;
+  box-sizing: border-box;
+  padding: 0 calc(12px + var(--nav-border));
+  border-radius: 20px;
+}
+.amap-nav__group .amap-nav__btn { width: 20px; height: 20px; }
+.amap-nav__sep { flex: none; width: 1px; height: 16px; background: var(--ds-color-divider); }

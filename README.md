@@ -11,7 +11,7 @@ assets/      从 Figma 导出的素材
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）、`reminders.html`（限行 / 末班车）。事件会显示在页面上。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）、`reminders.html`（限行 / 末班车）、`nav-bar.html`、`place-row.html`（收藏地点）。事件会显示在页面上。
 
 加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
 
@@ -344,3 +344,42 @@ assets/      从 Figma 导出的素材
 `<amap-transit-list>`：`items` 每项 `{ line, color, title, subtitle, time, timeLabel }`；`color` 为线路色，属于数据（不进 token），缺省为灰。事件 `transit-select`（`{ index, item }`）。实例 `766:8339` 中第二条线路为「12路」，预览已单列。
 
 与 Figma 的统一：限行图标底与「今日限行」标签底 `#FFF1F0` → `--ds-color-tag-danger-surface`（`#FFEDED`）；车辆图标 `#FF4D4F` → 警示红 `#FF3041`；车牌底 `#F0F0F2` 与「避开限行路线已规划」底 `#F5F5F5` → 灰色标签 `#EFEFEF`；两枚标签统一为 22 高、11 号字（Figma 中「今日限行」为 10 号字、另一枚 23 高）；末班车文字 `#222222` / `#111111` → 正文色；行分隔线 `#F3F3F3` → `--ds-color-divider`；「查看更多」`#5A5A5A` → 正文灰。
+
+### 10. 顶部导航栏（Figma `777:3440`，实例 `777:3441`）
+
+位于 Header 上方：左侧 36×36 圆形返回，右侧胶囊内「搜索 | 分享 | 更多」。
+
+```html
+<link rel="stylesheet" href="components/nav-bar/nav-bar.css">
+<script src="components/nav-bar/nav-bar.js"></script>
+
+<amap-nav-bar></amap-nav-bar>
+<amap-nav-bar actions="share,more"></amap-nav-bar>
+```
+
+`actions`：右侧按钮，逗号分隔，默认 `search,share,more`。事件：`nav-back` / `nav-search` / `nav-share` / `nav-more`。图标从 Figma 导出后内联，颜色走 token。
+
+与 Figma 的统一：图标 `#262626` → 正文色；胶囊内竖线 `#ECECEC` → `--ds-color-divider`。
+
+### 11. 收藏地点行卡（Figma `766:8580` 收藏，实例 `766:8581` / `766:8596`）
+
+放在 `<amap-section heading="你的收藏就在附近">` 中：56×56 图 + 名称 / 「距离 · 评分 · 类型」+ 右侧「导航过去」浅底按钮。
+
+```html
+<link rel="stylesheet" href="components/place-row/place-row.css">
+<script src="components/place-row/place-row.js"></script>
+
+<amap-place-row name="永兴坊" distance="1.2 公里" details='["4.8 分","美食街"]' image="…"></amap-place-row>
+```
+
+| 属性 | 说明 |
+|---|---|
+| `name` | 名称，超长省略 |
+| `distance` | 距离（棕色） |
+| `details` | JSON 数组，「·」串联 |
+| `image` | 56×56 图片 |
+| `action-label` | 默认「导航过去」，传空字符串隐藏 |
+
+事件：`place-select`（`{ name }`，点图片或文字）、`place-action`（`{ name, label }`）。名称 `#222222` → 正文色。
+
+素材：`assets/place-row/samples/*.jpg`，2 张 56×56 @3x，仅预览用。

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>收藏地点 · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/primitives/primitives.css">
+  <link rel="stylesheet" href="../components/section/section.css">
+  <link rel="stylesheet" href="../components/place-row/place-row.css">
+  <style>
+    body { margin: 0; padding: 24px 0; background: #fff; font-family: var(--ds-font-family-base); color: #191919; }
+    .label { font-size: 14px; font-weight: 500; color: #60636c; margin: 32px 18px 12px; }
+    .label:first-child { margin-top: 0; }
+    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin: 16px 18px; font-family: ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body>
+  <p class="label">Figma 766:8580，实例 766:8581 / 766:8596（区块 766:8427）</p>
+  <amap-section heading="你的收藏就在附近">
+    <amap-place-row name="魏世纪 Hey wego·Bistro" distance="369 米" details='["4.8 分","酒吧"]' image="../assets/place-row/samples/weishiji-bistro.jpg"></amap-place-row>
+    <amap-place-row name="永兴坊" distance="1.2 公里" details='["4.8 分","美食街"]' image="../assets/place-row/samples/yongxingfang.jpg"></amap-place-row>
+  </amap-section>
+
+  <p class="label">边界情况</p>
+  <amap-section>
+    <amap-place-row name="超长的地点名称会省略显示超长的地点名称会省略显示" distance="12.6 公里" details='["4.9 分","特色街区","人均 ¥88"]' action-label="去这里"></amap-place-row>
+    <amap-place-row name="无按钮、无图片" distance="80 米" details='["4.5 分"]' action-label=""></amap-place-row>
+  </amap-section>
+
+  <div id="log"></div>
+  <script src="../components/primitives/primitives.js"></script>
+  <script src="../components/section/section.js"></script>
+  <script src="../components/place-row/place-row.js"></script>
+  <script>
+    const log = (t) => { document.getElementById('log').textContent = t; };
+    document.addEventListener('place-select', (e) => log('place-select → ' + e.detail.name));
+    document.addEventListener('place-action', (e) => log('place-action → ' + JSON.stringify(e.detail)));
+  </script>
+</body>
+</html>
