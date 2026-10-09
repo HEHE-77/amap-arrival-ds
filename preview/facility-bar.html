@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>设施快捷入口 · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/facility-bar/facility-bar.css">
+  <style>
+    body { margin: 0; padding: 24px 0; background: #fff; font-family: var(--ds-font-family-base); color: #191919; }
+    .label { font-size: 14px; font-weight: 500; color: #60636c; margin: 32px 18px 12px; }
+    .label:first-child { margin-top: 0; }
+    .all { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 18px; }
+    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin: 16px 18px; font-family: ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body asset-base="../assets/">
+  <p class="label">饭店 / 常规到达 · Figma 765:6203（preset="regular"）</p>
+  <amap-facility-bar preset="regular"></amap-facility-bar>
+
+  <p class="label">景点到达 · Figma 777:2671（preset="attraction"）</p>
+  <amap-facility-bar preset="attraction"></amap-facility-bar>
+
+  <p class="label">上班到达 · Figma 777:3333（preset="commute"）</p>
+  <amap-facility-bar preset="commute"></amap-facility-bar>
+
+  <p class="label">自定义：items="parking,toilet,atm"，文案可改</p>
+  <amap-facility-bar items='[{"key":"parking","label":"地下停车场"},{"key":"toilet"},{"key":"atm"}]'></amap-facility-bar>
+
+  <p class="label">全部 16 种入口</p>
+  <amap-facility-bar class="all-bar" items="parking,toilet,charging,store,aed,elevator,nursing,visitor-center,metro,luggage,police,bike,locker,print,pharmacy,atm"></amap-facility-bar>
+  <style>.all-bar .amap-fac { flex-wrap: wrap; row-gap: 8px; }</style>
+
+  <div id="log"></div>
+  <script src="../components/facility-bar/facility-bar.js"></script>
+  <script>
+    document.addEventListener('facility-select', (e) => { document.getElementById('log').textContent = 'facility-select → ' + JSON.stringify(e.detail); });
+  </script>
+</body>
+</html>

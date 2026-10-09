@@ -1,0 +1,49 @@
+/* <amap-facility-bar> · Header 下方的设施快捷入口（Figma 765:6203 / 777:2671 / 777:3333）
+ * 依赖 tokens/tokens.css
+ */
+amap-facility-bar {
+  --fac-inset: 18px;         /* 与页面左右边距一致 */
+  --fac-gap: var(--ds-space-4);
+  --fac-border: 0.6px;
+
+  display: block;
+  width: var(--fac-width, 402px);
+  max-width: 100%;
+  font-family: var(--ds-font-family-base);
+}
+
+.amap-fac {
+  display: flex;
+  gap: var(--fac-gap);
+  margin: 0;
+  padding: 0 var(--fac-inset);
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.amap-fac::-webkit-scrollbar { display: none; }
+.amap-fac > li { flex: none; display: flex; }
+
+.amap-fac__chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  margin: 0;
+  padding: 0 calc(10px + var(--fac-border));
+  border: 0;
+  border-radius: var(--ds-radius-12);
+  background: var(--ds-color-surface-card);
+  box-shadow: inset 0 0 0 var(--fac-border) var(--ds-color-border-card);
+  font: inherit;
+  font-size: var(--ds-type-body-s-size);
+  line-height: var(--ds-type-body-s-line);
+  color: var(--ds-color-text-primary);
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.amap-fac__chip:active { opacity: 0.7; }
+.amap-fac__chip:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; }
+.amap-fac__icon { display: block; flex: none; }
+.amap-fac__icon.is-missing { width: 20px; height: 20px; border-radius: 50%; background: var(--ds-color-tag-neutral-surface); }

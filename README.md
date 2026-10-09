@@ -11,7 +11,7 @@ assets/      从 Figma 导出的素材
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）、`reminders.html`（限行 / 末班车）、`nav-bar.html`、`place-row.html`（收藏地点）、`more-card.html`。事件会显示在页面上。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）、`reminders.html`（限行 / 末班车）、`nav-bar.html`、`place-row.html`（收藏地点）、`more-card.html`、`facility-bar.html`。事件会显示在页面上。
 
 加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
 
@@ -404,3 +404,30 @@ assets/      从 Figma 导出的素材
 `label` 默认「查看更多」，可换行。事件：`more-select`（`{ label }`）。
 
 新增 token：`--ds-color-action-tonal-icon-surface`（`#D4E6FF`）。卡片底色 Figma 为 `#EBF3FE`，并入浅底按钮色 `#EDF3FF`。实例 `777:2659`（上班到达那行）高 384，比同行卡片（390）矮 6，组件按撑满处理。
+
+### 13. 设施快捷入口（Figma `765:6203` 常规 / `777:2671` 景点 / `777:3333` 上班）
+
+Header 下方一排横向滑动的入口。Figma 中每个入口是独立 component（共 16 种），这里合为一个组件，按 key 取图标与默认文案。
+
+```html
+<link rel="stylesheet" href="components/facility-bar/facility-bar.css">
+<script src="components/facility-bar/facility-bar.js"></script>
+
+<amap-facility-bar preset="attraction"></amap-facility-bar>
+<amap-facility-bar items="parking,toilet,charging,store"></amap-facility-bar>
+<amap-facility-bar items='[{"key":"parking","label":"地下停车场"},{"key":"atm"}]'></amap-facility-bar>
+```
+
+| 属性 | 说明 |
+|---|---|
+| `preset` | `regular`（停车场、公共厕所、充电桩、便利店、AED、电梯口、母婴室）/ `attraction`（游客服务中心、公共厕所、地铁站出入口、行李寄存、便利店、警务站、共享单车停放点）/ `commute`（便利店、快递柜、电梯口、打印复印、共享单车停放点、药房、ATM） |
+| `items` | 逗号分隔的 key，或 JSON `[{ key, label }]`，优先于 `preset` |
+| `asset-base` | 素材目录 |
+
+key：`parking` `toilet` `charging` `store` `aed` `elevator` `nursing` `visitor-center` `metro` `luggage` `police` `bike` `locker` `print` `pharmacy` `atm`。事件：`facility-select`（`{ key, label }`）。
+
+入口样式：32 高，圆角 12（新增 `--ds-radius-12`），`surface-card` 底 + 0.6 描边，图标与文字间距 5，左右边距 18，入口间距 4。
+
+素材（`assets/facility/`，SVG 由 Figma 插件 API 导出，多色图标保留原色）：16 个，文件名即 key。两个「电梯口」component（`765:6201` / `777:3328`）图标相同，合为一个。
+
+与 Figma 的统一：「公共厕所」图标与文字之间 Figma 为 0 间距，统一为 5（入口宽 95，原稿 90）。
