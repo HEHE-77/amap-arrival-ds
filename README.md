@@ -211,4 +211,6 @@ assets/      从 Figma 导出的素材
 
 各实例渐变色记录在 `tokens.json` → `component.poi-recommend.tints`。
 
-素材：`assets/poi-recommend/samples/*.jpg`，仅预览用，待补（需未模糊的原图，189×189 @3x）。
+9 个实例统一用同一套模糊参数（Figma 中「回民街」为半径 4、从顶部开始，已确认按其余卡片统一）。
+
+素材：`assets/poi-recommend/samples/*.jpg`，9 张未模糊原图 189×189 @3x，仅预览用。
