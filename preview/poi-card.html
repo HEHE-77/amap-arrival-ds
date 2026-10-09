@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>POI 卡片 · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/poi-card/poi-card.css">
+  <style>
+    body { margin: 0; padding: 24px 16px; background: #eef0f2; font-family: var(--ds-font-family-base); color: #191919; }
+    h2.label { font-size: 13px; font-weight: 500; color: #5a5a5a; margin: 28px 0 10px; }
+    h2.label:first-child { margin-top: 0; }
+    #log { font-size: 12px; color: #00a27f; min-height: 16px; margin-top: 8px; font-family: ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body>
+  <h2 class="label">默认（Figma 853:4824）</h2>
+  <amap-poi-card id="default" heading="藏在街巷的烟火气" count="13" asset-base="../assets/"></amap-poi-card>
+  <div id="log"></div>
+
+  <h2 class="label">已收藏第一项</h2>
+  <amap-poi-card id="fav" heading="藏在街巷的烟火气" count="13" asset-base="../assets/"></amap-poi-card>
+
+  <h2 class="label">超长标题 / 店名 → 省略；图片缺失 → 占位底色</h2>
+  <amap-poi-card id="long" heading="钟楼周边本地人常去的老字号小吃合集" count="128" asset-base="../assets/"></amap-poi-card>
+
+  <script src="../components/poi-card/poi-card.js"></script>
+  <script>
+    const SAMPLE = [
+      { name: '老白家肉丸胡辣汤', distance: '距您 250 米', price: '人均 ¥18', image: '../assets/poi/sample-poi-1.png' },
+      { name: '竹笆市甑糕', distance: '距您 780 米', price: '人均 ¥15', image: '../assets/poi/sample-poi-2.png' },
+    ];
+    document.getElementById('default').items = SAMPLE;
+    document.getElementById('fav').items = SAMPLE.map((it, i) => ({ ...it, favorited: i === 0 }));
+    document.getElementById('long').items = [
+      { name: '回民街老孙家羊肉泡馍（总店）钟楼饭庄', distance: '距您 1.2 公里', price: '人均 ¥45', image: '../assets/poi/sample-poi-1.png' },
+      { name: '没有图片的店铺', distance: '距您 3.6 公里', price: '人均 ¥120' },
+    ];
+
+    const log = (t) => { document.getElementById('log').textContent = t + ' · ' + new Date().toLocaleTimeString(); };
+    const card = document.getElementById('default');
+    card.addEventListener('poi-more', () => log('poi-more'));
+    card.addEventListener('poi-select', (e) => log(`poi-select #${e.detail.index + 1} ${e.detail.item.name}`));
+    card.addEventListener('poi-favorite', (e) => log(`poi-favorite #${e.detail.index + 1} → ${e.detail.favorited}`));
+  </script>
+</body>
+</html>

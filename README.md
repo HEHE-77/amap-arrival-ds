@@ -11,8 +11,7 @@ assets/      从 Figma 导出的素材
 
 ## 查看交互效果
 
-- **在线组件台**：claude.ai 上的私有 Artifact「到达页组件台」，可切换变体、改文案、调宽度、点击行程回溯看事件。
-- **本地**：打开 `preview/header.html`（全部状态静态对照），或运行 `python3 playground/build.py` 后打开 `playground/dist/index.html`。
+在浏览器打开 `preview/` 下对应组件的页面（如 `preview/poi-card.html`），列出全部状态，事件会显示在默认态下方。
 
 ## Token 分层
 
@@ -64,3 +63,41 @@ assets/      从 Figma 导出的素材
 | `header-map-thumb-taxi.png` | `849:2939` image 7（可见区域） | 319×84 |
 | `icon-green-energy.png` | `849:2986` Frame | 18×17 |
 | `icon-arrow-right.png` | `849:2992` ic:baseline-keyboard-arrow-right | 17×17 |
+
+### 2. POI 榜单卡片（Figma `853:4824` poi/secondary）
+
+```html
+<link rel="stylesheet" href="components/poi-card/poi-card.css">
+<script src="components/poi-card/poi-card.js"></script>
+
+<amap-poi-card heading="藏在街巷的烟火气" count="13"></amap-poi-card>
+<script>
+  document.querySelector('amap-poi-card').items = [
+    { name: '老白家肉丸胡辣汤', distance: '距您 250 米', price: '人均 ¥18', image: '…' },
+    { name: '竹笆市甑糕', distance: '距您 780 米', price: '人均 ¥15', image: '…', favorited: true },
+  ];
+</script>
+```
+
+| 属性 | 说明 |
+|---|---|
+| `heading` | 榜单标题，超长省略（不压水印） |
+| `count` | 生成「精选 N 个热门店铺」，不传只显示扫街榜标识 |
+| `more-label` | 默认「完整榜单」 |
+| `items` | JSON 数组或 `el.items = [...]`；字段 `name` `distance` `price` `image` `favorited` |
+| `asset-base` | 素材目录 |
+
+事件：`poi-more`、`poi-select`（`{ index, item }`）、`poi-favorite`（`{ index, item, favorited }`，组件内已切换状态）。排名序号按顺序自动生成 01、02…
+
+素材（`assets/poi/`，@3x PNG）：
+
+| 文件名 | Figma 节点 | 尺寸 |
+|---|---|---|
+| `poi-watermark.png` | `853:4827` Group 18 | 73×70 |
+| `saojiebang-logo.png` | `853:4834` image 21 | 34×12 |
+| `icon-chevron-right-muted.png` | `853:4838` | 16×18 |
+| `rank-badge-1.png` | `853:4845` | 29×29 |
+| `rank-badge-2.png` | `853:4860` | 29×29 |
+| `icon-star-outline.png` | `853:4854` | 26×25 |
+| `icon-star-filled.png` | 收藏态（Figma 中未见） | 26×25 |
+| `sample-poi-1.png` / `sample-poi-2.png` | `853:4844` / `853:4859`（仅预览用） | 50×50 |
