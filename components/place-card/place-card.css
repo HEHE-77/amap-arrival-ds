@@ -1,9 +1,16 @@
-/* 到达地点卡片 · Figma 853:5068 及实例 853:6420（饭店 / 景点 / 上班）
+/* 到达地点卡片 · Figma 853:5068 及实例 853:6420（饭店 / 景点 / 上班）、858:6486（单 POI 宽版）
  * 依赖 tokens/tokens.css、components/primitives/primitives.css
  */
+amap-place-card, amap-restaurant-card {
+  display: block;
+  width: var(--place-card-width, 301px);
+  max-width: 100%;
+}
+/* 单 POI 导航到达（Figma 858:6486）：宽 365，按钮 167 / 171 */
+amap-place-card[layout="single"], amap-restaurant-card[layout="single"] { --place-card-width: 365px; }
+
 .amap-place {
   /* ── Component tokens ── */
-  --place-width: 301px;
   --place-radius: var(--ds-radius-16);
   --place-border-width: 0.6px;
   --place-pad: var(--ds-space-8);
@@ -20,8 +27,7 @@
 
   position: relative;
   box-sizing: border-box;
-  width: var(--place-width);
-  max-width: 100%;
+  width: 100%; /* 宽度由宿主决定：默认 301，layout="single" 为 365 */
   display: flex;
   flex-direction: column;
   gap: var(--place-gap);

@@ -127,7 +127,7 @@ assets/      从 Figma 导出的素材
 
 箭头用全局 `icon-chevron-right.svg`；星标与水印内联在组件中。收藏态填充 `--ds-color-favorite`（暂定 `#FFB300`）。
 
-### 3. 到达地点卡片（Figma `853:5068`，实例 `853:6420`）
+### 3. 到达地点卡片（Figma `853:5068`，实例 `853:6420`，单 POI `858:6486`）
 
 `<amap-place-card scene>`，三种场景共用一个组件；`<amap-restaurant-card>` 保留为别名（等同 `scene="restaurant"`）。
 
@@ -136,6 +136,13 @@ assets/      从 Figma 导出的素材
 | 饭店到达 | `restaurant`（默认） | 热评、多条团购、看团购 / 查看路线 | 370 |
 | 景点到达 | `attraction` | 灰色信息标签、门票（票 / 省 N 元 / 起）、订门票 / 查看路线 | 370 |
 | 上班到达 | `commute` | 收录年限、单条团购 + 查看更多、一键下单卡片 | 390 |
+
+| 布局 | `layout` | 宽 | 用途 |
+|---|---|---|---|
+| 默认 | — | 301 | 排行榜等多卡并列 |
+| 单 POI | `single` | 365 | 单 POI 导航到达（Figma `858:6486`），通常不传 `rank`，次按钮如「联系商家」 |
+
+卡片宽度跟随宿主，也可直接设置 CSS 变量 `--place-card-width`。
 
 ```html
 <link rel="stylesheet" href="components/place-card/place-card.css">
@@ -152,6 +159,7 @@ assets/      从 Figma 导出的素材
 | 属性 | 说明 |
 |---|---|
 | `scene` | `restaurant` / `attraction` / `commute`，决定默认按钮文案与间距 |
+| `layout` | 不传为 301 宽；`single` 为 365 宽 |
 | `rank` | 排名 → 飘带，1 金 / 2 银 / 3 铜（第 4 名起暂用铜） |
 | `name` / `distance` | 店名（超长省略）/ 距离 |
 | `score` / `score-label` | 评分徽标 |
@@ -164,7 +172,7 @@ assets/      从 Figma 导出的素材
 | `primary-label` / `secondary-label` | 底部按钮，默认 看团购（景点：订门票）/ 查看路线 |
 | `order` | JSON `{ image, title, tag, spec, note, price, actionLabel, swapLabel }`；有它时替代底部按钮 |
 
-事件：`card-primary`、`card-route`、`card-review`、`card-deal`（`{ index, deal }`）、`card-more`、`card-order-buy`、`card-order-swap`。
+事件：`card-primary` / `card-secondary`（`{ label }`，次按钮可能是「查看路线」或「联系商家」）、`card-review`、`card-deal`（`{ index, deal }`）、`card-more`、`card-order-buy`、`card-order-swap`。
 
 素材（`assets/restaurant/`，SVG 由 Figma 插件 API 直接导出；飘带与麦穗改为组件内联 SVG，颜色走 `--ds-rank-{gold|silver|bronze}-*`）：
 
@@ -173,4 +181,4 @@ assets/      从 Figma 导出的素材
 | `score-glow.svg` | `765:3889` Ellipse 11 | 26×10 |
 | `icon-fire.svg` | `853:5096` ic:round-whatshot | 16×16 |
 | `icon-star-white.svg` | `853:5072` Star 3 | 15×14 |
-| `samples/*.jpg` | 主图 284×156 与一键下单商品图 48×48，仅预览用（按像素比对 Figma 对应到卡片；huda-fanguan 为 1x，其余 @3x） | — |
+| `samples/*.jpg` | 主图 284×156 与一键下单商品图 48×48，仅预览用（按像素比对 Figma 对应到卡片；huda-fanguan 与 huda-fanguan-wide 为 1x，其余 @3x） | — |

@@ -8,6 +8,11 @@
  *   attraction  景点到达：灰色信息标签、门票、订门票 / 查看路线
  *   commute     上班到达：收录年限标签、单条团购 + 查看更多、一键下单卡片
  *
+ * 布局 layout
+ *   （默认）   宽 301，排行榜等多卡场景
+ *   single     宽 365，单 POI 导航到达（Figma 858:6486），通常不传 rank
+ *   也可直接设置 CSS 变量 --place-card-width
+ *
  * 通用属性
  *   rank            排名 → TOP 飘带（1 金 / 2 银 / 3 铜）；不传不显示
  *   name / distance 店名（超长省略）/ 距离
@@ -21,13 +26,13 @@
  *   deals           JSON 数组 [{ type: '团'|'券'|'票', price, discount, title }]
  *   deal-more       第一条团购右侧入口文案，如「查看更多」
  *   image / saves / image-index   主图 / 收藏数 / 页码
- *   primary-label / secondary-label  底部按钮；默认 看团购 | 订门票（景点）/ 查看路线
+ *   primary-label / secondary-label  底部按钮；默认 看团购 | 订门票（景点）/ 查看路线（单 POI 稿中为「联系商家」）
  *   order           JSON，一键下单卡片 { image, title, tag, spec, note, price, actionLabel, swapLabel }；
  *                   有 order 时替代底部按钮
  *   asset-base      素材目录（子组件自动继承）
  *
  * 事件（bubbles + composed）
- *   card-primary / card-route    底部主 / 次按钮
+ *   card-primary / card-secondary → { label }   底部主 / 次按钮
  *   card-review                  热评条
  *   card-deal → { index, deal }  某条团购
  *   card-more                    查看更多
@@ -44,7 +49,7 @@
   class AmapPlaceCard extends HTMLElement {
     static get observedAttributes() {
       return ['scene', 'rank', 'name', 'distance', 'score', 'score-label', 'details', 'ranking', 'info-tag', 'tenure', 'status',
-        'review', 'review-count', 'deals', 'deal-more', 'image', 'saves', 'image-index', 'primary-label', 'secondary-label', 'order', 'asset-base'];
+        'review', 'review-count', 'deals', 'deal-more', 'image', 'saves', 'image-index', 'primary-label', 'secondary-label', 'order', 'layout', 'asset-base'];
     }
     get defaultScene() { return 'restaurant'; }
     connectedCallback() { this.render(); }
@@ -111,8 +116,8 @@
 
       const fire = (type, detail) => this.dispatchEvent(new CustomEvent(type, { bubbles: true, composed: true, detail }));
       const on = (sel, ev, fn) => this.querySelector(sel)?.addEventListener(ev, fn);
-      on('.amap-place__primary', 'click', () => fire('card-primary'));
-      on('.amap-place__secondary', 'click', () => fire('card-route'));
+      on('.amap-place__primary', 'click', () => fire('card-primary', { label: a('primary-label', PRIMARY_DEFAULT[scene]) }));
+      on('.amap-place__secondary', 'click', () => fire('card-secondary', { label: a('secondary-label', '查看路线') }));
       on('.amap-place__review', 'click', () => fire('card-review'));
       on('.amap-place__more', 'click', () => fire('card-more'));
       on('.amap-place__order', 'order-buy', (e) => { e.stopPropagation(); fire('card-order-buy'); });
