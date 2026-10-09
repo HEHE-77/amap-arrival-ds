@@ -30,36 +30,37 @@
   <script src="../components/primitives/primitives.js"></script>
   <script src="../components/poi-card/poi-card.js"></script>
   <script>
-    const IMG1 = '../assets/poi/sample-poi-1.png', IMG2 = '../assets/poi/sample-poi-2.png';
-    // 内容逐字取自 Figma 各实例；仅 orange 卡有店铺图素材，其余显示占位底色
+    const IMG = (n) => `../assets/poi/samples/${n}.png`;
+    const IMG1 = IMG('laobai-hulatang'), IMG2 = IMG('zhubashi-zenggao');
+    // 内容逐字取自 Figma 各实例；店铺图按像素比对 Figma 缩略图对应
     const CARDS = [
       { node: '853:4824', theme: 'orange', heading: '藏在街巷的烟火气', subtitle: '精选 13 个热门店铺', items: [
         { name: '老白家肉丸胡辣汤', distance: '距您 250 米', details: ['人均 ¥18'], image: IMG1 },
         { name: '竹笆市甑糕', distance: '距您 780 米', details: ['人均 ¥15'], image: IMG2 }] },
       { node: '853:4877', theme: 'blue', heading: '臻选好店品质生活', subtitle: '精选 8 个热门店铺', items: [
-        { name: '隐庐·会席料理', distance: '距您 320 米', details: ['人均 ¥328', '4.9分'] },
-        { name: '翠园·粤式茶餐厅', distance: '距您 485 米', details: ['人均 ¥168', '4.8分'] }] },
+        { name: '隐庐·会席料理', distance: '距您 320 米', details: ['人均 ¥328', '4.9分'], image: IMG('yinlu-kaiseki') },
+        { name: '翠园·粤式茶餐厅', distance: '距您 485 米', details: ['人均 ¥168', '4.8分'], image: IMG('cuiyuan-dimsum') }] },
       { node: '853:4939', theme: 'green', heading: '值得专程去吃一趟', subtitle: '精选 10 个热门店铺', items: [
-        { name: '建国路油茶麻花', distance: '距您 60 米', details: ['现炸'] },
-        { name: '老焦熏肉大饼', distance: '距您 160 米', details: ['现烤'] }] },
+        { name: '建国路油茶麻花', distance: '距您 60 米', details: ['现炸'], image: IMG('youcha-mahua') },
+        { name: '老焦熏肉大饼', distance: '距您 160 米', details: ['现烤'], image: IMG('laojiao-dabing') }] },
       { node: '853:4472', theme: 'indigo', heading: '舒适好住品质之选', subtitle: '精选10家热门酒店', items: [
-        { name: '亚朵酒店 (朱雀大街店)', distance: '距您 980 米', details: ['4.9分'] },
-        { name: '钟楼CitiGO欢阁 (钟楼店)', distance: '距您 740 米', details: ['4.8分'] }] },
+        { name: '亚朵酒店 (朱雀大街店)', distance: '距您 980 米', details: ['4.9分'], image: IMG('atour-hotel') },
+        { name: '钟楼CitiGO欢阁 (钟楼店)', distance: '距您 740 米', details: ['4.8分'], image: IMG('citigo-hotel') }] },
       { node: '853:4531', theme: 'pink', heading: '本地人都在吃什么', subtitle: '精选10个热门店铺', items: [
-        { name: '洒金桥菜市', distance: '距您 476 米', details: ['游客少'] },
-        { name: '德福巷咖啡街', distance: '距您 508 米', details: ['坐得住'] }] },
+        { name: '洒金桥菜市', distance: '距您 476 米', details: ['游客少'], image: IMG('sajinqiao-market') },
+        { name: '德福巷咖啡街', distance: '距您 508 米', details: ['坐得住'], image: IMG('defuxiang-cafe') }] },
       { node: '853:4592', theme: 'amber', heading: '茶歇时间到', subtitle: '精选13家人气饮品店', items: [
-        { name: '% Arabica咖啡', distance: '距您 168 米', details: ['人均 ¥38'] },
-        { name: '喜茶·城市限定店', distance: '距您 98 米', details: ['可自取'] }] },
+        { name: '% Arabica咖啡', distance: '距您 168 米', details: ['人均 ¥38'], image: IMG('arabica') },
+        { name: '喜茶·城市限定店', distance: '距您 98 米', details: ['可自取'], image: IMG('heytea') }] },
       { node: '853:4648', theme: 'purple', heading: '疲惫一扫轻松享受', subtitle: '精选10家热门店铺', items: [
-        { name: '松筋堂 (雁塔南路店)', distance: '距您 742 米', details: ['团购 ¥38起'] },
-        { name: '筋膜实验室', distance: '距您 516 米', details: ['无需预约'] }] },
+        { name: '松筋堂 (雁塔南路店)', distance: '距您 742 米', details: ['团购 ¥38起'], image: IMG('songjintang') },
+        { name: '筋膜实验室', distance: '距您 516 米', details: ['无需预约'], image: IMG('jinmo-lab') }] },
       { node: '853:4703', theme: 'red', heading: '吃腻了换换口味', subtitle: '精选10家热门店铺', items: [
-        { name: '巷子里的面', distance: '距您 653 米', details: ['4.9分'] },
-        { name: '松川唐风料理', distance: '距您 451 米', details: ['4.8分'] }] },
+        { name: '巷子里的面', distance: '距您 653 米', details: ['4.9分'], image: IMG('xiangzi-noodle') },
+        { name: '松川唐风料理', distance: '距您 451 米', details: ['4.8分'], image: IMG('songchuan-tang') }] },
       { node: '853:4765', theme: 'lime', heading: '一杯慢饮享悠闲', subtitle: '精选13家人气饮品店', items: [
-        { name: 'Manner 咖啡', distance: '距您 56 米', details: ['人均 ¥18'] },
-        { name: '蓝瓶咖啡 (高新旗舰店)', distance: '距您 32 米', details: ['人均 ¥22'] }] },
+        { name: 'Manner 咖啡', distance: '距您 56 米', details: ['人均 ¥18'], image: IMG('manner') },
+        { name: '蓝瓶咖啡 (高新旗舰店)', distance: '距您 32 米', details: ['人均 ¥22'], image: IMG('blue-bottle') }] },
     ];
 
     const grid = document.getElementById('grid');

@@ -112,6 +112,6 @@ assets/      从 Figma 导出的素材
 |---|---|---|
 | `saojiebang-logo.png` | `853:4834` image 21（Figma 中为位图，按 @3x 渲染导出） | 34×12 |
 | `rank-badge.svg` | `853:4845` / `853:4860`（两者相同，各名次共用） | 29×29 |
-| `sample-poi-1.png` / `sample-poi-2.png` | `853:4844` / `853:4859`（仅预览用） | 50×50 @3x |
+| `samples/*.png` | 18 张店铺图，仅预览用（按像素比对 Figma 缩略图对应到店铺） | 50×50 @3x |
 
 箭头用全局 `icon-chevron-right.svg`；星标与水印内联在组件中。收藏态填充 `--ds-color-favorite`（暂定 `#FFB300`）。
