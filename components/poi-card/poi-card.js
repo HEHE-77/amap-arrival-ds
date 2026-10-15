@@ -1,9 +1,12 @@
 /**
- * <amap-poi-card> · POI 榜单卡片 secondary（Figma 853:4824，实例见 853:4996）
+ * <amap-poi-card> · 扫街榜分榜卡片（Figma 970:2596「扫街榜分榜卡片」）
  * 依赖 components/primitives/primitives.js（需先加载）
  *
  * 属性
- *   theme        主题色：orange（默认）| amber | red | pink | purple | indigo | blue | green | lime
+ *   theme        主题背景（Figma 9 个主题，只影响卡头底色 / 徽标 / 高光，即 rank-theme/* 变量）：
+ *                  smoky 烟火小店（默认）| quality 品质甄选 | destination 专程前往 | hotel 酒店 | local 本地人爱去
+ *                  | tea 下午茶 | relax 休闲按摩 | new 近期新开 | slow 慢饮时光
+ *                也可写中文主题名；旧色名 orange | blue | green | indigo | pink | amber | purple | red | lime 继续兼容
  *   heading      榜单标题，超长省略（不压水印）
  *   subtitle     扫街榜标签文案，如「精选10家热门酒店」；不传只显示扫街榜标识
  *   count        （兼容）不传 subtitle 时生成「精选 N 个热门店铺」
@@ -26,7 +29,15 @@
  * 组成：amap-ranking-tag · amap-link · amap-rank-thumb · amap-meta-line · amap-fav-button
  */
 (() => {
-  const THEMES = ['orange', 'amber', 'red', 'pink', 'purple', 'indigo', 'blue', 'green', 'lime'];
+  // Figma「扫街榜分榜卡片/主题背景」9 个主题；旧色名与中文名映射到同一主题
+  const THEMES = ['smoky', 'quality', 'destination', 'hotel', 'local', 'tea', 'relax', 'new', 'slow'];
+  const THEME_ALIAS = {
+    orange: 'smoky', blue: 'quality', green: 'destination', indigo: 'hotel', pink: 'local',
+    amber: 'tea', purple: 'relax', red: 'new', lime: 'slow',
+    烟火小店: 'smoky', 品质甄选: 'quality', 专程前往: 'destination', 酒店: 'hotel', 本地人爱去: 'local',
+    下午茶: 'tea', 休闲按摩: 'relax', 近期新开: 'new', 慢饮时光: 'slow',
+  };
+  const themeOf = (v) => (THEMES.includes(v) ? v : THEME_ALIAS[v] ?? 'smoky');
   const esc = (s) =>
     String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const has = (v) => v != null && v !== '';
@@ -94,7 +105,7 @@
     }
 
     render() {
-      const theme = THEMES.includes(this.attr('theme')) ? this.attr('theme') : 'orange';
+      const theme = themeOf(this.attr('theme'));
       const heading = this.attr('heading');
       const count = this.getAttribute('count');
       const subtitle = this.getAttribute('subtitle') ?? (has(count) ? `精选 ${count} 个热门店铺` : '');

@@ -1,33 +1,21 @@
-/* POI 榜单卡片 · secondary · Figma 853:4824 及其实例 853:4996
- * 依赖 tokens/tokens.css、components/primitives/primitives.css
+/* 扫街榜分榜卡片 · Figma 970:2596（主题背景 970:2595，POI 行 942:812）
+ * 只引用新版 token（tokens/ds-tokens.css）；依赖 components/primitives/primitives.css
  */
 .amap-poi {
   /* ── Component tokens ── */
   --poi-width: 301px;
-  --poi-radius: var(--ds-radius-16);
-  --poi-border-width: 0.6px;
-  --poi-pad-top: var(--ds-space-14);
-  --poi-pad-x: var(--ds-space-8);
-  --poi-pad-bottom: var(--ds-space-8);
-  --poi-gap-head-list: var(--ds-space-10);
-  --poi-bg-fade-stop: 51.311%;
-  --poi-head-inset-start: 6.8px;
-  --poi-gap-title-sub: var(--ds-space-4);
+  --poi-wash-h: 199px;        /* 主题背景 Header wash 高 199，渐隐到 51% */
+  --poi-wash-fade: 51%;
   --poi-watermark-w: 73px;
-  --poi-watermark-h: 61px;   /* 已按卡片上沿裁切 */
+  --poi-watermark-h: 61px;    /* 已按卡片上沿裁切（素材不变） */
   --poi-watermark-top: -14px;
   --poi-watermark-end: 10px;
-  --poi-list-pad: var(--ds-space-8);
-  --poi-list-gap: var(--ds-space-8);
-  --poi-list-radius: var(--ds-radius-8);
   --poi-row-h: 50px;
-  --poi-row-gap: var(--ds-space-10);
-  --poi-info-gap: var(--ds-space-3);
 
-  /* ── 主题（默认 orange，即原始稿 853:4824）── */
-  --poi-tint: var(--ds-theme-orange-surface);
-  --poi-wm-shape: var(--ds-theme-orange-accent);
-  --poi-wm-arrow: var(--ds-theme-orange-accent-soft);
+  /* ── 主题（默认 烟火小店）：rank-theme/{theme}/wash · badge · glow ── */
+  --poi-tint: var(--color-rank-theme-smoky-wash);
+  --poi-wm-shape: var(--color-rank-theme-smoky-badge);
+  --poi-wm-arrow: var(--color-rank-theme-smoky-glow);
 
   position: relative;
   box-sizing: border-box;
@@ -36,44 +24,46 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: var(--poi-gap-head-list);
-  padding: var(--poi-pad-top) var(--poi-pad-x) var(--poi-pad-bottom);
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--space-md) var(--space-md);
   overflow: hidden;
-  border: var(--poi-border-width) solid var(--ds-color-border-card);
-  border-radius: var(--poi-radius);
-  background: linear-gradient(to bottom, var(--poi-tint), var(--ds-color-surface-card) var(--poi-bg-fade-stop));
-  box-shadow: var(--ds-shadow-card);
-  font-family: var(--ds-font-family-base);
+  border: var(--stroke-card) solid var(--color-border-default);
+  border-radius: var(--radius-container);
+  background:
+    linear-gradient(to bottom, var(--poi-tint), transparent calc(var(--poi-wash-h) * 0.51)) no-repeat top / 100% var(--poi-wash-h),
+    var(--color-surface-default);
+  box-shadow: var(--shadow-card);  /* 扫街榜卡片：描边之外额外加投影 */
+  font-family: var(--font-family-zh);
   font-style: normal;
 }
 
-.amap-poi[data-theme="orange"] { --poi-tint: var(--ds-theme-orange-surface); --poi-wm-shape: var(--ds-theme-orange-accent); --poi-wm-arrow: var(--ds-theme-orange-accent-soft); }
-.amap-poi[data-theme="amber"]  { --poi-tint: var(--ds-theme-amber-surface);  --poi-wm-shape: var(--ds-theme-amber-accent);  --poi-wm-arrow: var(--ds-theme-amber-accent-soft); }
-.amap-poi[data-theme="red"]    { --poi-tint: var(--ds-theme-red-surface);    --poi-wm-shape: var(--ds-theme-red-accent);    --poi-wm-arrow: var(--ds-theme-red-accent-soft); }
-.amap-poi[data-theme="pink"]   { --poi-tint: var(--ds-theme-pink-surface);   --poi-wm-shape: var(--ds-theme-pink-accent);   --poi-wm-arrow: var(--ds-theme-pink-accent-soft); }
-.amap-poi[data-theme="purple"] { --poi-tint: var(--ds-theme-purple-surface); --poi-wm-shape: var(--ds-theme-purple-accent); --poi-wm-arrow: var(--ds-theme-purple-accent-soft); }
-.amap-poi[data-theme="indigo"] { --poi-tint: var(--ds-theme-indigo-surface); --poi-wm-shape: var(--ds-theme-indigo-accent); --poi-wm-arrow: var(--ds-theme-indigo-accent-soft); }
-.amap-poi[data-theme="blue"]   { --poi-tint: var(--ds-theme-blue-surface);   --poi-wm-shape: var(--ds-theme-blue-accent);   --poi-wm-arrow: var(--ds-theme-blue-accent-soft); }
-.amap-poi[data-theme="green"]  { --poi-tint: var(--ds-theme-green-surface);  --poi-wm-shape: var(--ds-theme-green-accent);  --poi-wm-arrow: var(--ds-theme-green-accent-soft); }
-.amap-poi[data-theme="lime"]   { --poi-tint: var(--ds-theme-lime-surface);   --poi-wm-shape: var(--ds-theme-lime-accent);   --poi-wm-arrow: var(--ds-theme-lime-accent-soft); }
+.amap-poi[data-theme="smoky"] { --poi-tint: var(--color-rank-theme-smoky-wash); --poi-wm-shape: var(--color-rank-theme-smoky-badge); --poi-wm-arrow: var(--color-rank-theme-smoky-glow); }  /* 旧名 orange */
+.amap-poi[data-theme="quality"] { --poi-tint: var(--color-rank-theme-quality-wash); --poi-wm-shape: var(--color-rank-theme-quality-badge); --poi-wm-arrow: var(--color-rank-theme-quality-glow); }  /* 旧名 blue */
+.amap-poi[data-theme="destination"] { --poi-tint: var(--color-rank-theme-destination-wash); --poi-wm-shape: var(--color-rank-theme-destination-badge); --poi-wm-arrow: var(--color-rank-theme-destination-glow); }  /* 旧名 green */
+.amap-poi[data-theme="hotel"] { --poi-tint: var(--color-rank-theme-hotel-wash); --poi-wm-shape: var(--color-rank-theme-hotel-badge); --poi-wm-arrow: var(--color-rank-theme-hotel-glow); }  /* 旧名 indigo */
+.amap-poi[data-theme="local"] { --poi-tint: var(--color-rank-theme-local-wash); --poi-wm-shape: var(--color-rank-theme-local-badge); --poi-wm-arrow: var(--color-rank-theme-local-glow); }  /* 旧名 pink */
+.amap-poi[data-theme="tea"] { --poi-tint: var(--color-rank-theme-tea-wash); --poi-wm-shape: var(--color-rank-theme-tea-badge); --poi-wm-arrow: var(--color-rank-theme-tea-glow); }  /* 旧名 amber */
+.amap-poi[data-theme="relax"] { --poi-tint: var(--color-rank-theme-relax-wash); --poi-wm-shape: var(--color-rank-theme-relax-badge); --poi-wm-arrow: var(--color-rank-theme-relax-glow); }  /* 旧名 purple */
+.amap-poi[data-theme="new"] { --poi-tint: var(--color-rank-theme-new-wash); --poi-wm-shape: var(--color-rank-theme-new-badge); --poi-wm-arrow: var(--color-rank-theme-new-glow); }  /* 旧名 red */
+.amap-poi[data-theme="slow"] { --poi-tint: var(--color-rank-theme-slow-wash); --poi-wm-shape: var(--color-rank-theme-slow-badge); --poi-wm-arrow: var(--color-rank-theme-slow-glow); }  /* 旧名 lime */
 
 /* ── 标题区 ── */
 .amap-poi__head {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--poi-gap-title-sub);
-  margin-inline-start: var(--poi-head-inset-start);
+  gap: var(--space-xs);
+  padding-inline: var(--space-md);
 }
 .amap-poi__title {
   position: relative;
   z-index: 1;
   margin: 0;
   max-width: calc(100% - var(--poi-watermark-w) - var(--poi-watermark-end));
-  font-size: var(--ds-type-title-m-size);
-  font-weight: var(--ds-type-title-m-weight);
-  line-height: var(--ds-type-title-m-line);
-  color: var(--ds-color-text-primary);
+  font-size: var(--font-size-heading);  /* 中文/Heading */
+  font-weight: var(--font-weight-heading);
+  line-height: var(--line-height-heading);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -94,9 +84,11 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: var(--ds-space-8);
-  height: var(--ds-type-body-s-line);
+  gap: var(--space-md);
+  height: var(--line-height-body);
 }
+/* 分榜卡片的扫街榜标签右侧留 space/xs（Figma 970:2607） */
+.amap-poi__sub .ds-ranking-tag { padding-inline-end: var(--space-xs); }
 .amap-poi__sub amap-ranking-tag { flex: 0 1 auto; align-self: flex-end; }
 .amap-poi__sub amap-link { flex: none; }
 
@@ -104,16 +96,16 @@
 .amap-poi__list {
   display: flex;
   flex-direction: column;
-  gap: var(--poi-list-gap);
+  gap: var(--space-md);
   margin: 0;
-  padding: var(--poi-list-pad);
+  padding: var(--space-md);
   list-style: none;
-  border-radius: var(--poi-list-radius);
+  border-radius: var(--radius-media);
 }
 .amap-poi__item {
   display: flex;
   align-items: center;
-  gap: var(--poi-row-gap);
+  gap: var(--space-md);
   height: var(--poi-row-h);
 }
 .amap-poi__row {
@@ -121,32 +113,40 @@
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: var(--poi-row-gap);
+  gap: var(--space-md);
   margin: 0; padding: 0; border: 0; background: none;
   font: inherit; color: inherit; text-align: left;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
 .amap-poi__row:active { opacity: 0.7; }
-.amap-poi__row:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; border-radius: 4px; }
+.amap-poi__row:focus-visible { outline: 2px solid var(--color-focus-ring-strong); outline-offset: 2px; border-radius: var(--radius-control); }
 .amap-poi__row amap-rank-thumb { flex: none; display: flex; }
 .amap-poi__item amap-fav-button { flex: none; display: flex; }
 
 .amap-poi__info {
   display: flex;
   flex-direction: column;
-  gap: var(--poi-info-gap);
+  gap: var(--space-2xs);
   /* 占满到星标前的剩余宽度（Figma 中三段说明会溢出名义宽 157 到 171） */
   min-width: 0;
   flex: 1 1 0;
 }
 .amap-poi__name {
-  font-size: var(--ds-type-subtitle-m-size);
-  font-weight: var(--ds-type-subtitle-m-weight);
-  line-height: var(--ds-type-subtitle-m-line);
-  color: var(--ds-color-text-primary);
+  font-size: var(--font-size-subheading);  /* 中文/Subheading */
+  font-weight: var(--font-weight-subheading);
+  line-height: var(--line-height-subheading);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .amap-poi__info amap-meta-line { display: flex; }
+/* 说明行：距离 text/ranking + 「|」与补充信息 text/secondary，段距 space/xs，中文/Body */
+.amap-poi__info .ds-meta-line {
+  --meta-gap: var(--space-xs);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  color: var(--color-text-secondary);
+}
+.amap-poi__info .ds-meta-line__item.is-accent { color: var(--color-text-ranking); }

@@ -9,7 +9,7 @@
 >
 > 新版 token：`tokens/ds-tokens.css`，由 `python3 tokens/build_tokens.py` 从 `DESIGN.md` 生成，变量名与 Figma 变量的 code syntax 一致（如 `--color-text-primary`、`--space-md`），已通过 `tokens.css` 顶部的 `@import` 自动加载。
 >
-> 迁移进度：✅ 扫街榜 POI 卡片（`place-card`）及其用到的基础组件（评分、营业状态、优惠标签、热评、一键下单、图片胶囊、主 / 次按钮、扫街榜标签、TOP 角标）。其余组件仍引用旧的 `--ds-*` 变量，逐个对齐中。
+> 迁移进度：✅ 扫街榜分榜卡片（`poi-card`）、扫街榜 POI 卡片（`place-card`）及其用到的基础组件（排名缩略图、收藏星标、评分、营业状态、优惠标签、热评、一键下单、图片胶囊、主 / 次按钮、扫街榜标签、TOP 角标）。其余组件仍引用旧的 `--ds-*` 变量，逐个对齐中。
 
 逐个组件搭建。技术栈：原生 HTML / CSS 变量 / Web Component，无构建步骤，任何框架都能直接引用。
 
@@ -115,12 +115,14 @@ assets/      从 Figma 导出的素材
 | `icon-chevron-right.svg` | 全局统一箭头，所有组件共用 | 16×18 |
 
 
-### 2. POI 榜单卡片（Figma `853:4824` poi/secondary，实例 `853:4996`）
+### 2. 扫街榜分榜卡片（Figma `970:2596`「扫街榜分榜卡片」，主题背景 `970:2595`，POI 行 `942:812`）
+
+> 2026-10-15 已按新版 Figma 组件对齐 token（素材不变）。
 
 由 `amap-ranking-tag` · `amap-link` · `amap-rank-thumb` · `amap-meta-line` · `amap-fav-button` 组成。
 
 ```html
-<amap-poi-card theme="blue" heading="臻选好店品质生活" subtitle="精选 8 个热门店铺"></amap-poi-card>
+<amap-poi-card theme="quality" heading="臻选好店品质生活" subtitle="精选 8 个热门店铺"></amap-poi-card>
 <script>
   document.querySelector('amap-poi-card').items = [
     { name: '隐庐·会席料理', distance: '距您 320 米', details: ['人均 ¥328', '4.9分'], image: '…' },
@@ -131,16 +133,16 @@ assets/      从 Figma 导出的素材
 
 | 属性 | 说明 |
 |---|---|
-| `theme` | `orange`（默认）`amber` `red` `pink` `purple` `indigo` `blue` `green` `lime` |
-| `heading` | 榜单标题，超长省略（不压水印） |
-| `subtitle` | 扫街榜标签文案，如「精选10家热门酒店」 |
+| `theme` | Figma「主题背景」9 选 1：`smoky` 烟火小店（默认）`quality` 品质甄选 `destination` 专程前往 `hotel` 酒店 `local` 本地人爱去 `tea` 下午茶 `relax` 休闲按摩 `new` 近期新开 `slow` 慢饮时光；也可写中文名；旧色名 `orange` `blue` `green` `indigo` `pink` `amber` `purple` `red` `lime` 依次对应，继续兼容 |
+| `heading` | 标题（Figma 属性「标题」），超长省略（不压水印） |
+| `subtitle` | 副标题（Figma 属性「副标题」）= 扫街榜标签文案，如「精选10家热门酒店」 |
 | `more-label` | 默认「完整榜单」 |
 | `items` | JSON 数组或 `el.items = [...]`；字段 `name` `distance` `details[]` `image` `favorited` |
 | `asset-base` | 素材目录 |
 
 事件：`poi-more`、`poi-select`（`{ index, item }`）、`poi-favorite`（`{ index, item, favorited }`）。排名自动编号 01、02…
 
-主题色读自 Figma 各实例填充，每套 3 个 token：`--ds-theme-{name}-surface`（卡片顶色）/ `-accent`（水印六边形）/ `-accent-soft`（水印箭头）。水印为内联 SVG（路径取自 `853:4827`），颜色随主题切换。
+主题只换 3 个 token：`--color-rank-theme-{theme}-wash`（卡头底色，渐隐到 199 高的 51%）/ `-badge`（水印六边形）/ `-glow`（水印箭头高光），支持 `data-theme="dark"`。水印为内联 SVG（路径取自 `853:4827`），颜色随主题切换。
 
 素材（`assets/poi/`）：
 
@@ -150,7 +152,7 @@ assets/      从 Figma 导出的素材
 | `rank-badge.svg` | `853:4845` / `853:4860`（两者相同，各名次共用） | 29×29 |
 | `samples/*.png` | 18 张店铺图，仅预览用（按像素比对 Figma 缩略图对应到店铺） | 50×50 @3x |
 
-箭头用全局 `icon-chevron-right.svg`；星标与水印内联在组件中。收藏态填充 `--ds-color-favorite`（暂定 `#FFB300`）。
+箭头用全局 `icon-chevron-right.svg`；星标与水印内联在组件中。未收藏描边 `--color-icon-secondary`；收藏态填充 `--ds-color-favorite`（暂定 `#FFB300`，Figma 暂无对应变量）。
 
 ### 3. 扫街榜 POI 卡片（Figma `956:2869`「扫街榜POI卡片」，场景实例 `949:2281`，单 POI `858:6486`）
 
