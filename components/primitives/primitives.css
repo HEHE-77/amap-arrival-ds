@@ -74,28 +74,29 @@ amap-tag, amap-quick-order {
 .ds-ranking-tag.is-on-photo { background: var(--ds-color-surface-ranking-tag-on-photo); }
 .ds-ranking-tag.is-on-photo .ds-ranking-tag__text { color: var(--ds-color-text-on-photo); }
 
-/* ── amap-rank-thumb：图片 + 排名角标 ── */
+/* ── amap-rank-thumb：缩略图 + 排名（Figma 942:812「扫街榜分榜/POI 行」Thumbnail） ── */
 .ds-rank-thumb {
   --thumb-size: 50px;
-  --thumb-radius: var(--ds-radius-8);
+  --thumb-radius: var(--radius-media);
   position: relative;
   display: block;
   width: var(--thumb-size);
   height: var(--thumb-size);
   overflow: hidden;
   border-radius: var(--thumb-radius);
-  background: var(--ds-color-surface-media-placeholder);
+  background: var(--color-surface-sunken);
 }
 .ds-rank-thumb__photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.ds-rank-thumb__badge { position: absolute; top: 0; left: 0; width: 29px; height: 29px; }
-.ds-rank-thumb__num {
+.ds-rank-thumb__badge { position: absolute; top: 0; left: 0; width: 29px; height: 29px; }  /* Rank scrim · Gradient/Scrim Image */
+.ds-rank-thumb__num {  /* 数字/Medium */
   position: absolute;
-  top: 0;
+  top: 2px;
   left: 5px;
-  font-size: var(--ds-type-numeral-m-size);
-  font-weight: var(--ds-type-numeral-m-weight);
-  line-height: var(--ds-type-numeral-m-line);
-  color: var(--ds-color-text-on-media);
+  font-family: var(--font-family-numeric);
+  font-size: var(--font-size-numeric-md);
+  font-weight: var(--font-weight-numeric-md);
+  line-height: var(--line-height-numeric-md);
+  color: var(--color-neutral-0);
   font-variant-numeric: tabular-nums;
 }
 
@@ -103,7 +104,7 @@ amap-tag, amap-quick-order {
 .ds-fav {
   --fav-w: 26px;
   --fav-h: 25px;
-  --fav-stroke: var(--ds-color-text-muted);
+  --fav-stroke: var(--color-icon-secondary);  /* Figma Favorite 描边 icon/secondary 1.4 */
   --fav-fill: none;
   --fav-on: var(--ds-color-favorite);
   display: block;
