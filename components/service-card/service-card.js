@@ -1,5 +1,5 @@
 /**
- * <amap-service-card> · 服务卡（Figma 765:5300「停车场」/ 765:5299「加油站提示」中的卡片）
+ * <amap-service-card> · 服务卡（Figma 1006:4526 停车场卡 / 1013:4034 加油站卡）
  * 依赖 components/primitives/primitives.js（amap-meta-line、amap-tag、amap-button variant="tonal"）
  * 通常放在 <amap-section> 中纵向排列（间距 8）
  *
@@ -8,7 +8,7 @@
  *   badge         名称前的小标识文字，如「团」；不传不显示
  *   avatar        左侧 44 圆形头像图（代驾卡，Figma 765:5304）；有头像时名称为 15 号
  *   meta          JSON 数组，「|」串联，如 ["步行 8 分钟", "距终点 450 米"]
- *   tags          JSON 数组 [{ text, tone }]，tone 取 amap-tag 的 outline | danger | deal | neutral …（尺寸 m）
+ *   tags          JSON 数组 [{ text, tone }]：outline 停车类型 | danger 车位紧张 | success 车位充裕 | deal 优惠 | neutral 服务
  *   action-label  右侧浅底按钮文案，如「去停车」「去加油」；不传不显示
  *
  * 事件（bubbles + composed）
