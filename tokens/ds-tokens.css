@@ -1,8 +1,10 @@
 /* 高德到达页设计系统 · 新版 token（2026-10-15）
  * 由 tokens/build_tokens.py 从 docs/design-system/DESIGN.md 生成，请勿手改。
- * 变量名 = Figma 变量 code syntax；Light 写在 :root，Dark 通过 [data-theme="dark"] 启用。
+ * 变量名 = Figma 变量 code syntax；Light 写在 :root，Dark 通过 [data-theme="dark"] 启用；
+ * 容器加 data-theme="light" 可在暗色页面里强制恢复亮色（手机预览固定亮色）。
  */
-:root {
+:root,
+[data-theme="light"] {
   /* ── Palette（原子色，组件不直接引用） ── */
   --color-brand-50: #EBF3FE; --color-brand-100: #D4E6FF; --color-brand-200: #C0DCF9; --color-brand-300: #90C3FA; --color-brand-400: #52A5FC; --color-brand-500: #0980FE; --color-brand-600: #1A67FE; --color-brand-700: #0855A7; --color-brand-800: #0B4078; --color-brand-900: #0B2A4B; --color-brand-950: #09192A;
   --color-commerce-50: #FFF3EB; --color-commerce-100: #FFEBDE; --color-commerce-200: #FFDEC8; --color-commerce-300: #FAAD94; --color-commerce-400: #FF7A3D; --color-commerce-500: #FF4D13; --color-commerce-600: #E13903; --color-commerce-700: #AE3007; --color-commerce-800: #7C260A; --color-commerce-900: #4D1B0B; --color-commerce-950: #2A1109;

@@ -137,10 +137,11 @@ for line in [l for l in lines_root if l.strip().startswith(('--shadow-', '--high
 
 header = '''/* 高德到达页设计系统 · 新版 token（2026-10-15）
  * 由 tokens/build_tokens.py 从 docs/design-system/DESIGN.md 生成，请勿手改。
- * 变量名 = Figma 变量 code syntax；Light 写在 :root，Dark 通过 [data-theme="dark"] 启用。
+ * 变量名 = Figma 变量 code syntax；Light 写在 :root，Dark 通过 [data-theme="dark"] 启用；
+ * 容器加 data-theme="light" 可在暗色页面里强制恢复亮色（手机预览固定亮色）。
  */
 '''
-css = header + ':root {\n' + '\n'.join(lines_root) + '\n}\n\n' \
+css = header + ':root,\n[data-theme="light"] {\n' + '\n'.join(lines_root) + '\n}\n\n' \
     + '/* Dark：暂只支持显式 data-theme="dark"（未迁移组件还不支持暗色，避免页面一半变暗） */\n' \
     + '[data-theme="dark"] {\n' + '\n'.join(lines_dark) + '\n}\n'
 OUT.write_text(css, encoding='utf-8')
