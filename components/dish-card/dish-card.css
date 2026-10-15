@@ -5,7 +5,7 @@ amap-dish-card {
   /* 组件变量，可覆盖 */
   --dish-width: 84px;
   --dish-image-size: 84px;
-  --dish-image-radius: var(--radius-media);
+  --dish-image-radius: var(--radius-container);  /* 按 Figma「图片」外框 radius/container 16（2026-10-15 确认） */
   --dish-gap: var(--space-sm);
   --dish-text-gap: var(--space-xs);
 
