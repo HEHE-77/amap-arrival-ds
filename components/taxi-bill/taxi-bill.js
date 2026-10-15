@@ -58,6 +58,7 @@
               <amap-link class="amap-bill__fee" label="${esc(a('fee-label', '费用说明'))}"></amap-link>
             </div>
           </div>
+          <hr class="amap-bill__divider">
           <div class="amap-bill__bottom">
             <div class="amap-bill__actions">
               <button type="button" class="amap-bill__more" aria-label="更多">${ICONS.more}</button>
