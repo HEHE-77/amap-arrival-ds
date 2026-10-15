@@ -267,15 +267,15 @@ amap-button > .ds-btn { flex: 1 1 auto; }
 .ds-btn__price { font-family: var(--ds-font-family-price); font-size: var(--ds-font-size-16); font-weight: 700; line-height: 1; }
 .ds-btn__currency { font-family: var(--ds-font-family-base); font-size: var(--ds-font-size-12); font-weight: var(--ds-font-weight-semibold); }
 .ds-btn:active { opacity: 0.8; }
-.ds-btn--tonal {
-  height: 34px;
-  padding: 0 12px;
-  border-radius: var(--ds-radius-6);
-  background: var(--ds-color-action-tonal-surface);
-  color: var(--ds-color-action-secondary);
-  font-size: var(--ds-type-button-s-size);
-  font-weight: var(--ds-type-button-s-weight);
-  line-height: var(--ds-type-button-s-line);
+.ds-btn--tonal {  /* 同规格卡片族右侧按钮（Figma 1023:4596）：bg/brand-soft + radius/media + 中文/Subheading · text/accent */
+  height: 36px;
+  padding: 0 var(--space-xl);
+  border-radius: var(--radius-media);
+  background: var(--color-bg-brand-soft);
+  color: var(--color-text-accent);
+  font-size: var(--font-size-subheading);
+  font-weight: var(--font-weight-subheading);
+  line-height: var(--line-height-subheading);
 }
 .ds-btn--pill { border-radius: var(--ds-radius-pill); padding: 0 var(--ds-space-16); }
 

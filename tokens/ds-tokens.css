@@ -60,7 +60,7 @@
   --color-text-ranking-tag: var(--color-ranking-tag-text);
   --color-text-success: var(--color-success-500);
   --color-text-warning: var(--color-warning-700);
-  --color-text-danger: var(--color-danger-700);
+  --color-text-danger: var(--color-danger-500);
   --color-text-info: var(--color-info-700);
   --color-text-medal-gold: var(--color-medal-gold-text);
   --color-text-medal-silver: var(--color-medal-silver-text);

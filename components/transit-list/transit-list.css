@@ -1,38 +1,36 @@
-/* <amap-transit-list> · 末班车列表（Figma 766:8338「末班车提醒」中的卡片）
- * 依赖 tokens/tokens.css
+/* <amap-transit-list> · 末班车列表（Figma 1014:5217「末班出行」行 + 1020:4009 线路标）
+ * 只引用新版 token（tokens/ds-tokens.css）；列表卡沿用同规格卡片族
  */
 amap-transit-list {
-  --tr-pad-y: var(--ds-space-8);
-  --tr-pad-x: var(--ds-space-14);
-  --tr-border: 0.6px;
-  --tr-text-x: 58px;      /* 文字列起点（线路徽标列宽 48 + 间距 10） */
-  --tr-row-pad: 9px;
-  --tr-row-h: 31px;
+  --tr-pad-y: var(--space-md);
+  --tr-pad-x: var(--space-component-card-inset-x);   /* 14 */
+  --tr-icon-w: 48px;     /* 图标位固定 48 宽，无图标也占位 */
+  --tr-row-h: 50px;
 
   display: block;
   width: 100%;
-  font-family: var(--ds-font-family-base);
+  font-family: var(--font-family-zh);
 }
 
 .amap-tr {
   margin: 0;
-  padding: calc(var(--tr-pad-y) + var(--tr-border)) calc(var(--tr-pad-x) + var(--tr-border));
+  padding: var(--tr-pad-y) var(--tr-pad-x);
   list-style: none;
-  border-radius: var(--ds-radius-16);
-  background: var(--ds-color-surface-card-neutral);
-  box-shadow: inset 0 0 0 var(--tr-border) var(--ds-color-border-card);
+  border-radius: var(--radius-container);
+  background: var(--color-surface-card);
+  box-shadow: inset 0 0 0 var(--stroke-card) var(--color-border-default);
 }
-.amap-tr__item + .amap-tr__item { border-top: 1px solid var(--ds-color-divider); }
+/* 第 2 行起显示分隔线：0.6 · border/subtle */
+.amap-tr__item + .amap-tr__item { box-shadow: inset 0 var(--stroke-card) 0 var(--color-border-subtle); }
 
 .amap-tr__row {
   display: grid;
-  grid-template-columns: calc(var(--tr-text-x) - 10px) minmax(0, 1fr) auto;
-  grid-template-rows: var(--tr-row-h);
+  grid-template-columns: var(--tr-icon-w) minmax(0, 1fr) auto;
   align-items: center;
-  column-gap: 10px;
-  height: var(--tr-row-h);           /* 内容高 31，文字列略高于此，居中溢出（同 Figma） */
-  padding: var(--tr-row-pad) 0;
-  box-sizing: content-box;
+  column-gap: var(--space-md);
+  box-sizing: border-box;
+  height: var(--tr-row-h);
+  padding: var(--space-md) 0;
   width: 100%;
   margin: 0;
   border: 0;
@@ -43,41 +41,39 @@ amap-transit-list {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.amap-tr__row:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; border-radius: var(--ds-radius-8); }
+.amap-tr__row:focus-visible { outline: 2px solid var(--color-focus-ring-strong); outline-offset: 2px; border-radius: var(--radius-media); }
 .amap-tr__row:active { opacity: 0.7; }
 
-.amap-tr__badge {   /* 线路徽标，底色随线路 */
+.amap-tr__badge {   /* 线路标：线路色由数据下发；text/inverse · 中文/Caption Strong */
   justify-self: start;
-  display: inline-flex;
-  align-items: center;
-  height: 20px;
-  padding: 0 5px;
-  border-radius: var(--ds-radius-4);
-  background: var(--line-color, var(--ds-color-text-muted));
-  color: var(--ds-white);
-  font-size: 11px;
-  font-weight: var(--ds-font-weight-semibold);
-  line-height: 11px;
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--radius-element);
+  background: var(--line-color, var(--color-text-secondary));
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-caption);
   white-space: nowrap;
 }
 
-.amap-tr__text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.amap-tr__text { display: flex; flex-direction: column; gap: var(--space-2xs); min-width: 0; }
 .amap-tr__title,
 .amap-tr__sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.amap-tr__title {
-  font-size: var(--ds-type-subtitle-m-size);
-  font-weight: var(--ds-type-subtitle-m-weight);
-  line-height: 18.2px;
-  color: var(--ds-color-text-primary);
+.amap-tr__title {  /* 中文/Subheading */
+  font-size: var(--font-size-subheading);
+  font-weight: var(--font-weight-subheading);
+  line-height: var(--line-height-subheading);
+  color: var(--color-text-primary);
 }
-.amap-tr__sub { font-size: var(--ds-type-body-s-size); line-height: 15.6px; color: var(--ds-color-text-muted); }
+.amap-tr__sub { font-size: var(--font-size-body); line-height: var(--line-height-body); color: var(--color-text-secondary); }  /* 中文/Body */
 
-.amap-tr__time { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
-.amap-tr__clock {
-  font-size: var(--ds-type-subtitle-m-size);
-  font-weight: var(--ds-type-subtitle-m-weight);
-  line-height: 17px;
-  color: var(--ds-color-text-primary);
+.amap-tr__time { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-2xs); }
+.amap-tr__clock {  /* 数字/Medium */
+  font-family: var(--font-family-numeric);
+  font-size: var(--font-size-numeric-md);
+  font-weight: var(--font-weight-numeric-md);
+  line-height: var(--line-height-numeric-md);
+  color: var(--color-text-primary);
   font-variant-numeric: tabular-nums;
 }
-.amap-tr__label { font-size: 11px; line-height: 11px; color: var(--ds-color-text-muted); }
+.amap-tr__label { font-size: var(--font-size-body-sm); line-height: var(--line-height-body-sm); color: var(--color-text-secondary); }  /* 中文/Body Small */

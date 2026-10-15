@@ -259,7 +259,7 @@
   class AmapTag extends Base {
     static get observedAttributes() { return ['text', 'tone', 'size']; }
     render() {
-      const tone = ['neutral', 'tenure', 'area', 'promo', 'outline', 'danger', 'deal'].includes(this.attr('tone')) ? this.attr('tone') : 'neutral';
+      const tone = ['neutral', 'tenure', 'area', 'promo', 'outline', 'danger', 'success', 'deal'].includes(this.attr('tone')) ? this.attr('tone') : 'neutral';
       const size = ['m', 'l'].includes(this.attr('size')) ? this.attr('size') : 's';
       this.innerHTML = `<span class="ds-tag" data-tone="${tone}" data-size="${size}">${esc(this.attr('text'))}</span>`;
     }

@@ -1,32 +1,32 @@
-/* <amap-service-card> · 服务卡（Figma 765:5300 停车场 / 765:5299 加油站提示 中的卡片）
- * 依赖 tokens/tokens.css、components/primitives/primitives.css（amap-meta-line / amap-tag / amap-button）
+/* <amap-service-card> · 服务卡（Figma 1006:4526 停车场卡 / 1013:4034 加油站卡，同规格卡片族）
+ * 只引用新版 token（tokens/ds-tokens.css）；依赖 components/primitives/primitives.css（amap-meta-line / amap-tag / amap-button）
  */
 amap-service-card {
   /* 组件变量，可覆盖 */
-  --svc-pad: 12px;
-  --svc-border: 0.6px;
-  --svc-radius: var(--ds-radius-16);
-  --svc-info-gap: var(--ds-space-6);
+  --svc-pad: var(--space-lg);
+  --svc-info-gap: var(--space-sm);
+  --svc-info-max: 240px;   /* 停车场卡信息区最大宽 */
 
   display: block;
   width: 100%;
-  font-family: var(--ds-font-family-base);
+  font-family: var(--font-family-zh);
 }
 
 .amap-svc {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: calc(var(--svc-pad) + var(--svc-border));   /* Figma 描边计入布局：12 + 0.6 */
-  border-radius: var(--svc-radius);
-  background: var(--ds-color-surface-card-neutral);
-  box-shadow: inset 0 0 0 var(--svc-border) var(--ds-color-border-card);
+  gap: var(--space-lg);
+  padding: var(--svc-pad);
+  border-radius: var(--radius-container);
+  background: var(--color-surface-card);
+  box-shadow: inset 0 0 0 var(--stroke-card) var(--color-border-default);  /* stroke/card 不计入布局 */
 }
 
 .amap-svc__info {
   flex: 1 1 0;
   min-width: 0;
+  max-width: var(--svc-info-max);
   display: flex;
   flex-direction: column;
   gap: var(--svc-info-gap);
@@ -34,51 +34,63 @@ amap-service-card {
 .amap-svc__title {
   display: flex;
   align-items: center;
-  gap: var(--ds-space-6);
+  gap: var(--space-sm);
   min-width: 0;
   margin: 0;
 }
-.amap-svc__badge {   /* 「团」小标识 */
+.amap-svc__badge {   /* 「团」标识：bg/commerce-soft + text/price · 中文/Caption Strong */
   flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: var(--ds-radius-3);
-  background: var(--ds-color-deal-surface);
-  color: var(--ds-color-deal);
-  font-size: var(--ds-type-caption-xs-size);
-  font-weight: var(--ds-font-weight-semibold);
-  line-height: var(--ds-type-caption-xs-line);
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--radius-element);
+  background: var(--color-bg-commerce-soft);
+  color: var(--color-text-price);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-caption);
 }
-.amap-svc__name {
+.amap-svc__name {  /* 中文/Heading */
   min-width: 0;
-  font-size: var(--ds-type-title-m-size);
-  font-weight: var(--ds-type-title-m-weight);
-  line-height: var(--ds-type-title-m-line);
-  color: var(--ds-color-text-primary);
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-heading);
+  line-height: var(--line-height-heading);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.amap-svc__meta {
-  --meta-gap: 7px;                               /* Figma 为「  |  」两侧各两个空格 */
-  --meta-sep-color: var(--ds-color-text-separator);
+.amap-svc__meta {  /* 中文/Body · text/secondary；分隔符 neutral.300（Figma 为「  |  」） */
+  --meta-gap: 7px;
+  --meta-sep-color: var(--color-neutral-300);
   max-width: 100%;
 }
-.amap-svc__tags { display: flex; gap: var(--ds-space-6); min-width: 0; overflow: hidden; }
+.amap-svc__meta .ds-meta-line { font-size: var(--font-size-body); line-height: var(--line-height-body); color: var(--color-text-secondary); }
+.amap-svc__tags { display: flex; flex-wrap: wrap; gap: var(--space-sm); min-width: 0; }
 .amap-svc__action { flex: none; }
 
-/* 头像版（代驾卡，Figma 765:5304）：44 圆形头像 + 15 号名称，名称与说明间距 4 */
+/* 标签（Figma 停车类型 / 车位状态 / 优惠 / 服务）：上下 2 左右 6，圆角 element，中文/Caption */
+.amap-svc .ds-tag[data-size="m"] {
+  height: auto;
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: var(--radius-element);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-caption);
+}
+.amap-svc .ds-tag[data-tone="outline"] { box-shadow: inset 0 0 0 1px var(--color-border-accent); color: var(--color-text-accent); background: none; }
+.amap-svc .ds-tag[data-tone="danger"]  { background: var(--color-status-danger-bg); color: var(--color-text-danger); font-weight: var(--font-weight-semibold); }   /* 车位紧张 */
+.amap-svc .ds-tag[data-tone="success"] { background: var(--color-status-success-bg); color: var(--color-text-success); font-weight: var(--font-weight-semibold); } /* 车位充裕 */
+.amap-svc .ds-tag[data-tone="deal"]    { background: var(--color-bg-commerce-soft); color: var(--color-text-price); font-weight: var(--font-weight-semibold); }
+.amap-svc .ds-tag[data-tone="neutral"] { background: var(--color-bg-page-subtle); color: var(--color-text-secondary); }
+
+/* 头像版（代驾卡）：44 圆形头像 + 15 号名称，名称与说明间距 4（Figma 尚未出新版，仅换 token） */
 .amap-svc__avatar {
   flex: none;
   width: 44px;
   height: 44px;
   border-radius: 50%;
   object-fit: cover;
-  background: var(--ds-color-score-surface);
+  background: var(--color-bg-brand-soft);
 }
 .amap-svc.has-avatar { justify-content: flex-start; }
-.amap-svc.has-avatar .amap-svc__info { --svc-info-gap: var(--ds-space-4); }
+.amap-svc.has-avatar .amap-svc__info { --svc-info-gap: var(--space-xs); max-width: none; }
 .amap-svc.has-avatar .amap-svc__name { font-size: 15px; line-height: 21px; }

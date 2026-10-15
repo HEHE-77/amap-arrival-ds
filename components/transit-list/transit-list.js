@@ -1,5 +1,5 @@
 /**
- * <amap-transit-list> · 末班车列表（Figma 766:8338「末班车提醒」，实例 766:8339）
+ * <amap-transit-list> · 末班车列表（Figma 1014:5217「末班出行」行，线路标 1020:4009）
  * 通常放在 <amap-section heading="今晚末班车时间" more-label="查看更多"> 中
  *
  * 属性
