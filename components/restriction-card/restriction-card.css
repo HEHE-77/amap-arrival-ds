@@ -1,9 +1,9 @@
 /* <amap-restriction-card> · 限行提醒卡（Figma 765:5302「限行」中的 Restriction Card）
- * 只引用新版 token（tokens/ds-tokens.css）。Figma 中部分间距 / 字号尚未绑定变量，按稿面数值保留并注明。
+ * 只引用新版 token（tokens/ds-tokens.css）。
  */
 amap-restriction-card {
   --rc-pad: var(--space-lg);
-  --rc-gap: 10px;          /* Figma 未绑定变量 */
+  --rc-gap: var(--space-md);
 
   display: block;
   width: 100%;
@@ -22,14 +22,14 @@ amap-restriction-card {
 
 .amap-rc__header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
 .amap-rc__heading { display: flex; align-items: center; gap: var(--space-md); min-width: 0; margin: 0; }
-.amap-rc__icon {   /* 图标底：status/danger 底，内边距 4，圆角 6（Figma 未绑定变量）；图标素材不变 */
+.amap-rc__icon {   /* 图标底：status/danger 底，内边距 space/xs，radius/control；图标素材不变 */
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 26px;
   height: 26px;
-  border-radius: 6px;
+  border-radius: var(--radius-control);
   background: var(--color-status-danger-bg);
   color: var(--color-text-danger);
 }
@@ -44,15 +44,15 @@ amap-restriction-card {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.amap-rc__plate {   /* 车牌：bg/page-subtle + radius/control，11 Semibold · text/secondary */
+.amap-rc__plate {   /* 车牌：bg/page-subtle + radius/control，中文/Body Small · text/secondary */
   flex: none;
   padding: var(--space-2xs) var(--space-sm);
   border-radius: var(--radius-control);
   background: var(--color-bg-page-subtle);
   color: var(--color-text-secondary);
   font-size: var(--font-size-body-sm);
-  font-weight: var(--font-weight-semibold);
-  line-height: normal;
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body-sm);
   white-space: nowrap;
 }
 
