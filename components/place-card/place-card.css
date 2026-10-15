@@ -126,6 +126,4 @@ amap-place-card[layout="single"], amap-restaurant-card[layout="single"] { --plac
 /* ── CTA（扫街榜POI卡片/CTA）：看团购 / 订门票 两按钮等宽，间距 space/md ── */
 .amap-place__actions { display: flex; gap: var(--space-md); }
 .amap-place__actions amap-button { flex: 1 1 0; min-width: 0; }
-/* CTA 类型=看团购：两个按钮圆角 radius/media（Figma 952:2799，2026-10-15 确认；订门票 / 一键下单为 radius/control） */
-.amap-place__actions[data-cta="group"] .ds-btn { border-radius: var(--radius-media); }
 .amap-place__order { width: 100%; }

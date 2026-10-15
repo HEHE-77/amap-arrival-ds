@@ -254,7 +254,7 @@ amap-button > .ds-btn { flex: 1 1 auto; }
   width: 100%;
   height: 36px;
   padding: 0 var(--space-lg);
-  border-radius: var(--radius-control);  /* Figma CTA 描述：圆角 radius/control */
+  border-radius: var(--radius-media);  /* CTA 按钮统一 radius/media 8（2026-10-15 确认） */
   font-size: var(--font-size-subheading);  /* 中文/Subheading */
   font-weight: var(--font-weight-subheading);
   line-height: var(--line-height-subheading);

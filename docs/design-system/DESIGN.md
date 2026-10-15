@@ -188,8 +188,8 @@ components:
     tag: { radius: "{rounded.element}", type: "{typography.zh-caption}" }
     price: { color: "{colors.semantic.text.light.price}", type: "{typography.numeric-sm}" }
     hot-review: "{colors.gradients.hot-review}"
-    button: { primary: "{colors.gradients.theme}", radius: "{rounded.control}" }
-    cta: { figma: "扫街榜POI卡片/CTA (类型: 一键下单 / 看团购 / 订门票)", gap: "{spacing.md}", padding-x: "{spacing.lg}", radius: "{rounded.control}", radius-group: "{rounded.media}" }
+    button: { primary: "{colors.gradients.theme}", radius: "{rounded.media}" }
+    cta: { figma: "扫街榜POI卡片/CTA (类型: 一键下单 / 看团购 / 订门票)", gap: "{spacing.md}", padding-x: "{spacing.lg}", radius: "{rounded.media}" }
   dish-card:
     figma: "必吃榜/菜品卡 (状态: 默认 / 按下 / 加载中) + 必吃榜/菜品横滑列表"
     image: { size: "84px", radius: "{rounded.media}", pressed: "{colors.palette.alpha.black.12}", skeleton: "{colors.semantic.surface.light.sunken}" }
@@ -510,8 +510,8 @@ PingFang SC 与 Helvetica 为 Apple 系统字体，只在苹果设备上可用�
 嵌套递减：容器 16 › 内容卡 12 › 图片 8 › 按钮 4 › 标签 2。
 
 - `{rounded.element}` = 2px — 评分徽标「4.8」、团购/票务/状态标签、线路标
-- `{rounded.control}` = 4px — 订门票 / 一键下单 CTA 按钮、数量步进器、日期与场次选项
-- `{rounded.media}` = 8px — 卡片内图片、缩略图、图片推荐卡（有 1 小时以上）、扫街榜 POI 卡「看团购」CTA 两个按钮（看团购 + 查看路线）
+- `{rounded.control}` = 4px — 数量步进器、日期与场次选项
+- `{rounded.media}` = 8px — 卡片内图片、缩略图、图片推荐卡（有 1 小时以上）、扫街榜 POI 卡 CTA 按钮（看团购 / 订门票 / 一键下单 / 换一杯 / 查看路线，2026-10-15 确认统一为 8）
 - `{rounded.component}` = 12px — 扫街榜 POI 卡、附近精选卡、横滑「查看更多」卡
 - `{rounded.container}` = 16px — 列表卡（末班车、你的收藏）、浮层（POI 浮层、一键下单）
 - `{rounded.pill}` = 999px — 服务入口胶囊、图片上热度/收藏角标
@@ -565,7 +565,7 @@ PingFang SC 与 Helvetica 为 Apple 系统字体，只在苹果设备上可用�
 
 - 单一主组件，不再按场景拆变体：场景差异由属性组合实现（上班到达 = CTA 一键下单 + 附加标签「收录」+ 查看更多、无热评、单条优惠；饭店到达 = CTA 看团购 + 热评 + 团/券两条优惠；景点到达 = CTA 订门票 + 附加标签「区域」+ 热评 + 两条门票）。营业状态统一文案「正在营业」（景点用「正在开放」）。
 - 外壳：`{colors.semantic.surface.light.card}` 底 + `{rounded.container}` + `{elevation.shadow-card}`，内边距 `{spacing.md}`；图片 `{rounded.media}`，图上热度与页码角标 `{rounded.pill}` + `{elevation.glass-blur}`。
-- 文字：店名 `{typography.zh-heading}`，元信息 `{typography.zh-body}`，标签 `{typography.zh-caption}`（强调用 600 字重的「中文/Caption Strong」），价格数字 `{typography.numeric-sm}` + `{colors.semantic.text.light.price}`；标签圆角 `{rounded.element}`，按钮 `{rounded.control}`（CTA 类型=看团购 时两个按钮为 `{rounded.media}`，按 Figma 确认），主按钮 `{colors.gradients.theme}`；热评条 `{colors.gradients.hot-review}`。
+- 文字：店名 `{typography.zh-heading}`，元信息 `{typography.zh-body}`，标签 `{typography.zh-caption}`（强调用 600 字重的「中文/Caption Strong」），价格数字 `{typography.numeric-sm}` + `{colors.semantic.text.light.price}`；标签圆角 `{rounded.element}`，CTA 按钮 `{rounded.media}`（三种类型统一），主按钮 `{colors.gradients.theme}`；热评条 `{colors.gradients.hot-review}`。
 - 操作区为嵌套组件 `扫街榜POI卡片/CTA`，「类型」三选一：一键下单（整块一键下单卡片：商品图、商品名、规格 + 一键下单/换一杯按钮）/ 看团购 + 查看路线 / 订门票 + 查看路线；主按钮 `{colors.gradients.theme}`，按钮间距 `{spacing.md}`，按钮左右内边距 `{spacing.lg}`，两按钮等宽填充。
 - 属性：名称、距离（TEXT）；TOP 角标、附加标签、优惠标签 1/2（实例替换）；显示 TOP 角标、显示附加标签、显示热评、显示查看更多、显示第二条优惠（布尔）；CTA 类型（暴露的嵌套实例）。团 / 票 / 券、营业状态、评分、榜单标签、一键下单卡片为暴露的嵌套实例，各自带价格、折扣、状态、文案等文本属性。
 
