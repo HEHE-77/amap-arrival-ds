@@ -8,7 +8,7 @@ amap-place-card, amap-restaurant-card {
   max-width: 100%;
 }
 /* 单 POI 到达场景（Figma 1056:5349）：宽 365，结构同主组件；无 TOP 角标、无投影（不是扫街榜卡片），图片角标距右 12 */
-amap-place-card[layout="single"], amap-restaurant-card[layout="single"] { --place-card-width: 365px; }
+amap-place-card[layout="single"], amap-restaurant-card[layout="single"] { --place-card-width: 100%; }   /* 随容器撑满（组件稿 365，页面里左右页边距 16） */
 amap-place-card[layout="single"] .amap-place,
 amap-restaurant-card[layout="single"] .amap-place {
   --place-pill-end: 12px;

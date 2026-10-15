@@ -8,7 +8,7 @@ amap-taxi-bill {
   --bill-icon: 20px;          /* 快捷操作图标位 */
 
   display: block;
-  width: var(--bill-width, 366px);
+  width: var(--bill-width, 100%);     /* 随容器撑满，左右页边距 16 */
   max-width: 100%;
   font-family: var(--font-family-zh);
 }

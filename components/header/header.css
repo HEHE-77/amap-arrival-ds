@@ -3,7 +3,7 @@
  */
 .amap-header {
   /* ── Component tokens ── */
-  --header-width: 366px;
+  --header-width: 100%;        /* 随容器撑满（场景页 370 = 402 − 页边距 16 × 2） */
   --header-height: 78px;       /* 两种类型同高 */
   --header-gap-title-meta: var(--space-sm);
   --header-gap-meta-rows: var(--space-sm);
