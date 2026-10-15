@@ -1,18 +1,18 @@
-/* <amap-dish-card> · 当地特色菜单品卡（Figma 765:6257「本地菜」）
- * 依赖 tokens/tokens.css
+/* <amap-dish-card> · 必吃榜菜品卡（Figma 979:2811，状态：默认 / 按下 / 加载中）
+ * 只引用新版 token（tokens/ds-tokens.css）
  */
 amap-dish-card {
   /* 组件变量，可覆盖 */
   --dish-width: 84px;
   --dish-image-size: 84px;
-  --dish-image-radius: var(--ds-radius-8);
-  --dish-gap: 6px;
-  --dish-text-gap: var(--ds-space-4);
+  --dish-image-radius: var(--radius-media);
+  --dish-gap: var(--space-sm);
+  --dish-text-gap: var(--space-xs);
 
   display: block;
   flex: none;
   width: var(--dish-width);
-  font-family: var(--ds-font-family-base);
+  font-family: var(--font-family-zh);
 }
 
 .amap-dish {
@@ -30,17 +30,21 @@ amap-dish-card {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.amap-dish:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; border-radius: var(--dish-image-radius); }
+.amap-dish:focus-visible { outline: 2px solid var(--color-focus-ring-strong); outline-offset: 2px; border-radius: var(--dish-image-radius); }
 
 .amap-dish__media {
+  position: relative;
   width: var(--dish-image-size);
   height: var(--dish-image-size);
   border-radius: var(--dish-image-radius);
   overflow: hidden;
-  background: var(--ds-color-tag-neutral-surface);   /* 无图 / 加载失败时的占位 */
+  background: var(--color-surface-sunken);   /* 无图 / 加载失败 / 加载中的骨架 */
 }
 .amap-dish__photo { display: block; width: 100%; height: 100%; object-fit: cover; }
 .amap-dish__photo.is-missing { visibility: hidden; }
+/* 按下：菜品图上叠 alpha/black-12 遮罩（Figma 979:2799） */
+.amap-dish__media::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--color-alpha-black-12); opacity: 0; pointer-events: none; }
+.amap-dish:active .amap-dish__media::after { opacity: 1; }
 
 .amap-dish__text {
   display: flex;
@@ -56,17 +60,28 @@ amap-dish-card {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.amap-dish__name {
-  font-size: var(--ds-type-subtitle-m-size);
-  font-weight: var(--ds-type-subtitle-m-weight);
-  line-height: var(--ds-type-subtitle-m-line);
-  color: var(--ds-color-text-primary);
+.amap-dish__name {  /* 中文/Subheading */
+  font-size: var(--font-size-subheading);
+  font-weight: var(--font-weight-subheading);
+  line-height: var(--line-height-subheading);
+  color: var(--color-text-primary);
 }
 .amap-dish__honor,
-.amap-dish__stores {
-  font-size: var(--ds-type-body-s-size);
-  font-weight: var(--ds-type-body-s-weight);
-  line-height: var(--ds-type-body-s-line);
+.amap-dish__stores {  /* 中文/Body */
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body);
 }
-.amap-dish__honor { color: var(--ds-color-text-honor); }
-.amap-dish__stores { color: var(--ds-color-text-muted); }
+.amap-dish__honor { color: var(--color-text-ranking); }
+.amap-dish__stores { color: var(--color-text-secondary); }
+
+/* 加载中（Figma 979:2807）：骨架条 56×14 / 64×12 / 48×12，间距 space/sm，圆角 radius/element */
+.amap-dish.is-loading { cursor: default; }
+.amap-dish.is-loading .amap-dish__text { gap: var(--space-sm); }
+.amap-dish__bone {
+  display: block;
+  width: var(--bone-w);
+  height: var(--bone-h);
+  border-radius: var(--radius-element);
+  background: var(--color-surface-sunken);
+}

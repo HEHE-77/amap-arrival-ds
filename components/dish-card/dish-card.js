@@ -1,5 +1,5 @@
 /**
- * <amap-dish-card> · 当地特色菜单品卡（Figma 765:6257「本地菜」，实例 765:6258–765:6306）
+ * <amap-dish-card> · 必吃榜菜品卡（Figma 979:2811「必吃榜/菜品卡」，状态：默认 / 按下 / 加载中）
  * 不依赖 primitives，可单独使用；通常横向排列在「当地特色菜」列表中（卡片间距 8）
  *
  * 属性
@@ -9,6 +9,8 @@
  *   honor         整行自定义文案，传了就覆盖 honor-label + rank
  *   stores        入选店铺文案，如「91家店入选」
  *   image         菜品图（84×84，建议 @3x）
+ *   loading       布尔，加载中：菜品图与三行文字显示 surface/sunken 骨架（Figma 状态「加载中」）
+ *   按下态（Figma 状态「按下」）由 :active 自动呈现：菜品图上叠 alpha/black-12 遮罩
  *
  * 事件（bubbles + composed）
  *   dish-select → { name, rank }
@@ -19,13 +21,25 @@
   const has = (v) => v != null && v !== '';
 
   class AmapDishCard extends HTMLElement {
-    static get observedAttributes() { return ['name', 'rank', 'honor-label', 'honor', 'stores', 'image']; }
+    static get observedAttributes() { return ['name', 'rank', 'honor-label', 'honor', 'stores', 'image', 'loading']; }
     connectedCallback() { this.render(); }
     attributeChangedCallback() { if (this.isConnected) this.render(); }
     attr(n, d = '') { return this.getAttribute(n) ?? d; }
 
     render() {
       const a = (n, d) => this.attr(n, d);
+      if (this.hasAttribute('loading')) {
+        this.innerHTML = `
+          <span class="amap-dish is-loading" role="status" aria-label="加载中">
+            <span class="amap-dish__media"></span>
+            <span class="amap-dish__text">
+              <span class="amap-dish__bone" style="--bone-w:56px;--bone-h:14px"></span>
+              <span class="amap-dish__bone" style="--bone-w:64px;--bone-h:12px"></span>
+              <span class="amap-dish__bone" style="--bone-w:48px;--bone-h:12px"></span>
+            </span>
+          </span>`;
+        return;
+      }
       const honor = has(a('honor')) ? a('honor')
         : has(a('rank')) ? `${a('honor-label', '必吃')}·第${a('rank')}名` : '';
 
