@@ -1,9 +1,9 @@
 /**
- * <amap-arrival-header> · 到达页 Header
+ * <amap-arrival-header> · 到达头部卡（Figma 981:3041）
  *
  * 变体（variant）
- *   regular  常规到达（默认）  Figma 849:2920
- *   taxi     打车到达          Figma 849:2938
+ *   regular  常规到达（默认）  Figma 981:3018
+ *   taxi     打车到达          Figma 981:3039
  *
  * 通用属性
  *   heading      标题，默认「已到达」
