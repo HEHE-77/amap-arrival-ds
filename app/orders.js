@@ -41,40 +41,40 @@
           { name: '砂锅', items: [['招牌羊肉砂锅', '×1', '¥128'], ['酸菜白肉砂锅', '×1', '¥88']] },
           { name: '凉菜', items: [['凉拌木耳', '1 份', '¥18'], ['蒜泥黄瓜', '1 份', '¥16']] },
           { name: '主食', items: [['手工锅盔', '×2', '¥12']] }] },
-        午市单人: { rules: '周一至周五 11:00–14:00 可用 · 随时退 · 可堂食', summary: '4 道 · 适合 1 人', groups: [
+        午市单人: { image: 'order/samples/xiangzikou-lunch.jpg', rules: '周一至周五 11:00–14:00 可用 · 随时退 · 可堂食', summary: '4 道 · 适合 1 人', groups: [
           { name: '砂锅', items: [['酸菜白肉小砂锅', '×1', '¥58']] },
           { name: '小吃', items: [['卤蛋', '×1', '¥4']] },
           { name: '主食', items: [['米饭', '×1', '¥3']] },
           { name: '饮品', items: [['冰峰汽水', '×1', '¥5']] }] } } },
     '南门口卤味小馆': { where: '本店可用 · 可打包', sold: ['已售 5200', '已售 1.8 万'],
       deals: {
-        卤味拼盘: { rules: '周一至周日可用 · 可堂食 · 可打包 · 随时退', summary: '4 样 · 适合 2–3 人', groups: [
+        卤味拼盘: { image: 'order/samples/luwei-platter.jpg', rules: '周一至周日可用 · 可堂食 · 可打包 · 随时退', summary: '4 样 · 适合 2–3 人', groups: [
           { name: '卤味', items: [['卤大肠', '1 份', '¥58'], ['卤猪蹄', '1 只', '¥48'], ['卤鸭翅', '4 只', '¥36'], ['卤豆干', '1 份', '¥18']] }] },
-        宵夜: { rules: '每天 18:00 后可用 · 仅限打包 · 随时退', summary: '5 样 · 适合 4 人', groups: [
+        宵夜: { image: 'order/samples/luwei-night.jpg', rules: '每天 18:00 后可用 · 仅限打包 · 随时退', summary: '5 样 · 适合 4 人', groups: [
           { name: '卤味', items: [['卤鸭脖', '2 根', '¥24'], ['卤鸡爪', '6 只', '¥18'], ['卤藕片', '1 份', '¥12']] },
           { name: '饮品', items: [['冰峰汽水', '×4', '¥20']] }] } } },
     '老孙家泡馍（东大街店）': { where: '3 家门店可用', sold: ['已售 2.6 万', '已售 9800'],
       deals: {
-        单人: { rules: '周一至周日可用 · 随时退 · 可堂食', summary: '3 道 · 适合 1 人', groups: [
+        单人: { image: 'order/samples/laosun-single.jpg', rules: '周一至周日可用 · 随时退 · 可堂食', summary: '3 道 · 适合 1 人', groups: [
           { name: '主食', items: [['优质牛肉泡馍', '×1', '¥58']] },
           { name: '小菜', items: [['糖蒜', '1 碟', '¥6']] },
           { name: '饮品', items: [['冰峰汽水', '×1', '¥5']] }] },
-        双人: { rules: '周一至周日可用 · 随时退 · 可堂食', summary: '5 道 · 适合 2 人', groups: [
+        双人: { image: 'order/samples/laosun-double.jpg', rules: '周一至周日可用 · 随时退 · 可堂食', summary: '5 道 · 适合 2 人', groups: [
           { name: '主食', items: [['羊肉泡馍', '×2', '¥96'], ['腊牛肉夹馍', '×1', '¥22']] },
           { name: '凉菜', items: [['秦镇凉皮', '1 份', '¥16']] },
           { name: '饮品', items: [['冰峰汽水', '×2', '¥10']] }] } } },
-    '泡泡玛特城市乐园': { where: '本店可用', sold: ['已售 3200', '已领 1.1 万'],
+    '泡泡玛特城市乐园': { where: '本店可用', image: 'order/samples/popmart.jpg', sold: ['已售 3200', '已领 1.1 万'],
       deals: {
         盲盒: { rules: '到店核销 · 款式随机 · 随时退', summary: '2 件', heading: '包含内容', groups: [
           { name: '商品', items: [['城市限定系列盲盒', '×2', '¥74']] }] },
         满: { rules: '满 200 元可用 · 每人限领 1 张 · 7 天内有效' } } },
-    '言几又书店（万象城店）': { where: '本店可用', sold: ['已售 1800', '已领 6400'],
+    '言几又书店（万象城店）': { where: '本店可用', image: 'order/samples/yanjiyou.jpg', sold: ['已售 1800', '已领 6400'],
       deals: {
         图书: { rules: '周一至周日可用 · 不可叠加 · 随时退', summary: '2 样', heading: '包含内容', groups: [
           { name: '图书', items: [['店内图书任选一本（定价 ¥30 内）', '×1', '¥30']] },
           { name: '饮品', items: [['手冲咖啡', '×1', '¥12']] }] },
         饮品: { rules: '饮品区满 50 元可用 · 每人限领 1 张 · 当日有效' } } },
-    '话梅 HARMAY（万象城店）': { where: '本店可用', sold: ['已领 2.3 万', '已售 7600'],
+    '话梅 HARMAY（万象城店）': { where: '本店可用', image: 'order/samples/harmay.jpg', sold: ['已领 2.3 万', '已售 7600'],
       deals: {
         满: { rules: '满 300 元可用 · 每人限领 1 张 · 7 天内有效' },
         旅行装: { rules: '到店自取 · 每人限购 1 份 · 随时退', summary: '3 件', heading: '包含内容', groups: [
@@ -103,16 +103,15 @@
         { name: '草莓杯子蛋糕', tag: '收录 2 年', price: 4.9, original: 12, image: 'order/samples/strawberry-cupcake.jpg' }] },
     '早安山丘（银泰 B 座 B1）': { where: '到店自取', original: 26, prep: 8, unit: '份数', swap: '换一份',
       addons: [
-        { name: '黄油可颂', tag: '有 36 人换购', price: 6.9, original: 12 },
-        { name: '肉桂卷', tag: '收录 2 年', price: 7.9, original: 15 },
-        { name: '海盐碱水结', tag: '有 12 人换购', price: 5.9, original: 10 },
-        { name: '冰美式', tag: '有 40 人换购', price: 8.9, original: 18 }] },
+        { name: '黄油可颂', tag: '有 36 人换购', price: 6.9, original: 12, image: 'order/samples/croissant.jpg' },
+        { name: '肉桂卷', tag: '收录 2 年', price: 7.9, original: 15, image: 'order/samples/cinnamon-roll.jpg' },
+        { name: '海盐碱水结', tag: '有 12 人换购', price: 5.9, original: 10, image: 'order/samples/pretzel.jpg' }] },
     '小面日记（万象天地店）': { where: '到店自取', original: 28, prep: 6, unit: '份数', swap: '换一份',
       addons: [
-        { name: '卤蛋', tag: '有 52 人换购', price: 2, original: 3 },
-        { name: '肉夹馍', tag: '收录 2 年', price: 9.9, original: 15 },
-        { name: '秦镇凉皮', tag: '有 18 人换购', price: 7.9, original: 12 },
-        { name: '冰峰汽水', tag: '有 30 人换购', price: 3, original: 5 }] },
+        { name: '卤蛋', tag: '有 52 人换购', price: 2, original: 3, image: 'order/samples/lu-egg.jpg' },
+        { name: '肉夹馍', tag: '收录 2 年', price: 9.9, original: 15, image: 'order/samples/roujiamo.jpg' },
+        { name: '秦镇凉皮', tag: '有 18 人换购', price: 7.9, original: 12, image: 'order/samples/liangpi.jpg' },
+        { name: '冰峰汽水', tag: '有 30 人换购', price: 3, original: 5, image: 'order/samples/bingfeng.jpg' }] },
   };
 
   /* ───────── 工具 ───────── */
@@ -157,7 +156,7 @@
         priceText: free ? '免费领' : undefined, action: free ? '免费领取' : undefined,
         sold: X.sold?.[i] ?? '', badge: i === 0 && c.deals.length > 1 ? '最多人选' : (/午市/.test(title) ? '午市' : ''),
         detail: {
-          name: title, image: extra.image ? base + extra.image : (c.img ? base + c.img : ''),
+          name: title, image: (extra.image || X.image || c.img) ? base + (extra.image || X.image || c.img) : '',
           rules: extra.rules || (type === '券' ? '全场通用 · 不可叠加 · 随时退' : '周一至周日可用 · 随时退'),
           summary: extra.summary || '', heading: extra.heading || '套餐内容', groups,
         },
