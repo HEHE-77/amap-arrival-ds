@@ -193,7 +193,7 @@ components:
     cta: { figma: "扫街榜POI卡片/CTA (类型: 一键下单 / 看团购 / 订门票)", gap: "{spacing.md}", padding-x: "{spacing.lg}", radius: "{rounded.media}" }
   dish-card:
     figma: "必吃榜/菜品卡 (状态: 默认 / 按下 / 加载中) + 必吃榜/菜品横滑列表"
-    image: { size: "84px", radius: "{rounded.media}", pressed: "{colors.palette.alpha.black.12}", skeleton: "{colors.semantic.surface.light.sunken}" }
+    image: { size: "84px", radius: "{rounded.container}", pressed: "{colors.palette.alpha.black.12}", skeleton: "{colors.semantic.surface.light.sunken}" }
     name: "{typography.zh-subheading}"
     rank: { color: "{colors.semantic.text.light.ranking}", type: "{typography.zh-body}" }
     count: { color: "{colors.semantic.text.light.secondary}", type: "{typography.zh-body}" }
@@ -514,7 +514,7 @@ PingFang SC 与 Helvetica 为 Apple 系统字体，只在苹果设备上可用�
 - `{rounded.control}` = 4px — 数量步进器、日期与场次选项
 - `{rounded.media}` = 8px — 卡片内图片、缩略图、图片推荐卡（有 1 小时以上）、扫街榜 POI 卡 CTA 按钮（看团购 / 订门票 / 一键下单 / 换一杯 / 查看路线，2026-10-15 确认统一为 8）
 - `{rounded.component}` = 12px — 扫街榜 POI 卡、附近精选卡、横滑「查看更多」卡
-- `{rounded.container}` = 16px — 列表卡（末班车、你的收藏）、浮层（POI 浮层、一键下单）
+- `{rounded.container}` = 16px — 列表卡（末班车、你的收藏）、浮层（POI 浮层、一键下单）、必吃榜菜品图
 - `{rounded.pill}` = 999px — 服务入口胶囊、图片上热度/收藏角标
 - `{rounded.shape-sheet-top}` = `16px 16px 0 0` — 底部浮层顶部
 - `{rounded.shape-ranking-tag}` = `2px 0 4px 2px` — 扫街榜标签（左上 2 · 右上 0 · 右下 4 · 左下 2）
@@ -573,7 +573,7 @@ PingFang SC 与 Helvetica 为 Apple 系统字体，只在苹果设备上可用�
 
 ### `{components.dish-card}` 必吃榜菜品卡
 
-- 84px 菜品图（`{rounded.media}`）+ 菜名 `{typography.zh-subheading}` + 排名 `{colors.semantic.text.light.ranking}` + 入选店数 `{colors.semantic.text.light.secondary}`（均 `{typography.zh-body}`）。
+- 84px 菜品图（`{rounded.container}`，按 Figma「图片」外框，2026-10-15 确认）+ 菜名 `{typography.zh-subheading}` + 排名 `{colors.semantic.text.light.ranking}` + 入选店数 `{colors.semantic.text.light.secondary}`（均 `{typography.zh-body}`）。
 - 状态：默认 / 按下（图片上叠 `{colors.palette.alpha.black.12}` 遮罩）/ 加载中（`{colors.semantic.surface.light.sunken}` 骨架，`{rounded.element}`）。属性：菜名、排名、入选数（TEXT）；图片覆盖「菜品图」填充。
 - 横滑列表：6 张卡，间距 `{spacing.md}`，每张为暴露的嵌套实例。
 
