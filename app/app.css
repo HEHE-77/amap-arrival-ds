@@ -114,14 +114,14 @@ button { font: inherit; }
   height: var(--phone-h);
   border-radius: 55px;
   overflow: hidden;
-  background: var(--ds-gray-50);   /* 页面底色 #FBFBFB（Figma 812:7853） */
+  background: var(--color-bg-page);   /* 页面底色 bg/page #FEFEFE（场景页 Figma 925:8720） */
 }
 .screen__scroll { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
 .screen__scroll::-webkit-scrollbar { display: none; }
 .statusbar {
   position: sticky; top: 0; z-index: 5;
   height: 51px;
-  background: var(--ds-gray-50);
+  background: var(--color-bg-page);
 }
 .statusbar img { position: absolute; left: 0; top: 0; width: 402px; height: 51px; }
 /* 常规到达：Figma 顶部区块有 4 的上内边距，状态栏整体下移 4；打车到达没有 */
@@ -144,15 +144,15 @@ button { font: inherit; }
 
 /* ───────── 页面编排（手机内） ───────── */
 .page {
-  display: flex; flex-direction: column; gap: 16px;   /* 模块间距 16（Figma 三张整页一致） */
+  display: flex; flex-direction: column; gap: var(--space-section-gap);   /* 模块间距 16（场景页 Figma 925:8898） */
   padding: 0 0 41px;                                   /* 底部留出 home indicator 25 + 16 */
 }
-.pg-top { display: flex; flex-direction: column; gap: 8px; }
+.pg-top { display: flex; flex-direction: column; gap: var(--space-md); }
 .pg-top amap-nav-bar { width: 100%; }
-.pg-top__header, .pg-pad { padding: 0 18px; }
-.pg-stack { display: flex; flex-direction: column; gap: 8px; }
-.pg-dwell { display: flex; flex-direction: column; gap: 8px; }
-.pg-dwell__long { display: flex; flex-direction: column; gap: 8px; padding-top: 6px; }
+.pg-top__header, .pg-pad { padding: 0 var(--space-page-margin); }   /* 页面左右边距 16 */
+.pg-stack { display: flex; flex-direction: column; gap: var(--space-md); }
+.pg-dwell { display: flex; flex-direction: column; gap: var(--space-md); }
+.pg-dwell__long { display: flex; flex-direction: column; gap: var(--space-md); padding-top: var(--space-sm); }
 .page amap-section, .page amap-nav-bar, .page amap-facility-bar { width: 100%; }
 .page [data-flash] { animation: flash 1.2s ease; }
 @keyframes flash { 0%, 40% { box-shadow: 0 0 0 3px var(--app-accent-bg) inset; background: rgba(9, 128, 254, 0.06); } 100% { box-shadow: none; background: transparent; } }

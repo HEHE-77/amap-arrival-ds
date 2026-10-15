@@ -1,36 +1,29 @@
-/* <amap-nearby-list> · 附近 POI 列表（Figma 765:5256「附近景点POI」）
- * 依赖 tokens/tokens.css、components/primitives/primitives.css（复用 ds-link 样式与 amap-meta-line）
+/* <amap-nearby-list> · 附近景点列表（Figma 765:5256，行 1028:4005；场景页实例 1029:2）
+ * 只引用新版 token（tokens/ds-tokens.css）；依赖 components/primitives/primitives.css（ds-link / amap-meta-line）
  */
 amap-nearby-list {
-  /* 组件变量，可覆盖 */
-  --nearby-row-pad: var(--ds-space-6);
   --nearby-image-size: 50px;
-  --nearby-image-radius: var(--ds-radius-8);
-  --nearby-gap: 12px;
-  --nearby-text-gap: var(--ds-space-3);
+  --nearby-row-h: 66px;
 
   display: block;
   width: var(--nearby-width, 366px);
   max-width: 100%;
-  font-family: var(--ds-font-family-base);
+  font-family: var(--font-family-zh);
 }
-
 .amap-nearby { margin: 0; padding: 0; list-style: none; }
-
-/* 每行：上边线 1px + 上内边距 6；行与行之间再留 6（末行没有下内边距） */
+/* 每行：66 高，上下 space/md，行顶分隔线 border/subtle 0.6，行间距 0 */
 .amap-nearby__item {
-  border-top: 1px solid var(--ds-color-divider);
-  padding: var(--nearby-row-pad) 0;
+  box-shadow: inset 0 var(--stroke-card) 0 var(--color-border-subtle);
 }
-.amap-nearby__item:last-child { padding-bottom: 0; }
-
 .amap-nearby__row {
   display: flex;
   align-items: center;
-  gap: var(--nearby-gap);
+  gap: var(--space-lg);
+  box-sizing: border-box;
+  height: var(--nearby-row-h);
   width: 100%;
   margin: 0;
-  padding: 0;
+  padding: var(--space-md) 0;
   border: 0;
   background: none;
   font: inherit;
@@ -39,37 +32,37 @@ amap-nearby-list {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.amap-nearby__row:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; border-radius: var(--ds-radius-8); }
+.amap-nearby__row:focus-visible { outline: 2px solid var(--color-focus-ring-strong); outline-offset: 2px; border-radius: var(--radius-media); }
 .amap-nearby__row:active .ds-link { opacity: 0.6; }
-
 .amap-nearby__media {
   flex: none;
   width: var(--nearby-image-size);
   height: var(--nearby-image-size);
-  border-radius: var(--nearby-image-radius);
+  border-radius: var(--radius-media);
   overflow: hidden;
-  background: var(--ds-color-tag-neutral-surface);
+  background: var(--color-surface-sunken);
 }
 .amap-nearby__photo { display: block; width: 100%; height: 100%; object-fit: cover; }
 .amap-nearby__photo.is-missing { visibility: hidden; }
-
 .amap-nearby__text {
   flex: 1 1 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--nearby-text-gap);
+  gap: var(--space-sm);
 }
-.amap-nearby__name {
+.amap-nearby__name {  /* 中文/Heading */
   margin: 0;
-  font-size: var(--ds-type-title-m-size);
-  font-weight: var(--ds-type-title-m-weight);
-  line-height: var(--ds-type-title-m-line);
-  color: var(--ds-color-text-primary);
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-heading);
+  line-height: var(--line-height-heading);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.amap-nearby__meta { max-width: 100%; }
-
+/* 元信息：距离 text/ranking，其余 text/secondary，「|」text/tertiary，段距 space/sm */
+.amap-nearby__meta { --meta-gap: var(--space-sm); --meta-sep-color: var(--color-text-tertiary); max-width: 100%; }
+.amap-nearby__meta .ds-meta-line { font-size: var(--font-size-body); line-height: var(--line-height-body); color: var(--color-text-secondary); }
+.amap-nearby__meta .ds-meta-line__item.is-accent { color: var(--color-text-ranking); }
 .amap-nearby__detail { flex: none; }

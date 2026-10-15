@@ -1,15 +1,15 @@
-/* <amap-tier-label> · 模块内的分档小标题（Figma 765:5257：「还有 20 分钟」「有 1 小时以上」）
- * 依赖 tokens/tokens.css
+/* <amap-tier-label> · 模块内的分档小标题（场景页 Figma 925:9324「还有 20 分钟」/ 925:9365「有 1 小时以上」）
+ * 只引用新版 token（tokens/ds-tokens.css）；图标素材不变
  */
-amap-tier-label {
+amap-tier-label {  /* 16 图标 + 中文/Subheading，间距 space/sm */
   display: flex;
   align-items: center;
-  gap: var(--ds-space-6);
-  padding: 0 var(--tier-inset, 18px);
-  font-family: var(--ds-font-family-base);
-  font-size: var(--ds-type-subtitle-m-size);
-  font-weight: var(--ds-type-subtitle-m-weight);
-  line-height: var(--ds-type-subtitle-m-line);
-  color: var(--ds-color-text-primary);
+  gap: var(--space-sm);
+  padding: 0 var(--tier-inset, var(--space-page-margin));
+  font-family: var(--font-family-zh);
+  font-size: var(--font-size-subheading);
+  font-weight: var(--font-weight-subheading);
+  line-height: var(--line-height-subheading);
+  color: var(--color-text-primary);
 }
 amap-tier-label img { display: block; flex: none; width: 16px; height: 16px; }

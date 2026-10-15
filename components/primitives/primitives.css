@@ -8,7 +8,7 @@ amap-tag, amap-quick-order {
   display: inline-flex;
   vertical-align: top;
   min-width: 0;
-  font-family: var(--ds-font-family-base);
+  font-family: var(--font-family-zh);
 }
 
 .ds-link, .ds-fav, .ds-btn, .ds-hot {
@@ -17,7 +17,7 @@ amap-tag, amap-quick-order {
   -webkit-tap-highlight-color: transparent;
 }
 .ds-link:focus-visible, .ds-fav:focus-visible, .ds-btn:focus-visible, .ds-hot:focus-visible {
-  outline: 2px solid var(--ds-color-focus-ring);
+  outline: 2px solid var(--color-focus-ring-strong);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -28,11 +28,11 @@ amap-tag, amap-quick-order {
   --link-icon-h: 18px;
   display: flex;
   align-items: center;
-  height: var(--ds-type-body-s-line);
-  font-size: var(--ds-type-body-s-size);
-  font-weight: var(--ds-type-body-s-weight);
-  line-height: var(--ds-type-body-s-line);
-  color: var(--ds-color-text-muted);
+  height: var(--line-height-body);
+  font-size: var(--font-size-body);  /* 中文/Body · text/secondary */
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body);
+  color: var(--color-text-secondary);
   white-space: nowrap;
 }
 .ds-link:active { opacity: 0.6; }
@@ -123,16 +123,16 @@ amap-tag, amap-quick-order {
 .ds-meta-line {
   display: flex;
   align-items: flex-start;
-  gap: var(--meta-gap, var(--ds-space-3));
+  gap: var(--meta-gap, var(--space-2xs));
   min-width: 0;
-  font-size: var(--ds-type-body-s-size);
-  font-weight: var(--ds-type-body-s-weight);
-  line-height: var(--ds-type-body-s-line);
-  color: var(--ds-color-text-muted);
+  font-size: var(--font-size-body);  /* 中文/Body · text/secondary */
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body);
+  color: var(--color-text-secondary);
   white-space: nowrap;
   overflow: hidden;
 }
-.ds-meta-line__item.is-accent { color: var(--ds-color-text-distance); }
+.ds-meta-line__item.is-accent { color: var(--color-text-ranking); }
 .ds-meta-line__item:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .ds-meta-line__sep { flex: none; color: var(--meta-sep-color, inherit); }
 
@@ -146,7 +146,7 @@ amap-tag, amap-quick-order {
   border-radius: var(--shape-medal);
   font-family: var(--font-family-medal);
   font-weight: 600;
-  /* 颜色按档位由组件内联 var(--ds-rank-{tier}-num) 设置 */
+  /* 颜色按档位由组件内联 var(--color-text-medal-{tier}) 设置 */
 }
 .ds-ribbon__bg { position: absolute; top: 0; left: 0; width: 49px; height: 57px; }
 .ds-ribbon__label { position: absolute; top: 5px; left: 15px; font-size: 12px; line-height: 13.44px; letter-spacing: 1px; }
@@ -262,10 +262,10 @@ amap-button > .ds-btn { flex: 1 1 auto; }
 }
 .ds-btn--primary { background: var(--gradient-theme); color: var(--color-text-inverse); }
 .ds-btn--secondary { border: 1px solid var(--color-border-accent); color: var(--color-text-accent); }
-.ds-btn { gap: var(--ds-space-8); }
+.ds-btn { gap: var(--space-md); }
 .ds-btn__divider { flex: none; width: 1px; height: 20px; background: var(--color-surface-glass); }
-.ds-btn__price { font-family: var(--ds-font-family-price); font-size: var(--ds-font-size-16); font-weight: 700; line-height: 1; }
-.ds-btn__currency { font-family: var(--ds-font-family-base); font-size: var(--ds-font-size-12); font-weight: var(--ds-font-weight-semibold); }
+.ds-btn__price { font-family: var(--font-family-numeric); font-size: var(--font-size-heading); font-weight: var(--font-weight-bold); line-height: 1; }  /* 一键下单价格 */
+.ds-btn__currency { font-family: var(--font-family-zh); font-size: var(--font-size-body); font-weight: var(--font-weight-semibold); }
 .ds-btn:active { opacity: 0.8; }
 .ds-btn--tonal {  /* 同规格卡片族右侧按钮（Figma 1023:4596）：bg/brand-soft + radius/media + 中文/Subheading · text/accent */
   height: 36px;
@@ -279,19 +279,19 @@ amap-button > .ds-btn { flex: 1 1 auto; }
 }
 .ds-btn--pill { border-radius: var(--radius-pill); padding: 0 var(--space-xl); }  /* 立即支付（Figma 617:1813）：Gradient/Theme · radius/pill */
 
-/* ── amap-tag：小标签 ── */
+/* ── amap-tag：小标签（默认 16 高，左右 2，radius/element，中文/Caption；组件内按需覆盖） ── */
 .ds-tag {
   display: inline-flex;
   align-items: center;
   height: 16px;
-  padding: 0 3px;
+  padding: 0 var(--space-2xs);
   box-sizing: border-box;
-  border-radius: var(--ds-radius-4);
-  font-size: var(--ds-type-caption-xs-size);
-  line-height: var(--ds-type-caption-xs-line);
+  border-radius: var(--radius-element);
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-caption);
   white-space: nowrap;
 }
-.ds-tag[data-tone="neutral"] { background: var(--ds-color-tag-neutral-surface); color: var(--ds-color-text-muted); }
+.ds-tag[data-tone="neutral"] { background: var(--color-bg-page-subtle); color: var(--color-text-secondary); }
 /* POI 卡「附加标签」（Figma 场景实例 949:2281：收录年限 / 区域）：16 高，左右 2，圆角 element，中文/Caption */
 .ds-tag[data-tone="tenure"],
 .ds-tag[data-tone="area"]    { padding: 0 var(--space-2xs); border-radius: var(--radius-element); font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
@@ -299,13 +299,14 @@ amap-button > .ds-btn { flex: 1 1 auto; }
 .ds-tag[data-tone="area"]    { background: var(--color-bg-page-subtle); color: var(--color-text-secondary); }
 /* 一键下单商品标签（Figma 一键下单卡片「上次那杯」）：左右 6、上下 2 */
 .ds-tag[data-tone="promo"]   { height: auto; padding: var(--space-2xs) var(--space-sm); border-radius: var(--radius-element); background: var(--color-bg-commerce-soft); color: var(--color-text-price); font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
-.ds-tag[data-tone="outline"] { box-shadow: inset 0 0 0 1px var(--ds-color-action-secondary); color: var(--ds-color-action-secondary); }
-.ds-tag[data-tone="danger"]  { background: var(--ds-color-tag-danger-surface); color: var(--ds-color-tag-danger-text); font-weight: var(--ds-font-weight-semibold); }
-.ds-tag[data-tone="deal"]    { background: var(--ds-color-deal-surface); color: var(--ds-color-deal); font-weight: var(--ds-font-weight-semibold); }
+.ds-tag[data-tone="outline"] { box-shadow: inset 0 0 0 1px var(--color-border-accent); color: var(--color-text-accent); }
+.ds-tag[data-tone="danger"]  { background: var(--color-status-danger-bg); color: var(--color-text-danger); font-weight: var(--font-weight-semibold); }
+.ds-tag[data-tone="success"] { background: var(--color-status-success-bg); color: var(--color-text-success); font-weight: var(--font-weight-semibold); }
+.ds-tag[data-tone="deal"]    { background: var(--color-bg-commerce-soft); color: var(--color-text-price); font-weight: var(--font-weight-semibold); }
 /* size m：18 高，左右 6（停车场 / 加油站标签） */
-.ds-tag[data-size="m"] { height: 18px; padding: 0 var(--ds-space-6); }
+.ds-tag[data-size="m"] { height: auto; padding: var(--space-2xs) var(--space-sm); }
 /* size l：22 高，左右 8，11 号字（限行规则标签） */
-.ds-tag[data-size="l"] { height: 22px; padding: 0 var(--ds-space-8); font-size: 11px; line-height: 15px; }
+.ds-tag[data-size="l"] { height: auto; padding: var(--space-xs) var(--space-md); }
 
 /* ── amap-quick-order：一键下单卡片（Figma CTA 类型=一键下单 · 955:2869） ── */
 amap-quick-order { display: flex; }
