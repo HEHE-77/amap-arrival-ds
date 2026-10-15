@@ -144,7 +144,7 @@ _white.80/.90、black.80（图片角标底 #131313@80%）、black.05（卡片投
 | `text/price` | `{commerce.500}` | `{commerce.400}` | 价格、折扣、优惠金额 |
 | `text/ranking` | `{ranking.700}` | `{ranking.300}` | 距离、扫街榜标签文字 |
 | `text/ranking-tag` | `{ranking.tag-text}` | `{ranking.tag-text}` | 「扫街榜」小标签深棕字（固定色，压在金色底上） |
-| `text/success` | `{success.700}` | `{success.500}` | 正在开放、绿色能量 |
+| `text/success` | `{success.500}` | `{success.500}` | 正在营业 / 正在开放、绿色能量（Light 按 Figma 变量 #16A85A，2026-10-15 确认） |
 | `text/warning` | `{warning.700}` | `{warning.500}` | 即将关门、限行提醒 |
 | `text/danger` | `{danger.700}` | `{danger.500}` | 已售罄、错误 |
 | `text/info` | `{info.700}` | `{info.500}` | 信息提示 |

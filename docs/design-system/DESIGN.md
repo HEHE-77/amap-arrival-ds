@@ -39,7 +39,7 @@ colors:
       light: { "default": "{colors.palette.neutral.0}", "card": "{colors.palette.neutral.card}", "subtle": "{colors.palette.neutral.50}", "elevated": "{colors.palette.neutral.0}", "sunken": "{colors.palette.neutral.100}", "glass": "{colors.palette.alpha.white.80}", "accent": "{colors.palette.brand.50}", "selected": "{colors.palette.brand.100}", "hover": "{colors.palette.neutral.50}", "pressed": "{colors.palette.neutral.100}", "disabled": "{colors.palette.neutral.100}" }
       dark: { "default": "{colors.palette.neutral.900}", "card": "{colors.palette.neutral.900}", "subtle": "{colors.palette.neutral.950}", "elevated": "{colors.palette.neutral.800}", "sunken": "{colors.palette.neutral.950}", "glass": "{colors.palette.alpha.black.50}", "accent": "{colors.palette.brand.900}", "selected": "{colors.palette.brand.800}", "hover": "{colors.palette.neutral.800}", "pressed": "{colors.palette.neutral.700}", "disabled": "{colors.palette.neutral.800}" }
     text:
-      light: { "primary": "{colors.palette.neutral.900}", "secondary": "{colors.palette.neutral.600}", "tertiary": "{colors.palette.neutral.400}", "placeholder": "{colors.palette.neutral.300}", "disabled": "{colors.palette.neutral.300}", "inverse": "{colors.palette.neutral.0}", "accent": "{colors.palette.brand.500}", "link": "{colors.palette.brand.500}", "price": "{colors.palette.commerce.500}", "ranking": "{colors.palette.ranking.700}", "ranking-tag": "{colors.palette.ranking.tag-text}", "success": "{colors.palette.success.700}", "warning": "{colors.palette.warning.700}", "danger": "{colors.palette.danger.700}", "info": "{colors.palette.info.700}", "medal-gold": "{colors.palette.medal.gold-text}", "medal-silver": "{colors.palette.medal.silver-text}", "medal-bronze": "{colors.palette.medal.bronze-text}" }
+      light: { "primary": "{colors.palette.neutral.900}", "secondary": "{colors.palette.neutral.600}", "tertiary": "{colors.palette.neutral.400}", "placeholder": "{colors.palette.neutral.300}", "disabled": "{colors.palette.neutral.300}", "inverse": "{colors.palette.neutral.0}", "accent": "{colors.palette.brand.500}", "link": "{colors.palette.brand.500}", "price": "{colors.palette.commerce.500}", "ranking": "{colors.palette.ranking.700}", "ranking-tag": "{colors.palette.ranking.tag-text}", "success": "{colors.palette.success.500}", "warning": "{colors.palette.warning.700}", "danger": "{colors.palette.danger.700}", "info": "{colors.palette.info.700}", "medal-gold": "{colors.palette.medal.gold-text}", "medal-silver": "{colors.palette.medal.silver-text}", "medal-bronze": "{colors.palette.medal.bronze-text}" }
       dark: { "primary": "{colors.palette.neutral.50}", "secondary": "{colors.palette.neutral.300}", "tertiary": "{colors.palette.neutral.500}", "placeholder": "{colors.palette.neutral.600}", "disabled": "{colors.palette.neutral.700}", "inverse": "{colors.palette.neutral.900}", "accent": "{colors.palette.brand.400}", "link": "{colors.palette.brand.400}", "price": "{colors.palette.commerce.400}", "ranking": "{colors.palette.ranking.300}", "ranking-tag": "{colors.palette.ranking.tag-text}", "success": "{colors.palette.success.500}", "warning": "{colors.palette.warning.500}", "danger": "{colors.palette.danger.500}", "info": "{colors.palette.info.500}", "medal-gold": "{colors.palette.medal.gold-text}", "medal-silver": "{colors.palette.medal.silver-text}", "medal-bronze": "{colors.palette.medal.bronze-text}" }
     icon:
       light: { "primary": "{colors.palette.neutral.900}", "secondary": "{colors.palette.neutral.600}", "tertiary": "{colors.palette.neutral.400}", "disabled": "{colors.palette.neutral.300}", "inverse": "{colors.palette.neutral.0}", "accent": "{colors.palette.brand.500}", "price": "{colors.palette.commerce.500}", "ranking": "{colors.palette.ranking.700}", "success": "{colors.palette.success.700}", "warning": "{colors.palette.warning.500}", "danger": "{colors.palette.danger.700}", "info": "{colors.palette.info.700}" }
@@ -189,7 +189,7 @@ components:
     price: { color: "{colors.semantic.text.light.price}", type: "{typography.numeric-sm}" }
     hot-review: "{colors.gradients.hot-review}"
     button: { primary: "{colors.gradients.theme}", radius: "{rounded.control}" }
-    cta: { figma: "扫街榜POI卡片/CTA (类型: 一键下单 / 看团购 / 订门票)", gap: "{spacing.md}", padding-x: "{spacing.lg}" }
+    cta: { figma: "扫街榜POI卡片/CTA (类型: 一键下单 / 看团购 / 订门票)", gap: "{spacing.md}", padding-x: "{spacing.lg}", radius: "{rounded.control}", radius-group: "{rounded.media}" }
   dish-card:
     figma: "必吃榜/菜品卡 (状态: 默认 / 按下 / 加载中) + 必吃榜/菜品横滑列表"
     image: { size: "84px", radius: "{rounded.media}", pressed: "{colors.palette.alpha.black.12}", skeleton: "{colors.semantic.surface.light.sunken}" }
@@ -315,7 +315,7 @@ components:
 - `{colors.semantic.text.light.price}` / `{colors.semantic.text.dark.price}` — 价格、折扣、优惠金额。Light `commerce.500`（#FF4D13），Dark `commerce.400`（#FF7A3D）。
 - `{colors.semantic.text.light.ranking}` / `{colors.semantic.text.dark.ranking}` — 距离、扫街榜标签文字。Light `ranking.700`（#835B32），Dark `ranking.300`（#DAC1A7）。
 - `{colors.semantic.text.light.ranking-tag}` / `{colors.semantic.text.dark.ranking-tag}` — 「扫街榜」小标签深棕字（固定色，压在金色底上）。Light `ranking.tag-text`（#8B4424），Dark `ranking.tag-text`（#8B4424）。
-- `{colors.semantic.text.light.success}` / `{colors.semantic.text.dark.success}` — 正在开放、绿色能量。Light `success.700`（#13713F），Dark `success.500`（#16A85A）。
+- `{colors.semantic.text.light.success}` / `{colors.semantic.text.dark.success}` — 正在营业 / 正在开放、绿色能量。Light `success.500`（#16A85A，2026-10-15 按 Figma 变量确认），Dark `success.500`（#16A85A）。
 - `{colors.semantic.text.light.warning}` / `{colors.semantic.text.dark.warning}` — 即将关门、限行提醒。Light `warning.700`（#CA7C1C），Dark `warning.500`（#FAB428）。
 - `{colors.semantic.text.light.danger}` / `{colors.semantic.text.dark.danger}` — 已售罄、错误。Light `danger.700`（#BE0817），Dark `danger.500`（#FF3041）。
 - `{colors.semantic.text.light.info}` / `{colors.semantic.text.dark.info}` — 信息提示。Light `info.700`（#135BA9），Dark `info.500`（#2E8BF0）。
@@ -510,8 +510,8 @@ PingFang SC 与 Helvetica 为 Apple 系统字体，只在苹果设备上可用�
 嵌套递减：容器 16 › 内容卡 12 › 图片 8 › 按钮 4 › 标签 2。
 
 - `{rounded.element}` = 2px — 评分徽标「4.8」、团购/票务/状态标签、线路标
-- `{rounded.control}` = 4px — 订门票 / 查看路线按钮、数量步进器、日期与场次选项
-- `{rounded.media}` = 8px — 卡片内图片、缩略图、图片推荐卡（有 1 小时以上）
+- `{rounded.control}` = 4px — 订门票 / 一键下单 CTA 按钮、数量步进器、日期与场次选项
+- `{rounded.media}` = 8px — 卡片内图片、缩略图、图片推荐卡（有 1 小时以上）、扫街榜 POI 卡「看团购」CTA 两个按钮（看团购 + 查看路线）
 - `{rounded.component}` = 12px — 扫街榜 POI 卡、附近精选卡、横滑「查看更多」卡
 - `{rounded.container}` = 16px — 列表卡（末班车、你的收藏）、浮层（POI 浮层、一键下单）
 - `{rounded.pill}` = 999px — 服务入口胶囊、图片上热度/收藏角标
@@ -565,7 +565,7 @@ PingFang SC 与 Helvetica 为 Apple 系统字体，只在苹果设备上可用�
 
 - 单一主组件，不再按场景拆变体：场景差异由属性组合实现（上班到达 = CTA 一键下单 + 附加标签「收录」+ 查看更多、无热评、单条优惠；饭店到达 = CTA 看团购 + 热评 + 团/券两条优惠；景点到达 = CTA 订门票 + 附加标签「区域」+ 热评 + 两条门票）。营业状态统一文案「正在营业」（景点用「正在开放」）。
 - 外壳：`{colors.semantic.surface.light.card}` 底 + `{rounded.container}` + `{elevation.shadow-card}`，内边距 `{spacing.md}`；图片 `{rounded.media}`，图上热度与页码角标 `{rounded.pill}` + `{elevation.glass-blur}`。
-- 文字：店名 `{typography.zh-heading}`，元信息 `{typography.zh-body}`，标签 `{typography.zh-caption}`（强调用 600 字重的「中文/Caption Strong」），价格数字 `{typography.numeric-sm}` + `{colors.semantic.text.light.price}`；标签圆角 `{rounded.element}`，按钮 `{rounded.control}`，主按钮 `{colors.gradients.theme}`；热评条 `{colors.gradients.hot-review}`。
+- 文字：店名 `{typography.zh-heading}`，元信息 `{typography.zh-body}`，标签 `{typography.zh-caption}`（强调用 600 字重的「中文/Caption Strong」），价格数字 `{typography.numeric-sm}` + `{colors.semantic.text.light.price}`；标签圆角 `{rounded.element}`，按钮 `{rounded.control}`（CTA 类型=看团购 时两个按钮为 `{rounded.media}`，按 Figma 确认），主按钮 `{colors.gradients.theme}`；热评条 `{colors.gradients.hot-review}`。
 - 操作区为嵌套组件 `扫街榜POI卡片/CTA`，「类型」三选一：一键下单（整块一键下单卡片：商品图、商品名、规格 + 一键下单/换一杯按钮）/ 看团购 + 查看路线 / 订门票 + 查看路线；主按钮 `{colors.gradients.theme}`，按钮间距 `{spacing.md}`，按钮左右内边距 `{spacing.lg}`，两按钮等宽填充。
 - 属性：名称、距离（TEXT）；TOP 角标、附加标签、优惠标签 1/2（实例替换）；显示 TOP 角标、显示附加标签、显示热评、显示查看更多、显示第二条优惠（布尔）；CTA 类型（暴露的嵌套实例）。团 / 票 / 券、营业状态、评分、榜单标签、一键下单卡片为暴露的嵌套实例，各自带价格、折扣、状态、文案等文本属性。
 

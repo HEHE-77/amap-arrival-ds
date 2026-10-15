@@ -16,10 +16,7 @@ SRC = ROOT / 'docs/design-system/DESIGN.md'
 OUT = ROOT / 'tokens/ds-tokens.css'
 
 # Figma 变量实际值与 DESIGN.md 不一致、且以 Figma 为准的项（待设计确认后同步回文档）
-FIGMA_OVERRIDES = {
-    # Figma 变量 text/success（Light）= #16A85A（success.500）；文档写的是 success.700
-    ('text', 'light', 'success'): '{colors.palette.success.500}',
-}
+FIGMA_OVERRIDES = {}
 
 doc = yaml.safe_load(SRC.read_text(encoding='utf-8').split('---')[1])
 
