@@ -42,6 +42,7 @@
     const page = $('page');
     page.className = `page${s.move === 'taxi' ? ' is-taxi' : ''}`;
     page.innerHTML = R.page(s);
+    $('screen').querySelectorAll('amap-order-sheet').forEach((x) => x.remove());   // 换场景时收起浮层
     $('clock').textContent = I.CLOCK[s.time];
     $('statusbar').className = 'statusbar is-regular';   // 三个场景 Figma 顶部都有 4 的内边距
     if (resetScroll) $('scroll').scrollTop = 0;
@@ -82,6 +83,29 @@
     'section-more', 'service-action'];
   EVENTS.forEach((type) => $('page').addEventListener(type, (e) => {
     const d = e.detail && Object.keys(e.detail).length ? JSON.stringify(e.detail, (k, v) => (k === 'item' || k === 'deal' ? undefined : v)) : '';
+    $('log').innerHTML = `最近交互：<b>${esc(type)}</b> ${esc(d)}`;
+  }));
+
+  // CTA → 下单浮层（Figma 1057:4138）：看团购 / 看优惠 → 饭店；订门票 → 景点；一键下单 → 一键下单
+  const ORDER_OF_CTA = { group: 'restaurant', ticket: 'scenic' };
+  const assetBase = () => document.querySelector('[asset-base]')?.getAttribute('asset-base') ?? '../assets/';
+  function openOrder(kind) {
+    const screen = $('screen');
+    let sheet = screen.querySelector(`amap-order-sheet[data-order="${kind}"]`);
+    if (sheet) sheet.remove();   // 每次重新打开都从初始选择开始
+    screen.insertAdjacentHTML('beforeend', window.ArrivalOrders.html(kind, assetBase()));
+    sheet = screen.querySelector(`amap-order-sheet[data-order="${kind}"]`);
+    requestAnimationFrame(() => sheet.open());
+  }
+  $('page').addEventListener('card-primary', (e) => {
+    const card = e.target.closest('amap-place-card, amap-restaurant-card');
+    const kind = ORDER_OF_CTA[card?.querySelector('.amap-place')?.dataset.cta];
+    if (kind) openOrder(kind);
+  });
+  $('page').addEventListener('card-order-buy', () => openOrder('quick'));
+  ['option-select', 'quantity-change', 'addon-change', 'order-submit', 'sheet-close'].forEach((type) => $('screen').addEventListener(type, (e) => {
+    if (e.target.closest('#page')) return;
+    const d = e.detail ? JSON.stringify(e.detail, (k, v) => (k === 'item' ? undefined : v)) : '';
     $('log').innerHTML = `最近交互：<b>${esc(type)}</b> ${esc(d)}`;
   }));
 

@@ -608,6 +608,22 @@ PingFang SC 与 Helvetica 为 Apple 系统字体，只在苹果设备上可用�
 
 - 停车场卡、加油站卡、收藏卡、代驾卡、末班车列表卡共用一套卡片规格：`{colors.semantic.surface.light.card}` 底、`{colors.semantic.border.light.default}` 0.6 描边（不计入布局，保证高度为整数）、`{rounded.container}`、`{spacing.lg}` 内边距；主标题 `{typography.zh-heading}` 单行截断，次要信息 `{typography.zh-body}`；右侧按钮统一为 `{colors.semantic.bg.light.brand-soft}` 底 + `{rounded.media}` + `{typography.zh-subheading}` · `{colors.semantic.text.light.accent}`。所在区块标题 `{typography.zh-heading}`，左右 `{spacing.page-margin}`。
 
+### `{components.order-sheet}` 下单浮层
+
+Figma `1057:4138`（下单组件库）；整屏稿 `812:7855` 饭店 POI 浮层（看团购）、`812:7856` 景点 POI 浮层（订门票）、`812:7857` 一键下单浮层。
+
+- **容器**：遮罩 `{colors.semantic.overlay.light.scrim}`（黑 70%）；面板 `{rounded.shape-sheet-top}`（16/16/0/0），底色 `{colors.semantic.bg.light.page-subtle}`，自底部移入 400ms（ease-out），点遮罩不关闭，只能点右上角 × 关闭。
+- **面板头部**：padding 16/16/8/16；标题 `{typography.zh-heading}`，副标题 `{typography.zh-body}` · `{colors.semantic.text.light.tertiary}`，间距 2；关闭 24×24 热区，12×12 ×，`{colors.semantic.icon.light.secondary}` 1.5 描边。
+- **内容区**：padding 0/16/12/16，区块间距 `{spacing.md}`，超高时内容区滚动，头部与底部栏固定。
+- **区块卡片**：`{colors.semantic.surface.light.card}` + `{colors.semantic.border.light.default}` 0.6 内描边 + `{rounded.container}`，标题行到内容 `{spacing.section-title-gap}`；横滑列表（套餐 / 票种 / 加购）上下 12、左右 0，横滑区高 105；其余区块 padding 12。标题可带说明（`{typography.zh-body}` · tertiary，间距 6）。
+- **选项卡**：`{rounded.media}`；默认 `{colors.semantic.surface.light.default}` + `{colors.semantic.border.light.default}` 1；选中 `{colors.semantic.bg.light.brand-soft}` + `{colors.semantic.border.light.selected}` 1.5；不可选 `{colors.semantic.surface.light.disabled}` + `{colors.semantic.text.light.disabled}`，不显示角标。角标贴左上（套餐 / 票种 x 11，日期 / 场次 x 6，上探 8），commerce/500 底、`{colors.semantic.text.light.inverse}`、圆角 4/4/4/0、Caption Strong。尺寸：套餐 128×97、票种 128×88、日期 92×60（+ 更多日期 50×60）、场次两列 44 高（行距 12）、取餐时间四列 50 高。价格 `{typography.numeric-md}` · `{colors.semantic.text.light.price}`；折扣标签左右 4、radius 4、`{colors.semantic.border.light.commerce}` 1 描边。
+- **套餐详情卡**：padding 12、间距 12；64 图（`{rounded.media}`）+ 名称 `{typography.zh-subheading}` / 规则 `{typography.zh-body}` · secondary；「套餐内容」上方 `{colors.semantic.border.light.subtle}` 分割线，分组名 `{typography.zh-label}` · secondary，菜品行 20 高（份量 40 宽、价格 48 宽，右对齐）。
+- **数量行 / 步进器**：步进器 96×26，按钮 26×26 radius 4；减号 `{colors.semantic.surface.light.sunken}`（到下限 `{colors.semantic.icon.light.disabled}`），加号 `{colors.semantic.bg.light.brand-soft}` + `{colors.semantic.icon.light.accent}`；数字 `{typography.numeric-md}`，28 宽。
+- **购买须知条**：通栏，`{colors.semantic.bg.light.ranking-soft}`，padding 8/16，文字 `{typography.zh-body}` · `{colors.semantic.text.light.ranking}`，链接 `{typography.zh-label}` + 上箭头。
+- **底部栏**：padding 12/16/28/16，`{colors.semantic.surface.light.default}` + 顶部分割阴影；现价 `{typography.numeric-lg}`（¥ 用 `{typography.zh-subheading}`）· price，原价划线 tertiary，优惠说明 `{typography.zh-body-sm}` · price；按钮 140×46 胶囊 `{colors.gradients.commerce}`，`{typography.zh-heading}` · inverse（「去下单」/「免密支付」）。
+- **一键下单专用**：已选商品卡（56 图 + 名称 heading + 「上次那杯」`{colors.semantic.bg.light.ranking-tag}` 标签 + 规格行与「改规格」链接 + 「换一杯」胶囊 brand-soft 按钮）；加购卡 120×160，四种底色 brand-soft / status-warning-bg / status-success-bg / rank-theme-local-wash，加购按钮 16×16 radius 4 `{colors.gradients.theme}`；杯数 + 支付方式卡（左右 12，行间 subtle 分割线）；条款 `{typography.zh-body-sm}` · tertiary 居中，贴在底部栏上方。
+- **联动**：选中的套餐 / 票种单价 × 数量 + 已加购商品 = 底部栏现价，原价同理，优惠说明自动重算。
+
 ## Responsive Behavior
 
 | Token | 宽度 | 内容区 | 设备 |
@@ -629,8 +645,8 @@ PingFang SC 与 Helvetica 为 Apple 系统字体，只在苹果设备上可用�
 
 ## Known Gaps
 
-- **组件**：目前只有扫街榜分榜卡片与 POI 行；按钮、标签、POI 主卡、浮层等尚未组件化。
-- **动效**：只记录了浮层入场（原型观测：ease-in 400ms），缺少完整的时长 / 缓动 token；入场缓动建议复核为 ease-out。
+- **组件**：下单浮层 Figma 文字用 Noto Sans SC「自动」行高（16 号标题渲染为 19），与其他组件（苹方，16 → 22）不一致；代码统一按 `{typography.zh-heading}` 22 实现，浮层整体比稿面高约 3–9。
+- **动效**：只记录了浮层入场 400ms（代码用 ease-out 入场、ease-in 退场），缺少完整的时长 / 缓动 token。
 - **z-index / 层级栈**：地图、到达页、浮层、Toast 的层级顺序未定义。
 - **平板 / 折叠屏**：未覆盖。
 - **扩展值**：场景色 `.100` 以上、各色阶深色段、`spacing.2xl`、断点 compact/large 为推导值，未经稿面验证。

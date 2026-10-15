@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>下单浮层 · 到达页设计系统</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="../components/primitives/primitives.css">
+  <link rel="stylesheet" href="../components/order-sheet/order-sheet.css">
+  <style>
+    body { margin: 0; padding: 24px 16px; background: #eef0f2; font-family: var(--font-family-zh); color: #191919; }
+    h2.label { font-size: 13px; font-weight: 500; color: #60636c; margin: 0 0 18px; }
+    .row { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+    .cell { display: flex; flex-direction: column; gap: 8px; }
+    .cap { font-size: 12px; color: #60636c; font-family: ui-monospace, Menlo, monospace; display: flex; justify-content: space-between; align-items: center; }
+    .cap button { font: inherit; font-size: 12px; padding: 4px 10px; border: 1px solid #c9ccd3; border-radius: 6px; background: #fff; cursor: pointer; }
+    /* 402×874 手机屏，浮层贴底 */
+    .screen { position: relative; width: 402px; height: 874px; overflow: hidden; border-radius: 32px; background: var(--color-bg-page); }
+    .screen::before { content: '页面内容'; position: absolute; inset: 0; display: grid; place-items: center; color: #b5b8bf; font-size: 13px; }
+    #log { margin-top: 24px; font-size: 12px; color: #00a27f; min-height: 16px; font-family: ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body>
+  <h2 class="label">下单浮层（Figma 1057:4138 组件库 · 整屏稿 812:7855 / 812:7856 / 812:7857）· 点 × 关闭，点遮罩不关闭</h2>
+  <div class="row" id="row"></div>
+  <div id="log">选择套餐 / 票种 / 场次、加减数量、加购，事件显示在这里</div>
+
+  <script src="../components/primitives/primitives.js"></script>
+  <script src="../components/order-sheet/order-sheet.js"></script>
+  <script src="../app/orders.js"></script>
+  <script>
+    const CAPS = { restaurant: '饭店 POI 浮层 · 看团购', scenic: '景点 POI 浮层 · 订门票', quick: '一键下单浮层' };
+    const row = document.getElementById('row');
+    row.innerHTML = ArrivalOrders.kinds.map((k) => `
+      <div class="cell">
+        <div class="cap"><span>${CAPS[k]}</span><button type="button" data-open="${k}">重新打开</button></div>
+        <div class="screen" data-theme="light" data-screen="${k}">${ArrivalOrders.html(k, '../assets/')}</div>
+      </div>`).join('');
+    requestAnimationFrame(() => document.querySelectorAll('amap-order-sheet').forEach((s) => s.open()));
+    row.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-open]');
+      if (b) document.querySelector(`[data-screen="${b.dataset.open}"] amap-order-sheet`).open();
+    });
+    const log = document.getElementById('log');
+    ['option-select', 'option-more', 'quantity-change', 'addon-change', 'item-spec', 'item-swap', 'payment-change', 'notice-more', 'order-submit', 'sheet-open', 'sheet-close']
+      .forEach((t) => row.addEventListener(t, (e) => {
+        const d = e.detail ? JSON.stringify(e.detail, (k, v) => (k === 'item' ? undefined : v)) : '';
+        log.textContent = `${t} ${d}`;
+      }));
+  </script>
+</body>
+</html>
