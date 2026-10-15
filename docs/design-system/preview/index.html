@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>高德到达页设计系统</title>
+<link href="https://fonts.googleapis.com/css2?family=Khand:wght@600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     TWO TOKEN LAYERS — do not mix them.
+
+     --ui-*     = the documentation tool's OWN chrome (nav rail,
+                  page-hero panel, tabs, tables, TOC). Always
+                  neutral/white, fixed regardless of brand. Never
+                  overwrite these with extracted values — the tool
+                  must stay legible no matter how saturated or dark
+                  the brand palette turns out to be.
+
+     --brand-*  = the actual extracted tokens, filled in from
+                  tokens/<category>.md as each category is confirmed.
+                  Only ever used INSIDE demo content that is
+                  specifically previewing what a token looks like
+                  (swatch chips, a live button/component demo) —
+                  never as the tool's own background/surface/border.
+     ============================================================ */
+  :root {
+    /* ---- UI chrome (fixed neutral, never themed, never edited per-project) ---- */
+    --ui-bg: #FFFFFF;
+    --ui-surface: #F7F7F6;
+    --ui-surface-2: #EFEFEE;
+    --ui-border: #E4E4E3;
+    --ui-text-1: #1A1A1A;
+    --ui-text-2: #6B6B6B;
+    --ui-text-3: #9B9B9B;
+    --ui-active-bg: #EFEFEE;
+    --ui-active-text: #1A1A1A;
+
+    /* ---- brand tokens — from tokens/colors.md, PLACEHOLDER until Color category confirmed ---- */
+    --brand-bg: #FAFAFA;
+    --brand-surface-1: #FFFFFF;
+    --brand-surface-2: #F2F2F2;
+    --brand-border: #E5E5E5;
+    --brand-text-1: #171717;
+    --brand-text-2: #595959;
+    --brand-text-3: #8C8C8C;
+    --brand-accent: #4C4CFF;
+    --brand-accent-subtle: #EEEEFF;
+
+    /* from tokens/typography.md — PLACEHOLDER until Typography category confirmed */
+    --font-display-en: "Inter", sans-serif;
+    --font-body-en: "Inter", sans-serif;
+    --font-mono: "IBM Plex Mono", monospace;
+    --font-display-zh: "Noto Sans SC", sans-serif;
+    --font-body-zh: "Noto Sans SC", sans-serif;
+
+    /* from tokens/spacing.md — PLACEHOLDER until Spacing category confirmed */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+
+    /* from tokens/radius.md — PLACEHOLDER until Radius category confirmed */
+    --radius-control: 8px;
+    --radius-component: 12px;
+    --radius-container: 16px;
+
+    /* from tokens/effects.md — PLACEHOLDER until Effects category confirmed */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ui-bg);
+    color: var(--ui-text-1);
+    font-family: var(--font-body-en), var(--font-body-zh);
+    display: flex;
+    min-height: 100vh;
+  }
+  :lang(zh) { font-family: var(--font-body-zh); }
+
+  /* ============================================================
+     LEFT ICON NAV RAIL — one item per token category.
+     Pattern: M3 styles left rail (narrow, icon + label, active
+     item gets a pill background). Disabled items = category not
+     generated yet; grey out, not clickable, small "待生成" hint.
+     All chrome here uses --ui-*, never --brand-*.
+     ============================================================ */
+  .rail {
+    width: 88px;
+    flex-shrink: 0;
+    background: var(--ui-surface);
+    border-right: 1px solid var(--ui-border);
+    padding: var(--space-md) 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+  .rail-item {
+    width: 72px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: var(--space-sm) 0;
+    border-radius: var(--radius-component);
+    cursor: pointer;
+    color: var(--ui-text-2);
+    font-size: 11px;
+  }
+  .rail-item .glyph {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--ui-surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+  }
+  .rail-item.active {
+    background: var(--ui-active-bg);
+    color: var(--ui-active-text);
+  }
+  .rail-item.pending {
+    color: var(--ui-text-3);
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .rail-item.pending .glyph::after { content: "…"; }
+
+  /* ============================================================
+     MAIN CONTENT — one <section class="page"> per category.
+     Only one visible at a time (toggled via JS on rail click).
+     ============================================================ */
+  .main { flex: 1; display: flex; min-width: 0; }
+  .content { flex: 1; overflow-y: auto; padding: var(--space-2xl) var(--space-2xl) var(--space-2xl) var(--space-2xl); }
+  .page { display: none; max-width: 920px; }
+  .page.active { display: block; }
+
+  /* Header hero: big title + description + live demo panel.
+     The panel itself (.page-hero) is UI chrome — neutral, bordered.
+     Only .hero-demo's CHILDREN (chips demonstrating actual tokens)
+     may use --brand-*; .hero-demo's own background stays neutral. */
+  .page-hero {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: var(--space-lg);
+    background: var(--ui-surface);
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-container);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-lg);
+  }
+  .page-hero h1 { font-family: var(--font-display-en); font-size: 40px; margin: 0 0 var(--space-sm); color: var(--ui-text-1); }
+  .page-hero p.desc { color: var(--ui-text-2); font-size: 15px; line-height: 1.5; margin: 0; }
+  .hero-demo {
+    background: var(--ui-surface-2);
+    border-radius: var(--radius-component);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 160px;
+    gap: 8px;
+    padding: var(--space-md);
+  }
+
+  /* Horizontal sub-tabs — only used when a category has multiple
+     facets (e.g. Color: Palette / Semantic Roles / Gradients) */
+  .tabs {
+    display: flex;
+    gap: var(--space-xs);
+    background: var(--ui-surface-2);
+    border-radius: 999px;
+    padding: 4px;
+    margin-bottom: var(--space-lg);
+    width: fit-content;
+  }
+  .tab {
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: 999px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--ui-text-2);
+    white-space: nowrap;
+  }
+  .tab.active { background: var(--ui-bg); color: var(--ui-text-1); box-shadow: var(--shadow-sm); }
+
+  h2 { font-size: 20px; margin: var(--space-xl) 0 var(--space-sm); color: var(--ui-text-1); }
+  .section-desc { color: var(--ui-text-2); font-size: 14px; margin: 0 0 var(--space-md); }
+
+  /* Spec table — used in every category to list exact token values */
+  table.spec { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: var(--space-lg); }
+  table.spec th, table.spec td { text-align: left; padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--ui-border); }
+  table.spec th { color: var(--ui-text-3); font-weight: 500; }
+  table.spec code { font-family: var(--font-mono); font-size: 12px; }
+
+  /* Color swatch grid — the chip color IS the brand token being
+     demonstrated (intentional, the one place --brand-* belongs).
+     The label strip beneath each chip stays neutral UI chrome. */
+  .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--space-sm); margin-bottom: var(--space-lg); }
+  .swatch { border-radius: var(--radius-component); overflow: hidden; border: 1px solid var(--ui-border); }
+  .swatch-color { height: 64px; }
+  .swatch-label { padding: var(--space-xs) var(--space-sm); font-size: 11px; background: var(--ui-bg); }
+  .swatch-label code { font-family: var(--font-mono); display: block; color: var(--ui-text-2); }
+
+  .pill-btn { display: inline-block; padding: 10px 20px; border-radius: 999px; font-size: 14px; font-weight: 600; }
+
+  /* ============================================================
+     RIGHT IN-PAGE TOC — anchor list, built per active page.
+     ============================================================ */
+  .toc { width: 200px; flex-shrink: 0; padding: var(--space-2xl) var(--space-lg) var(--space-lg) 0; font-size: 13px; }
+  .toc-title { color: var(--ui-text-3); margin-bottom: var(--space-sm); }
+  .toc a { display: block; color: var(--ui-text-2); text-decoration: none; padding: 4px 0; }
+  .toc a.active { color: var(--ui-active-text); }
+
+  :root {
+    --brand-bg: #FFFFFF; --brand-surface-1: #FFFFFF; --brand-surface-2: #F4F5F7;
+    --brand-border: #E8E9EB; --brand-text-1: #191919; --brand-text-2: #60636C;
+    --brand-text-3: #999999; --brand-accent: #0980FE; --brand-accent-subtle: #EBF3FE;
+    --brand-commerce: #FF4D13; --brand-ranking: #835B32;
+  }
+  :root { --font-display-en: "PingFang SC", "Noto Sans SC", sans-serif; --font-body-en: "PingFang SC", "Noto Sans SC", sans-serif; --font-mono: Helvetica, "Helvetica Neue", Arial, sans-serif; --font-medal: "Khand", sans-serif; --font-display-zh: "PingFang SC", "Noto Sans SC", sans-serif; --font-body-zh: "PingFang SC", "Noto Sans SC", sans-serif; }
+  .ramp-label { font-size:12px; color:var(--ui-text-2); margin:4px 0 6px; font-family:var(--font-mono); }
+  .swatch-grid { grid-template-columns: repeat(11, minmax(0,1fr)); gap:6px; margin-bottom:14px; }
+  .swatch-color { height:48px; } .swatch-label { font-size:10px; } .swatch-label code { font-size:10px; }
+  .chip { display:inline-block; width:16px; height:16px; border-radius:4px; background:var(--c); border:1px solid var(--ui-border); vertical-align:middle; margin-right:6px; }
+  .alpha-stage { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:16px; border-radius:12px; margin-bottom:24px;
+    background: linear-gradient(135deg,#E9A15B 0%,#B5523A 40%,#2C3D63 75%,#0E1A2E 100%); }
+  .alpha-chip { height:56px; border-radius:8px; display:flex; align-items:flex-end; padding:6px 8px; backdrop-filter: blur(4px); }
+  .alpha-chip span { font:11px var(--font-mono); color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.5); }
+  .line-tag { color:#fff; font-size:11px; padding:1px 6px; border-radius:3px; }
+  .mode-toggle { display:flex; gap:4px; background:var(--ui-surface-2); border-radius:999px; padding:4px; width:fit-content; margin-bottom:12px; }
+  .demo-stage { background:var(--demo-stage); padding:24px; border-radius:16px; display:flex; justify-content:center; margin-bottom:8px; transition: background .2s; }
+  .status-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .status-pair { display:flex; flex-direction:column; gap:6px; align-items:flex-start; padding:12px; border:1px solid var(--ui-border); border-radius:12px; }
+  .status-pair .dark { outline: 6px solid #17181B; background-clip: padding-box; }
+  .status-tag { font-size:12px; padding:2px 8px; border:1px solid; border-radius:4px; font-family: "PingFang SC", sans-serif; }
+  .grad-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .grad-card { border:1px solid var(--ui-border); border-radius:12px; overflow:hidden; }
+  .grad-fill { height:72px; }
+  .grad-card .swatch-label { font-size:12px; line-height:1.5; }
+  /* mini arrival card — demo content only */
+  .mini { width:236px; border-radius:12px; padding:6px 6px 10px; font:12px/1.4 "PingFang SC", -apple-system, sans-serif; text-align:left; }
+  .mini-img { height:96px; border-radius:8px; position:relative; background:linear-gradient(180deg,#E9A15B,#B5523A 55%,#3a2a2a); margin-bottom:6px; }
+  .medal { position:absolute; left:8px; top:-1px; width:25px; height:29px; border-radius:1px 1px 0 0; clip-path:polygon(0 0,100% 0,100% 78%,50% 100%,0 78%); display:flex; flex-direction:column; align-items:center; font:600 12px/12px "Khand",sans-serif; color:#4A240A; box-shadow:inset 0 -1px 0 rgba(255,255,255,.25); }
+  .medal i { font:600 6px/8px "Khand",sans-serif; letter-spacing:.5px; font-style:normal; margin-top:2px; }
+  .glass { position:absolute; right:6px; top:6px; font-size:10px; padding:1px 6px; border-radius:10px; backdrop-filter:blur(4px); }
+  .mini-row { display:flex; gap:6px; align-items:center; justify-content:space-between; margin:3px 4px; }
+  .mini-row.sm { justify-content:flex-start; font-size:10px; }
+  .mini-row b { font-size:14px; font-weight:600; }
+  .rate { color:#fff; font-size:9px; padding:0 3px; border-radius:2px; }
+  .rk { font-size:9px; font-weight:600; padding:0 3px; border-radius:2px; }
+  .ok, .deal { font-size:9px; border:1px solid; padding:0 3px; border-radius:2px; }
+  .mini-btns { display:flex; gap:6px; margin:8px 4px 0; }
+  .btn-solid, .btn-line { flex:1; text-align:center; font-size:12px; padding:5px 0; border-radius:4px; font-weight:500; }
+  .btn-line { border:1px solid; }
+
+  .num { font-variant-numeric: tabular-nums; }
+  .muted { color:var(--ui-text-3); font-size:11px; margin-top:2px; }
+  .type-table td { vertical-align: middle; }
+  .type-hero { background:#fff; border-radius:12px; padding:18px 20px; }
+  .weight-row { display:flex; gap:12px; }
+  .weight-card { flex:1; border:1px solid var(--ui-border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:6px; }
+
+  .sp-scale { display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
+  .sp-row { display:grid; grid-template-columns:110px 160px 44px 1fr; align-items:center; gap:12px; font-size:13px; }
+  .sp-bar { height:16px; background:#0980FE; opacity:.85; border-radius:2px; }
+  .sp-demo { display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .sp-phone { position:relative; width:250px; background:#fff; border-radius:12px; padding:14px 16px; font-family:"PingFang SC",sans-serif; }
+  .sp-margin { position:absolute; top:0; bottom:0; width:16px; background:rgba(255,77,19,.14); }
+  .sp-margin.l { left:0; border-radius:12px 0 0 12px; } .sp-margin.r { right:0; border-radius:0 12px 12px 0; }
+  .sp-title { font:600 13px/18px "PingFang SC",sans-serif; color:#191919; }
+  .sp-gap { position:relative; background:rgba(9,128,254,.16); }
+  .sp-gap span, .sp-hgap span { position:absolute; right:-2px; top:50%; transform:translate(100%,-50%); font:10px var(--font-mono); color:#0980FE; }
+  .sp-cards { display:flex; }
+  .sp-card { flex:1; border:1px solid #E8E9EB; border-radius:8px; padding:6px; }
+  .sp-img { height:40px; border-radius:4px; background:linear-gradient(180deg,#E9A15B,#B5523A); margin-bottom:6px; }
+  .sp-t { font:500 11px/14px "PingFang SC"; color:#191919; } .sp-m { font:10px/13px "PingFang SC"; color:#60636C; }
+  .sp-gap6 { height:6px; background:rgba(9,128,254,.16); }
+  .sp-hgap { position:relative; width:12px; background:rgba(9,128,254,.16); }
+  .sp-hgap span { right:auto; left:50%; top:-12px; transform:translateX(-50%); }
+  .sp-legend { font-size:11px; color:var(--ui-text-2); display:flex; gap:6px; align-items:center; }
+  .sp-legend .k { width:10px; height:10px; display:inline-block; border-radius:2px; }
+  .sp-legend .m { background:rgba(255,77,19,.3); } .sp-legend .g { background:rgba(9,128,254,.3); margin-left:8px; }
+
+  .rd-hero { font-family:"PingFang SC",sans-serif; }
+  .rd-container { background:#F4F5F7; border-radius:16px; padding:22px 12px 12px; position:relative; }
+  .rd-card { background:#fff; border:1px solid #E8E9EB; border-radius:12px; padding:22px 8px 8px; width:210px; position:relative; }
+  .rd-label { position:absolute; top:5px; left:10px; font:10px var(--font-mono); color:#0980FE; }
+  .rd-img { height:64px; border-radius:8px; background:linear-gradient(180deg,#E9A15B,#B5523A); position:relative; }
+  .rd-pill { position:absolute; right:6px; top:6px; font-size:9px; padding:1px 6px; border-radius:999px; background:rgba(255,255,255,.8); }
+  .rd-line { display:flex; gap:4px; margin:8px 0; font-size:9px; }
+  .rd-tag { background:#0980FE; color:#fff; padding:0 3px; border-radius:2px; }
+  .rd-rank { background:linear-gradient(90deg,#FCD6B8,#FFF4E2,#FFE3C9); color:#8B4424; padding:0 4px; border-radius:2px 0 4px 2px; font-weight:600; }
+  .rd-ok { color:#13713F; border:1px solid #A0DBA4; padding:0 3px; border-radius:2px; }
+  .rd-btns { display:flex; gap:6px; }
+  .rd-btn { flex:1; text-align:center; font-size:11px; padding:4px 0; border-radius:4px; border:1px solid #0980FE; color:#0980FE; }
+  .rd-btn.solid { background:linear-gradient(90deg,#1A67FE,#198AFE); color:#fff; border-color:transparent; }
+  .rd-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:12px; }
+  .rd-tile { border:1px solid var(--ui-border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:4px; font-size:12px; }
+  .rd-shape { width:88px; height:52px; background:#D4E6FF; border:1.5px solid #0980FE; margin-bottom:8px; }
+
+  .fx-phone { position:relative; width:230px; height:250px; border-radius:16px; overflow:hidden; background:#F4F5F7; font-family:"PingFang SC",sans-serif; }
+  .fx-page { display:flex; gap:10px; padding:14px; }
+  .fx-card { flex:1; background:#fff; border-radius:12px; padding:5px; }
+  .fx-img { height:58px; border-radius:8px; background:linear-gradient(180deg,#E9A15B,#B5523A); position:relative; }
+  .fx-img.b { background:linear-gradient(180deg,#5A7FB5,#2C3D63); }
+  .fx-t { font:500 11px/16px "PingFang SC"; margin-top:4px; color:#191919; }
+  .fx-glass { position:absolute; right:4px; top:4px; font-size:9px; padding:1px 6px; border-radius:999px; background:rgba(255,255,255,.8); border:1px solid rgba(255,255,255,.4); backdrop-filter:blur(4px); color:#191919; }
+  .fx-scrim { position:absolute; inset:0; background:rgba(0,0,0,.7); }
+  .fx-sheet { position:absolute; left:0; right:0; bottom:0; height:132px; background:#F4F5F7; border-radius:16px 16px 0 0; }
+  .fx-st { font:600 12px/18px "PingFang SC"; padding:10px 12px 6px; color:#191919; }
+  .fx-row { margin:0 12px; background:#fff; border-radius:8px; padding:8px; font-size:10px; color:#191919; }
+  .fx-bar { position:absolute; left:0; right:0; bottom:0; background:#FCFCFC; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; }
+  .fx-bar b { color:#FF4D13; font:700 14px var(--font-mono); }
+  .fx-btn { background:linear-gradient(90deg,#FF5B2E,#FF7A3D); color:#fff; font-size:11px; padding:5px 16px; border-radius:4px; }
+  .fx-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; background:#F4F5F7; padding:20px; border-radius:12px; margin-bottom:16px; }
+  .fx-tile { display:flex; flex-direction:column; gap:4px; font-size:11px; }
+  .fx-sample { height:64px; margin-bottom:6px; }
+  .fx-glass-stage { position:relative; height:120px; border-radius:12px; margin-bottom:16px; display:flex; gap:12px; align-items:flex-start; padding:16px;
+    background:linear-gradient(135deg,#E9A15B 0%,#B5523A 45%,#2C3D63 100%); }
+  .fx-glass.big { position:static; font-size:12px; padding:3px 10px; }
+  .fx-fade { margin-left:auto; position:relative; width:110px; height:88px; display:flex; align-items:center; justify-content:center; }
+  .fx-fade-card { position:absolute; inset:0; background:#EBF3FE; border-radius:12px; filter:blur(16px); }
+  .fx-fade span { position:relative; color:#0980FE; font-size:11px; }
+
+  .bp-row { display:flex; gap:14px; align-items:flex-end; }
+  .bp-col { display:flex; flex-direction:column; gap:3px; font-size:11px; }
+  .bp-phone { height:120px; background:#fff; border-radius:10px; border:1px solid #E8E9EB; position:relative; overflow:hidden; margin-bottom:6px; }
+  .bp-cols { position:absolute; inset:0; display:grid; grid-template-columns:repeat(4,1fr); }
+  .bp-cols span { background:rgba(9,128,254,.08); }
+  .bp-car { position:absolute; top:30px; left:0; right:0; display:flex; }
+  .bp-card { flex:none; height:50px; border-radius:4px; background:linear-gradient(180deg,#E9A15B,#B5523A); box-shadow:0 2px 7px rgba(0,0,0,.08); }
+</style></head>
+<body>
+<nav class="rail"><div class="rail-item active" data-page="overview" onclick="showPage('overview')"><div class="glyph">◎</div>Overview</div>
+<div class="rail-item" data-page="color" onclick="showPage('color')"><div class="glyph">●</div>颜色</div>
+<div class="rail-item" data-page="typography" onclick="showPage('typography')"><div class="glyph">A</div>字体</div>
+<div class="rail-item" data-page="spacing" onclick="showPage('spacing')"><div class="glyph">▭</div>间距</div>
+<div class="rail-item" data-page="radius" onclick="showPage('radius')"><div class="glyph">◲</div>圆角</div>
+<div class="rail-item" data-page="effects" onclick="showPage('effects')"><div class="glyph">◐</div>效果</div>
+<div class="rail-item" data-page="breakpoints" onclick="showPage('breakpoints')"><div class="glyph">▤</div>断点栅格</div></nav>
+<div class="main"><div class="content">
+<section class="page active" id="page-overview">
+  <div class="page-hero"><div><h1>高德导航 · 到达页 Design System</h1>
+    <p class="desc">从 Figma「到达页hifi / Frame 254」6 个到达场景屏（饭店开车到达、外地游客公交景区到达、上班族打车到达及 3 个浮层）提取的基础元素，逐类生成、逐类确认。左侧点亮表示已完成。工具外壳保持中性，只有色板与演示区域使用真实 token。</p></div>
+    <div class="hero-demo"><div style="width:40px;height:40px;border-radius:50%;background:#0980FE"></div><div style="width:40px;height:40px;border-radius:50%;background:#FF4D13"></div><div style="width:40px;height:40px;border-radius:50%;background:#835B32"></div><div style="width:40px;height:40px;border-radius:50%;background:#191919"></div></div></div>
+  <h2>进度</h2><p class="section-desc">6 个基础元素类别，全部确认后汇总为 DESIGN.md。</p>
+  <table class="spec"><tr><th>类别</th><th>状态</th></tr><tr><td>颜色</td><td>✅ 已确认</td></tr><tr><td>字体</td><td>✅ 已确认</td></tr><tr><td>间距</td><td>✅ 已确认</td></tr><tr><td>圆角</td><td>✅ 已确认</td></tr><tr><td>效果</td><td>✅ 已确认</td></tr><tr><td>断点栅格</td><td>✅ 已确认</td></tr></table>
+</section>
+<section class="page" id="page-color">
+  <div class="page-hero">
+    <div><h1>颜色</h1>
+      <p class="desc">双主色结构：<b>高德蓝</b>负责导航与功能操作，<b>交易橙</b>负责价格与成交；扫街榜金棕标识榜单身份。原子色阶 + 语义角色两层，每个语义角色都有 Light / Dark。值来自 <code>tokens/colors.md</code>。</p></div>
+    <div class="hero-demo"><div class="mini" style="background:#FFFFFF;border:1px solid #E8E9EB;box-shadow:0 4px 13.6px rgba(19,19,19,0.05)">
+  <div class="mini-img"><span class="medal" style="background:linear-gradient(160deg,#FEE495 2%,#FEF6E2 48%,#FEE493)"><i>TOP</i>01</span><span class="glass" style="background:rgba(255,255,255,0.8);color:#191919">★ 34.7w+</span></div>
+  <div class="mini-row"><b style="color:#191919">西安钟楼</b><span style="color:#835B32">&lt;100 米</span></div>
+  <div class="mini-row sm" style="color:#60636C"><span class="rate" style="background:#0980FE">4.8</span>古建登楼 · ¥40/人</div>
+  <div class="mini-row sm"><span class="rk" style="background:linear-gradient(90deg,#FCD6B8 10%,#FFF4E2 61%,#FFE3C9 100%);color:#8B4424">扫街榜</span><span style="color:#835B32">2026 上榜景区</span>
+    <span class="ok" style="background:#FEFEFE;color:#13713F;border-color:#A0DBA4">正在开放</span></div>
+  <div class="mini-row sm"><span style="color:#FF4D13;font-weight:600">¥40</span><span class="deal" style="color:#FF4D13;border-color:#FFDEC8;background:#FFF3EB">省 2 元</span><span style="color:#60636C">钟楼成人票</span></div>
+  <div class="mini-btns"><span class="btn-solid" style="background:linear-gradient(90deg,#1A67FE,#198AFE);color:#fff">订门票</span><span class="btn-line" style="color:#0980FE;border-color:#0980FE">查看路线</span></div>
+</div></div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab(this,'color-palette')">色阶 Palette</div>
+    <div class="tab" onclick="showTab(this,'color-semantic')">语义角色 Semantic</div>
+    <div class="tab" onclick="showTab(this,'color-gradient')">渐变 Gradients</div>
+  </div>
+  <div class="tabpanel" id="tab-color-palette">
+<h2>Brand · 高德蓝</h2><p class="section-desc">高德蓝 · .50/.100/.500/.600 观测（主题蓝变量 #0980FE；按钮渐变起点 #1A67FE）；其余扩展</p>
+<div class="ramp-label">brand</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#EBF3FE"></div><div class="swatch-label">.50<code>#EBF3FE</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#D4E6FF"></div><div class="swatch-label">.100<code>#D4E6FF</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#C0DCF9"></div><div class="swatch-label">.200<code>#C0DCF9</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#90C3FA"></div><div class="swatch-label">.300<code>#90C3FA</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#52A5FC"></div><div class="swatch-label">.400<code>#52A5FC</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#0980FE"></div><div class="swatch-label">.500<code>#0980FE</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#1A67FE"></div><div class="swatch-label">.600<code>#1A67FE</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#0855A7"></div><div class="swatch-label">.700<code>#0855A7</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#0B4078"></div><div class="swatch-label">.800<code>#0B4078</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#0B2A4B"></div><div class="swatch-label">.900<code>#0B2A4B</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#09192A"></div><div class="swatch-label">.950<code>#09192A</code></div></div>
+</div>
+<h2>Commerce · 交易橙</h2><p class="section-desc">交易橙 · .100/.200/.400/.500 观测（.50 补齐）（价格、下单按钮、团购标签描边）；合并 #FF4F1F #FE5E33 #FF5B2E</p>
+<div class="ramp-label">commerce</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#FFF3EB"></div><div class="swatch-label">.50<code>#FFF3EB</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FFEBDE"></div><div class="swatch-label">.100<code>#FFEBDE</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FFDEC8"></div><div class="swatch-label">.200<code>#FFDEC8</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FAAD94"></div><div class="swatch-label">.300<code>#FAAD94</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FF7A3D"></div><div class="swatch-label">.400<code>#FF7A3D</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FF4D13"></div><div class="swatch-label">.500<code>#FF4D13</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#E13903"></div><div class="swatch-label">.600<code>#E13903</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#AE3007"></div><div class="swatch-label">.700<code>#AE3007</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#7C260A"></div><div class="swatch-label">.800<code>#7C260A</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#4D1B0B"></div><div class="swatch-label">.900<code>#4D1B0B</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#2A1109"></div><div class="swatch-label">.950<code>#2A1109</code></div></div>
+</div>
+<h2>Extended · 扫街榜金棕</h2><p class="section-desc">扫街榜金棕 · .50/.200/.700/.900 观测（距离变量 #835B32、榜单标签渐变、深棕标题）；tag-text #8B4424 为扫街榜标签文字（观测 ×19，#BD581A 并入）；.500 由 .700 反推</p>
+<div class="ramp-label">ranking</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#FFF4E2"></div><div class="swatch-label">.50<code>#FFF4E2</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FDE6D0"></div><div class="swatch-label">.100<code>#FDE6D0</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FCD6B8"></div><div class="swatch-label">.200<code>#FCD6B8</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#DAC1A7"></div><div class="swatch-label">.300<code>#DAC1A7</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#CAA177"></div><div class="swatch-label">.400<code>#CAA177</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#B07A43"></div><div class="swatch-label">.500<code>#B07A43</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#926639"></div><div class="swatch-label">.600<code>#926639</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#835B32"></div><div class="swatch-label">.700<code>#835B32</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#553E26"></div><div class="swatch-label">.800<code>#553E26</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#4A240A"></div><div class="swatch-label">.900<code>#4A240A</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#211A12"></div><div class="swatch-label">.950<code>#211A12</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#8B4424"></div><div class="swatch-label">.tag-text<code>#8B4424</code></div></div>
+</div>
+<h2>Extended · 扫街榜奖牌文字</h2><p class="section-desc">扫街榜 TOP 奖牌文字色 · 全部观测（源组件 01/02/03）；固定色，两模式不变</p>
+<div class="ramp-label">medal</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#4A240A"></div><div class="swatch-label">.gold-text<code>#4A240A</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#4F5568"></div><div class="swatch-label">.silver-text<code>#4F5568</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#7A4137"></div><div class="swatch-label">.bronze-text<code>#7A4137</code></div></div>
+</div>
+<h2>Extended · 场景色</h2><p class="section-desc">场景色 · .50 观测（附近精选 / 扫街榜分榜卡头），.100 回填分榜徽标观测色（indigo 另回填 .200）；purple/red/lime 为分榜卡片新增；.500 按色相扩展；cat-blue 兼作 info</p>
+<div class="ramp-label">cat-blue · 住宿 · 信息 · 品质甄选</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#E5F2FF"></div><div class="swatch-label">.50<code>#E5F2FF</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#DFEBFB"></div><div class="swatch-label">.100<code>#DFEBFB</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#C8DEF7"></div><div class="swatch-label">.200<code>#C8DEF7</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#A0C8F4"></div><div class="swatch-label">.300<code>#A0C8F4</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#6CACF2"></div><div class="swatch-label">.400<code>#6CACF2</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#2E8BF0"></div><div class="swatch-label">.500<code>#2E8BF0</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#1372DA"></div><div class="swatch-label">.600<code>#1372DA</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#135BA9"></div><div class="swatch-label">.700<code>#135BA9</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#134378"></div><div class="swatch-label">.800<code>#134378</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#102C4B"></div><div class="swatch-label">.900<code>#102C4B</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#0B1928"></div><div class="swatch-label">.950<code>#0B1928</code></div></div>
+</div>
+<div class="ramp-label">cat-green · 生活服务 · 专程前往</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#E5FFF0"></div><div class="swatch-label">.50<code>#E5FFF0</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#D8FDE4"></div><div class="swatch-label">.100<code>#D8FDE4</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#BDEED5"></div><div class="swatch-label">.200<code>#BDEED5</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#89E5B7"></div><div class="swatch-label">.300<code>#89E5B7</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#47DB92"></div><div class="swatch-label">.400<code>#47DB92</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#1FA864"></div><div class="swatch-label">.500<code>#1FA864</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#1C8C54"></div><div class="swatch-label">.600<code>#1C8C54</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#197045"></div><div class="swatch-label">.700<code>#197045</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#165435"></div><div class="swatch-label">.800<code>#165435</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#123A26"></div><div class="swatch-label">.900<code>#123A26</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#0E251A"></div><div class="swatch-label">.950<code>#0E251A</code></div></div>
+</div>
+<div class="ramp-label">cat-indigo · 文化 · 夜游 · 酒店</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#F2F1FD"></div><div class="swatch-label">.50<code>#F2F1FD</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#E5EDFF"></div><div class="swatch-label">.100<code>#E5EDFF</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#DBE4FD"></div><div class="swatch-label">.200<code>#DBE4FD</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#B6B7F5"></div><div class="swatch-label">.300<code>#B6B7F5</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#9092F4"></div><div class="swatch-label">.400<code>#9092F4</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#6366F1"></div><div class="swatch-label">.500<code>#6366F1</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#2E32E9"></div><div class="swatch-label">.600<code>#2E32E9</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#191DC2"></div><div class="swatch-label">.700<code>#191DC2</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#171A88"></div><div class="swatch-label">.800<code>#171A88</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#121451"></div><div class="swatch-label">.900<code>#121451</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#0C0C27"></div><div class="swatch-label">.950<code>#0C0C27</code></div></div>
+</div>
+<div class="ramp-label">cat-pink · 美食 · 本地人爱去</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#FFE5EF"></div><div class="swatch-label">.50<code>#FFE5EF</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FFD8EB"></div><div class="swatch-label">.100<code>#FFD8EB</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#F5CDDB"></div><div class="swatch-label">.200<code>#F5CDDB</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#F1A9C2"></div><div class="swatch-label">.300<code>#F1A9C2</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#ED7CA3"></div><div class="swatch-label">.400<code>#ED7CA3</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#E8457E"></div><div class="swatch-label">.500<code>#E8457E</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#DB1E60"></div><div class="swatch-label">.600<code>#DB1E60</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#A91C4D"></div><div class="swatch-label">.700<code>#A91C4D</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#78193A"></div><div class="swatch-label">.800<code>#78193A</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#4A1326"></div><div class="swatch-label">.900<code>#4A1326</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#260D16"></div><div class="swatch-label">.950<code>#260D16</code></div></div>
+</div>
+<div class="ramp-label">cat-amber · 茶饮 · 下午茶</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#FFF5E5"></div><div class="swatch-label">.50<code>#FFF5E5</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FFEED0"></div><div class="swatch-label">.100<code>#FFEED0</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#F4E2C4"></div><div class="swatch-label">.200<code>#F4E2C4</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#F0CF98"></div><div class="swatch-label">.300<code>#F0CF98</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#EDB760"></div><div class="swatch-label">.400<code>#EDB760</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#E89A1C"></div><div class="swatch-label">.500<code>#E89A1C</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#C28016"></div><div class="swatch-label">.600<code>#C28016</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#976616"></div><div class="swatch-label">.700<code>#976616</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#6D4B14"></div><div class="swatch-label">.800<code>#6D4B14</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#453110"></div><div class="swatch-label">.900<code>#453110</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#271D0C"></div><div class="swatch-label">.950<code>#271D0C</code></div></div>
+</div>
+<div class="ramp-label">cat-purple · 休闲按摩</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#F3E5FF"></div><div class="swatch-label">.50<code>#F3E5FF</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#F2DDFF"></div><div class="swatch-label">.100<code>#F2DDFF</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#E2D0F3"></div><div class="swatch-label">.200<code>#E2D0F3</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#CFAFED"></div><div class="swatch-label">.300<code>#CFAFED</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#B784E7"></div><div class="swatch-label">.400<code>#B784E7</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#9B51E0"></div><div class="swatch-label">.500<code>#9B51E0</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#8128D4"></div><div class="swatch-label">.600<code>#8128D4</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#6624A3"></div><div class="swatch-label">.700<code>#6624A3</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#4B1E74"></div><div class="swatch-label">.800<code>#4B1E74</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#301647"></div><div class="swatch-label">.900<code>#301647</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#1A0E25"></div><div class="swatch-label">.950<code>#1A0E25</code></div></div>
+</div>
+<div class="ramp-label">cat-red · 近期新开</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#FFE5E5"></div><div class="swatch-label">.50<code>#FFE5E5</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FFDEDE"></div><div class="swatch-label">.100<code>#FFDEDE</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#F7CDCD"></div><div class="swatch-label">.200<code>#F7CDCD</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#F4A9A9"></div><div class="swatch-label">.300<code>#F4A9A9</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#F27B7B"></div><div class="swatch-label">.400<code>#F27B7B</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#EF4444"></div><div class="swatch-label">.500<code>#EF4444</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#E71717"></div><div class="swatch-label">.600<code>#E71717</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#B21717"></div><div class="swatch-label">.700<code>#B21717</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#7E1515"></div><div class="swatch-label">.800<code>#7E1515</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#4D1111"></div><div class="swatch-label">.900<code>#4D1111</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#270C0C"></div><div class="swatch-label">.950<code>#270C0C</code></div></div>
+</div>
+<div class="ramp-label">cat-lime · 慢饮时光</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#F3FFE5"></div><div class="swatch-label">.50<code>#F3FFE5</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#DDFFD8"></div><div class="swatch-label">.100<code>#DDFFD8</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#DBEEC5"></div><div class="swatch-label">.200<code>#DBEEC5</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#C2E59A"></div><div class="swatch-label">.300<code>#C2E59A</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#A2DC62"></div><div class="swatch-label">.400<code>#A2DC62</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#7CC52A"></div><div class="swatch-label">.500<code>#7CC52A</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#68A325"></div><div class="swatch-label">.600<code>#68A325</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#538020"></div><div class="swatch-label">.700<code>#538020</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#3F5E1B"></div><div class="swatch-label">.800<code>#3F5E1B</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#2A3D15"></div><div class="swatch-label">.900<code>#2A3D15</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#1A240F"></div><div class="swatch-label">.950<code>#1A240F</code></div></div>
+</div>
+<h2>Neutral · 冷灰</h2><p class="section-desc">冷灰 · .0/.50/.100/.200/.300/.400/.600/.900 观测（正文字体/正文灰/Stroke 变量）；37 种文字灰归并于此；canvas #FEFEFE（页面底）与 card #FEFDFD（顶部到达卡）按原稿指定值单列</p>
+<div class="ramp-label">neutral</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#FFFFFF"></div><div class="swatch-label">.0<code>#FFFFFF</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#F8F8F8"></div><div class="swatch-label">.50<code>#F8F8F8</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#F4F5F7"></div><div class="swatch-label">.100<code>#F4F5F7</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#E8E9EB"></div><div class="swatch-label">.200<code>#E8E9EB</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#C8C8C8"></div><div class="swatch-label">.300<code>#C8C8C8</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#999999"></div><div class="swatch-label">.400<code>#999999</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#7A7D86"></div><div class="swatch-label">.500<code>#7A7D86</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#60636C"></div><div class="swatch-label">.600<code>#60636C</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#51535A"></div><div class="swatch-label">.700<code>#51535A</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#2A2B2F"></div><div class="swatch-label">.800<code>#2A2B2F</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#191919"></div><div class="swatch-label">.900<code>#191919</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#0F1012"></div><div class="swatch-label">.950<code>#0F1012</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FEFEFE"></div><div class="swatch-label">.canvas<code>#FEFEFE</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FEFDFD"></div><div class="swatch-label">.card<code>#FEFDFD</code></div></div>
+</div>
+<h2>Functional</h2><p class="section-desc">「正在开放」绿 + #A0DBA4 描边、评分星黄、地铁标红均观测；info 复用 cat-blue；扩展到 5 阶因描边色 .200 被观测到</p>
+<div class="ramp-label">success</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#E9FFED"></div><div class="swatch-label">.50<code>#E9FFED</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#A0DBA4"></div><div class="swatch-label">.200<code>#A0DBA4</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#16A85A"></div><div class="swatch-label">.500<code>#16A85A</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#13713F"></div><div class="swatch-label">.700<code>#13713F</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#103B24"></div><div class="swatch-label">.900<code>#103B24</code></div></div>
+</div>
+<div class="ramp-label">warning</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#FFF6E5"></div><div class="swatch-label">.50<code>#FFF6E5</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#F9E8C6"></div><div class="swatch-label">.200<code>#F9E8C6</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FAB428"></div><div class="swatch-label">.500<code>#FAB428</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#CA7C1C"></div><div class="swatch-label">.700<code>#CA7C1C</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#4E380D"></div><div class="swatch-label">.900<code>#4E380D</code></div></div>
+</div>
+<div class="ramp-label">danger</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#FFF1F0"></div><div class="swatch-label">.50<code>#FFF1F0</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FAC8CC"></div><div class="swatch-label">.200<code>#FAC8CC</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#FF3041"></div><div class="swatch-label">.500<code>#FF3041</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#BE0817"></div><div class="swatch-label">.700<code>#BE0817</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#520B11"></div><div class="swatch-label">.900<code>#520B11</code></div></div>
+</div>
+<div class="ramp-label">info</div><div class="swatch-grid">
+<div class="swatch"><div class="swatch-color" style="background:#E5F2FF"></div><div class="swatch-label">.50<code>#E5F2FF</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#C8DEF7"></div><div class="swatch-label">.200<code>#C8DEF7</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#2E8BF0"></div><div class="swatch-label">.500<code>#2E8BF0</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#135BA9"></div><div class="swatch-label">.700<code>#135BA9</code></div></div>
+<div class="swatch"><div class="swatch-color" style="background:#102C4B"></div><div class="swatch-label">.900<code>#102C4B</code></div></div>
+</div>
+<h2>Alpha</h2><p class="section-desc">white.80/.90、black.80（图片角标底 #131313@80%）、black.05（卡片投影）、black.70（原型 Open overlay 背景 #000 70%）、white.25（按钮高光）观测；其余补齐。放在真实图片背景上预览，透明色放白底没有意义。</p><div class="alpha-stage">
+<div class="alpha-chip" style="background:rgba(255,255,255,0.25)"><span>alpha-white.25</span></div>
+<div class="alpha-chip" style="background:rgba(255,255,255,0.4)"><span>alpha-white.40</span></div>
+<div class="alpha-chip" style="background:rgba(255,255,255,0.8)"><span>alpha-white.80</span></div>
+<div class="alpha-chip" style="background:rgba(255,255,255,0.9)"><span>alpha-white.90</span></div>
+<div class="alpha-chip" style="background:rgba(19,19,19,0.05)"><span>alpha-black.05</span></div>
+<div class="alpha-chip" style="background:rgba(19,19,19,0.12)"><span>alpha-black.12</span></div>
+<div class="alpha-chip" style="background:rgba(19,19,19,0.5)"><span>alpha-black.50</span></div>
+<div class="alpha-chip" style="background:rgba(0,0,0,0.7)"><span>alpha-black.70</span></div>
+<div class="alpha-chip" style="background:rgba(19,19,19,0.8)"><span>alpha-black.80</span></div>
+<div class="alpha-chip" style="background:rgba(9,128,254,0.16)"><span>alpha-brand.16</span></div>
+<div class="alpha-chip" style="background:rgba(255,227,201,0.4)"><span>alpha-ranking.40</span></div>
+<div class="alpha-chip" style="background:rgba(9,128,254,0.24)"><span>alpha-brand.24</span></div>
+</div><h2>不进 token 的数据色</h2><p class="section-desc">地铁/公交线路色由线路数据下发（如 <span class="line-tag" style="background:#FF3041">2 号线</span> <span class="line-tag" style="background:#6B5BE2">12路</span>），组件只提供容器。</p></div>
+<div class="tabpanel" id="tab-color-semantic" style="display:none;">
+  <h2>主题切换演示</h2><p class="section-desc">演示卡使用独立的 <code>--demo-*</code> 变量，切换不影响其他页面。</p>
+  <div class="mode-toggle"><span class="tab active" onclick="setMode(this,'light')">Light</span><span class="tab" onclick="setMode(this,'dark')">Dark</span></div>
+  <div id="demo-stage" class="demo-stage"><div class="mini" style="background:var(--demo-surface-default);border:1px solid var(--demo-border-default);box-shadow:0 4px 13.6px var(--demo-shadow-color)">
+  <div class="mini-img"><span class="medal" style="background:linear-gradient(160deg,#FEE495 2%,#FEF6E2 48%,#FEE493)"><i>TOP</i>01</span><span class="glass" style="background:var(--demo-surface-glass);color:var(--demo-text-primary)">★ 34.7w+</span></div>
+  <div class="mini-row"><b style="color:var(--demo-text-primary)">西安钟楼</b><span style="color:var(--demo-text-ranking)">&lt;100 米</span></div>
+  <div class="mini-row sm" style="color:var(--demo-text-secondary)"><span class="rate" style="background:var(--demo-text-accent)">4.8</span>古建登楼 · ¥40/人</div>
+  <div class="mini-row sm"><span class="rk" style="background:linear-gradient(90deg,#FCD6B8 10%,#FFF4E2 61%,#FFE3C9 100%);color:#8B4424">扫街榜</span><span style="color:var(--demo-text-ranking)">2026 上榜景区</span>
+    <span class="ok" style="background:var(--demo-bg-page);color:var(--demo-text-success);border-color:var(--demo-border-success)">正在开放</span></div>
+  <div class="mini-row sm"><span style="color:var(--demo-text-price);font-weight:600">¥40</span><span class="deal" style="color:var(--demo-text-price);border-color:var(--demo-border-commerce);background:var(--demo-bg-commerce-soft)">省 2 元</span><span style="color:var(--demo-text-secondary)">钟楼成人票</span></div>
+  <div class="mini-btns"><span class="btn-solid" style="background:linear-gradient(90deg,#1A67FE,#198AFE);color:#fff">订门票</span><span class="btn-line" style="color:var(--demo-text-accent);border-color:var(--demo-border-accent)">查看路线</span></div>
+</div></div>
+<h2>Background</h2><table class="spec"><tr><th>Token</th><th>Light</th><th>Dark</th><th>用途</th></tr>
+<tr><td><code>bg/page</code></td><td><span class="chip" style="--c:#FEFEFE"></span><code>{neutral.canvas}</code></td><td><span class="chip" style="--c:#0F1012"></span><code>{neutral.950}</code></td><td>到达页整页底色（#FEFEFE，原稿指定）</td></tr>
+<tr><td><code>bg/page-subtle</code></td><td><span class="chip" style="--c:#F4F5F7"></span><code>{neutral.100}</code></td><td><span class="chip" style="--c:#191919"></span><code>{neutral.900}</code></td><td>分组区块底、横滑「查看更多」底</td></tr>
+<tr><td><code>bg/brand-soft</code></td><td><span class="chip" style="--c:#EBF3FE"></span><code>{brand.50}</code></td><td><span class="chip" style="--c:#0B2A4B"></span><code>{brand.900}</code></td><td>蓝色弱强调区（导航过去按钮底）</td></tr>
+<tr><td><code>bg/commerce-soft</code></td><td><span class="chip" style="--c:#FFF3EB"></span><code>{commerce.50}</code></td><td><span class="chip" style="--c:#4D1B0B"></span><code>{commerce.900}</code></td><td>团购/优惠信息条底</td></tr>
+<tr><td><code>bg/ranking-soft</code></td><td><span class="chip" style="--c:#FFF4E2"></span><code>{ranking.50}</code></td><td><span class="chip" style="--c:#4A240A"></span><code>{ranking.900}</code></td><td>扫街榜标签与榜单卡头底</td></tr>
+<tr><td><code>bg/ranking-tag</code></td><td><span class="chip" style="--c:rgba(255,227,201,0.4)"></span><code>{alpha-ranking.40}</code></td><td><span class="chip" style="--c:rgba(255,227,201,0.4)"></span><code>{alpha-ranking.40}</code></td><td>列表/榜单内「扫街榜」小标签浅金底（#FFE3C9 40%，固定）</td></tr>
+<tr><td><code>bg/inverse</code></td><td><span class="chip" style="--c:#191919"></span><code>{neutral.900}</code></td><td><span class="chip" style="--c:#F8F8F8"></span><code>{neutral.50}</code></td><td>反色 Toast、深色角标</td></tr>
+<tr><td><code>bg/disabled</code></td><td><span class="chip" style="--c:#F4F5F7"></span><code>{neutral.100}</code></td><td><span class="chip" style="--c:#2A2B2F"></span><code>{neutral.800}</code></td><td>禁用控件底</td></tr>
+</table>
+<h2>Surface</h2><table class="spec"><tr><th>Token</th><th>Light</th><th>Dark</th><th>用途</th></tr>
+<tr><td><code>surface/default</code></td><td><span class="chip" style="--c:#FFFFFF"></span><code>{neutral.0}</code></td><td><span class="chip" style="--c:#191919"></span><code>{neutral.900}</code></td><td>POI 卡片、列表卡</td></tr>
+<tr><td><code>surface/card</code></td><td><span class="chip" style="--c:#FEFDFD"></span><code>{neutral.card}</code></td><td><span class="chip" style="--c:#191919"></span><code>{neutral.900}</code></td><td>顶部「已到达」信息卡（#FEFDFD，原稿指定）</td></tr>
+<tr><td><code>surface/subtle</code></td><td><span class="chip" style="--c:#F8F8F8"></span><code>{neutral.50}</code></td><td><span class="chip" style="--c:#0F1012"></span><code>{neutral.950}</code></td><td>卡内次级区（套餐行、班车时间行）</td></tr>
+<tr><td><code>surface/elevated</code></td><td><span class="chip" style="--c:#FFFFFF"></span><code>{neutral.0}</code></td><td><span class="chip" style="--c:#2A2B2F"></span><code>{neutral.800}</code></td><td>浮层（POI 浮层、一键下单浮层）</td></tr>
+<tr><td><code>surface/sunken</code></td><td><span class="chip" style="--c:#F4F5F7"></span><code>{neutral.100}</code></td><td><span class="chip" style="--c:#0F1012"></span><code>{neutral.950}</code></td><td>数量步进器、输入框底</td></tr>
+<tr><td><code>surface/glass</code></td><td><span class="chip" style="--c:rgba(255,255,255,0.8)"></span><code>{alpha-white.80}</code></td><td><span class="chip" style="--c:rgba(19,19,19,0.5)"></span><code>{alpha-black.50}</code></td><td>图片上的毛玻璃角标（收藏、热度）</td></tr>
+<tr><td><code>surface/accent</code></td><td><span class="chip" style="--c:#EBF3FE"></span><code>{brand.50}</code></td><td><span class="chip" style="--c:#0B2A4B"></span><code>{brand.900}</code></td><td>选中日期/场次卡</td></tr>
+<tr><td><code>surface/selected</code></td><td><span class="chip" style="--c:#D4E6FF"></span><code>{brand.100}</code></td><td><span class="chip" style="--c:#0B4078"></span><code>{brand.800}</code></td><td>选中态强调</td></tr>
+<tr><td><code>surface/hover</code></td><td><span class="chip" style="--c:#F8F8F8"></span><code>{neutral.50}</code></td><td><span class="chip" style="--c:#2A2B2F"></span><code>{neutral.800}</code></td><td>按压前的轻反馈（Web）</td></tr>
+<tr><td><code>surface/pressed</code></td><td><span class="chip" style="--c:#F4F5F7"></span><code>{neutral.100}</code></td><td><span class="chip" style="--c:#51535A"></span><code>{neutral.700}</code></td><td>列表项按下</td></tr>
+<tr><td><code>surface/disabled</code></td><td><span class="chip" style="--c:#F4F5F7"></span><code>{neutral.100}</code></td><td><span class="chip" style="--c:#2A2B2F"></span><code>{neutral.800}</code></td><td>不可选场次</td></tr>
+</table>
+<h2>Text</h2><table class="spec"><tr><th>Token</th><th>Light</th><th>Dark</th><th>用途</th></tr>
+<tr><td><code>text/primary</code></td><td><span class="chip" style="--c:#191919"></span><code>{neutral.900}</code></td><td><span class="chip" style="--c:#F8F8F8"></span><code>{neutral.50}</code></td><td>标题、POI 名、正文</td></tr>
+<tr><td><code>text/secondary</code></td><td><span class="chip" style="--c:#60636C"></span><code>{neutral.600}</code></td><td><span class="chip" style="--c:#C8C8C8"></span><code>{neutral.300}</code></td><td>描述、元信息（¥40/人 · 4.5w+人导航过）</td></tr>
+<tr><td><code>text/tertiary</code></td><td><span class="chip" style="--c:#999999"></span><code>{neutral.400}</code></td><td><span class="chip" style="--c:#7A7D86"></span><code>{neutral.500}</code></td><td>弱提示、时间戳</td></tr>
+<tr><td><code>text/placeholder</code></td><td><span class="chip" style="--c:#C8C8C8"></span><code>{neutral.300}</code></td><td><span class="chip" style="--c:#60636C"></span><code>{neutral.600}</code></td><td>输入占位</td></tr>
+<tr><td><code>text/disabled</code></td><td><span class="chip" style="--c:#C8C8C8"></span><code>{neutral.300}</code></td><td><span class="chip" style="--c:#51535A"></span><code>{neutral.700}</code></td><td>不可选场次文字</td></tr>
+<tr><td><code>text/inverse</code></td><td><span class="chip" style="--c:#FFFFFF"></span><code>{neutral.0}</code></td><td><span class="chip" style="--c:#191919"></span><code>{neutral.900}</code></td><td>实心按钮、图片上文字</td></tr>
+<tr><td><code>text/accent</code></td><td><span class="chip" style="--c:#0980FE"></span><code>{brand.500}</code></td><td><span class="chip" style="--c:#52A5FC"></span><code>{brand.400}</code></td><td>「查看路线」「导航过去」等功能操作</td></tr>
+<tr><td><code>text/link</code></td><td><span class="chip" style="--c:#0980FE"></span><code>{brand.500}</code></td><td><span class="chip" style="--c:#52A5FC"></span><code>{brand.400}</code></td><td>「看完整扫街榜」等跳转</td></tr>
+<tr><td><code>text/price</code></td><td><span class="chip" style="--c:#FF4D13"></span><code>{commerce.500}</code></td><td><span class="chip" style="--c:#FF7A3D"></span><code>{commerce.400}</code></td><td>价格、折扣、优惠金额</td></tr>
+<tr><td><code>text/ranking</code></td><td><span class="chip" style="--c:#835B32"></span><code>{ranking.700}</code></td><td><span class="chip" style="--c:#DAC1A7"></span><code>{ranking.300}</code></td><td>距离、扫街榜标签文字</td></tr>
+<tr><td><code>text/ranking-tag</code></td><td><span class="chip" style="--c:#8B4424"></span><code>{ranking.tag-text}</code></td><td><span class="chip" style="--c:#8B4424"></span><code>{ranking.tag-text}</code></td><td>「扫街榜」小标签深棕字（固定色，压在金色底上）</td></tr>
+<tr><td><code>text/success</code></td><td><span class="chip" style="--c:#13713F"></span><code>{success.700}</code></td><td><span class="chip" style="--c:#16A85A"></span><code>{success.500}</code></td><td>正在开放、绿色能量</td></tr>
+<tr><td><code>text/warning</code></td><td><span class="chip" style="--c:#CA7C1C"></span><code>{warning.700}</code></td><td><span class="chip" style="--c:#FAB428"></span><code>{warning.500}</code></td><td>即将关门、限行提醒</td></tr>
+<tr><td><code>text/danger</code></td><td><span class="chip" style="--c:#BE0817"></span><code>{danger.700}</code></td><td><span class="chip" style="--c:#FF3041"></span><code>{danger.500}</code></td><td>已售罄、错误</td></tr>
+<tr><td><code>text/info</code></td><td><span class="chip" style="--c:#135BA9"></span><code>{info.700}</code></td><td><span class="chip" style="--c:#2E8BF0"></span><code>{info.500}</code></td><td>信息提示</td></tr>
+<tr><td><code>text/medal-gold</code></td><td><span class="chip" style="--c:#4A240A"></span><code>{medal.gold-text}</code></td><td><span class="chip" style="--c:#4A240A"></span><code>{medal.gold-text}</code></td><td>TOP 01 奖牌文字（固定色）</td></tr>
+<tr><td><code>text/medal-silver</code></td><td><span class="chip" style="--c:#4F5568"></span><code>{medal.silver-text}</code></td><td><span class="chip" style="--c:#4F5568"></span><code>{medal.silver-text}</code></td><td>TOP 02 奖牌文字（固定色）</td></tr>
+<tr><td><code>text/medal-bronze</code></td><td><span class="chip" style="--c:#7A4137"></span><code>{medal.bronze-text}</code></td><td><span class="chip" style="--c:#7A4137"></span><code>{medal.bronze-text}</code></td><td>TOP 03 奖牌文字（固定色）</td></tr>
+</table>
+<h2>Icon</h2><table class="spec"><tr><th>Token</th><th>Light</th><th>Dark</th><th>用途</th></tr>
+<tr><td><code>icon/primary</code></td><td><span class="chip" style="--c:#191919"></span><code>{neutral.900}</code></td><td><span class="chip" style="--c:#F8F8F8"></span><code>{neutral.50}</code></td><td>导航栏返回/搜索/分享</td></tr>
+<tr><td><code>icon/secondary</code></td><td><span class="chip" style="--c:#60636C"></span><code>{neutral.600}</code></td><td><span class="chip" style="--c:#C8C8C8"></span><code>{neutral.300}</code></td><td>列表右箭头、辅助图标</td></tr>
+<tr><td><code>icon/tertiary</code></td><td><span class="chip" style="--c:#999999"></span><code>{neutral.400}</code></td><td><span class="chip" style="--c:#7A7D86"></span><code>{neutral.500}</code></td><td>弱化图标</td></tr>
+<tr><td><code>icon/disabled</code></td><td><span class="chip" style="--c:#C8C8C8"></span><code>{neutral.300}</code></td><td><span class="chip" style="--c:#51535A"></span><code>{neutral.700}</code></td><td>禁用图标</td></tr>
+<tr><td><code>icon/inverse</code></td><td><span class="chip" style="--c:#FFFFFF"></span><code>{neutral.0}</code></td><td><span class="chip" style="--c:#191919"></span><code>{neutral.900}</code></td><td>图片上的收藏星、热度星</td></tr>
+<tr><td><code>icon/accent</code></td><td><span class="chip" style="--c:#0980FE"></span><code>{brand.500}</code></td><td><span class="chip" style="--c:#52A5FC"></span><code>{brand.400}</code></td><td>「还有 20 分钟」时间图标</td></tr>
+<tr><td><code>icon/price</code></td><td><span class="chip" style="--c:#FF4D13"></span><code>{commerce.500}</code></td><td><span class="chip" style="--c:#FF7A3D"></span><code>{commerce.400}</code></td><td>热议火焰、团购图标</td></tr>
+<tr><td><code>icon/ranking</code></td><td><span class="chip" style="--c:#835B32"></span><code>{ranking.700}</code></td><td><span class="chip" style="--c:#DAC1A7"></span><code>{ranking.300}</code></td><td>扫街榜图标</td></tr>
+<tr><td><code>icon/success</code></td><td><span class="chip" style="--c:#13713F"></span><code>{success.700}</code></td><td><span class="chip" style="--c:#16A85A"></span><code>{success.500}</code></td><td>绿色能量叶子</td></tr>
+<tr><td><code>icon/warning</code></td><td><span class="chip" style="--c:#FAB428"></span><code>{warning.500}</code></td><td><span class="chip" style="--c:#FAB428"></span><code>{warning.500}</code></td><td>评分星（实心填充，两模式不变）</td></tr>
+<tr><td><code>icon/danger</code></td><td><span class="chip" style="--c:#BE0817"></span><code>{danger.700}</code></td><td><span class="chip" style="--c:#FF3041"></span><code>{danger.500}</code></td><td>错误</td></tr>
+<tr><td><code>icon/info</code></td><td><span class="chip" style="--c:#135BA9"></span><code>{info.700}</code></td><td><span class="chip" style="--c:#2E8BF0"></span><code>{info.500}</code></td><td>信息</td></tr>
+</table>
+<h2>Border</h2><table class="spec"><tr><th>Token</th><th>Light</th><th>Dark</th><th>用途</th></tr>
+<tr><td><code>border/subtle</code></td><td><span class="chip" style="--c:#F4F5F7"></span><code>{neutral.100}</code></td><td><span class="chip" style="--c:#2A2B2F"></span><code>{neutral.800}</code></td><td>卡内分隔线</td></tr>
+<tr><td><code>border/default</code></td><td><span class="chip" style="--c:#E8E9EB"></span><code>{neutral.200}</code></td><td><span class="chip" style="--c:#51535A"></span><code>{neutral.700}</code></td><td>卡片描边、次按钮描边（Stroke 变量）</td></tr>
+<tr><td><code>border/strong</code></td><td><span class="chip" style="--c:#999999"></span><code>{neutral.400}</code></td><td><span class="chip" style="--c:#7A7D86"></span><code>{neutral.500}</code></td><td>强调分隔</td></tr>
+<tr><td><code>border/accent</code></td><td><span class="chip" style="--c:#0980FE"></span><code>{brand.500}</code></td><td><span class="chip" style="--c:#0980FE"></span><code>{brand.500}</code></td><td>蓝色描边按钮（查看路线）——不作普通分割线</td></tr>
+<tr><td><code>border/commerce</code></td><td><span class="chip" style="--c:#FFDEC8"></span><code>{commerce.200}</code></td><td><span class="chip" style="--c:#7C260A"></span><code>{commerce.800}</code></td><td>团购/票务标签描边</td></tr>
+<tr><td><code>border/brand-soft</code></td><td><span class="chip" style="--c:#EBF3FE"></span><code>{brand.50}</code></td><td><span class="chip" style="--c:#0B2A4B"></span><code>{brand.900}</code></td><td>浅蓝按钮（导航过去、去停车）描边</td></tr>
+<tr><td><code>border/focus</code></td><td><span class="chip" style="--c:#0980FE"></span><code>{brand.500}</code></td><td><span class="chip" style="--c:#52A5FC"></span><code>{brand.400}</code></td><td>键盘/无障碍焦点</td></tr>
+<tr><td><code>border/selected</code></td><td><span class="chip" style="--c:#0980FE"></span><code>{brand.500}</code></td><td><span class="chip" style="--c:#0980FE"></span><code>{brand.500}</code></td><td>选中日期/场次</td></tr>
+<tr><td><code>border/disabled</code></td><td><span class="chip" style="--c:#E8E9EB"></span><code>{neutral.200}</code></td><td><span class="chip" style="--c:#2A2B2F"></span><code>{neutral.800}</code></td><td>禁用控件</td></tr>
+<tr><td><code>border/success</code></td><td><span class="chip" style="--c:#A0DBA4"></span><code>{success.200}</code></td><td><span class="chip" style="--c:#13713F"></span><code>{success.700}</code></td><td>「正在开放」标签描边</td></tr>
+<tr><td><code>border/warning</code></td><td><span class="chip" style="--c:#F9E8C6"></span><code>{warning.200}</code></td><td><span class="chip" style="--c:#CA7C1C"></span><code>{warning.700}</code></td><td>警告标签描边</td></tr>
+<tr><td><code>border/danger</code></td><td><span class="chip" style="--c:#FAC8CC"></span><code>{danger.200}</code></td><td><span class="chip" style="--c:#BE0817"></span><code>{danger.700}</code></td><td>错误描边</td></tr>
+<tr><td><code>border/info</code></td><td><span class="chip" style="--c:#C8DEF7"></span><code>{info.200}</code></td><td><span class="chip" style="--c:#135BA9"></span><code>{info.700}</code></td><td>信息标签描边</td></tr>
+</table>
+<h2>Overlay / Glass / Focus / Shadow</h2><table class="spec"><tr><th>Token</th><th>Light</th><th>Dark</th><th>用途</th></tr>
+<tr><td><code>overlay/scrim</code></td><td><span class="chip" style="--c:rgba(0,0,0,0.7)"></span><code>{alpha-black.70}</code></td><td><span class="chip" style="--c:rgba(0,0,0,0.7)"></span><code>{alpha-black.70}</code></td><td>浮层打开后的背景遮罩（原型观测 #000000 70%）</td></tr>
+<tr><td><code>overlay/image</code></td><td><span class="chip" style="--c:rgba(19,19,19,0.8)"></span><code>{alpha-black.80}</code></td><td><span class="chip" style="--c:rgba(19,19,19,0.8)"></span><code>{alpha-black.80}</code></td><td>图片底部文字压暗（配合 scrim-image 渐变）</td></tr>
+<tr><td><code>overlay/brand</code></td><td><span class="chip" style="--c:rgba(9,128,254,0.16)"></span><code>{alpha-brand.16}</code></td><td><span class="chip" style="--c:rgba(9,128,254,0.16)"></span><code>{alpha-brand.16}</code></td><td>蓝色按压层</td></tr>
+<tr><td><code>glass/background</code></td><td><span class="chip" style="--c:rgba(255,255,255,0.8)"></span><code>{alpha-white.80}</code></td><td><span class="chip" style="--c:rgba(19,19,19,0.5)"></span><code>{alpha-black.50}</code></td><td>毛玻璃底</td></tr>
+<tr><td><code>glass/border</code></td><td><span class="chip" style="--c:rgba(255,255,255,0.4)"></span><code>{alpha-white.40}</code></td><td><span class="chip" style="--c:rgba(255,255,255,0.4)"></span><code>{alpha-white.40}</code></td><td>毛玻璃发丝描边</td></tr>
+<tr><td><code>focus/ring</code></td><td><span class="chip" style="--c:rgba(9,128,254,0.24)"></span><code>{alpha-brand.24}</code></td><td><span class="chip" style="--c:#52A5FC"></span><code>{brand.400}</code></td><td>焦点光环（暗色提亮）</td></tr>
+<tr><td><code>focus/ring-strong</code></td><td><span class="chip" style="--c:#0980FE"></span><code>{brand.500}</code></td><td><span class="chip" style="--c:#52A5FC"></span><code>{brand.400}</code></td><td>高对比焦点</td></tr>
+<tr><td><code>shadow/color</code></td><td><span class="chip" style="--c:rgba(19,19,19,0.05)"></span><code>{alpha-black.05}</code></td><td><span class="chip" style="--c:rgba(19,19,19,0.5)"></span><code>{alpha-black.50}</code></td><td>卡片投影色（观测 #000@5%）</td></tr>
+<tr><td><code>shadow/color-strong</code></td><td><span class="chip" style="--c:rgba(19,19,19,0.12)"></span><code>{alpha-black.12}</code></td><td><span class="chip" style="--c:rgba(19,19,19,0.8)"></span><code>{alpha-black.80}</code></td><td>浮层投影色</td></tr>
+</table>
+<h2>Rank theme · 扫街榜分榜</h2><table class="spec"><tr><th>Token</th><th>Light</th><th>Dark</th><th>用途</th></tr>
+<tr><td><code>rank-theme/smoky/wash</code></td><td><span class="chip" style="--c:#FFF3EB"></span><code>{commerce.50}</code></td><td><span class="chip" style="--c:#4D1B0B"></span><code>{commerce.900}</code></td><td>烟火小店 · 卡头底色（自上而下渐隐至卡片底）</td></tr>
+<tr><td><code>rank-theme/smoky/badge</code></td><td><span class="chip" style="--c:#FFEBDE"></span><code>{commerce.100}</code></td><td><span class="chip" style="--c:#7C260A"></span><code>{commerce.800}</code></td><td>烟火小店 · 右上箭头徽标</td></tr>
+<tr><td><code>rank-theme/smoky/glow</code></td><td><span class="chip" style="--c:#FFF3EB"></span><code>{commerce.50}</code></td><td><span class="chip" style="--c:#4D1B0B"></span><code>{commerce.900}</code></td><td>烟火小店 · 徽标高光（渐隐）</td></tr>
+<tr><td><code>rank-theme/quality/wash</code></td><td><span class="chip" style="--c:#E5F2FF"></span><code>{cat-blue.50}</code></td><td><span class="chip" style="--c:#102C4B"></span><code>{cat-blue.900}</code></td><td>品质甄选 · 卡头底色（自上而下渐隐至卡片底）</td></tr>
+<tr><td><code>rank-theme/quality/badge</code></td><td><span class="chip" style="--c:#DFEBFB"></span><code>{cat-blue.100}</code></td><td><span class="chip" style="--c:#134378"></span><code>{cat-blue.800}</code></td><td>品质甄选 · 右上箭头徽标</td></tr>
+<tr><td><code>rank-theme/quality/glow</code></td><td><span class="chip" style="--c:#E5F2FF"></span><code>{cat-blue.50}</code></td><td><span class="chip" style="--c:#102C4B"></span><code>{cat-blue.900}</code></td><td>品质甄选 · 徽标高光（渐隐）</td></tr>
+<tr><td><code>rank-theme/destination/wash</code></td><td><span class="chip" style="--c:#E5FFF0"></span><code>{cat-green.50}</code></td><td><span class="chip" style="--c:#123A26"></span><code>{cat-green.900}</code></td><td>专程前往 · 卡头底色（自上而下渐隐至卡片底）</td></tr>
+<tr><td><code>rank-theme/destination/badge</code></td><td><span class="chip" style="--c:#D8FDE4"></span><code>{cat-green.100}</code></td><td><span class="chip" style="--c:#165435"></span><code>{cat-green.800}</code></td><td>专程前往 · 右上箭头徽标</td></tr>
+<tr><td><code>rank-theme/destination/glow</code></td><td><span class="chip" style="--c:#E5FFF0"></span><code>{cat-green.50}</code></td><td><span class="chip" style="--c:#123A26"></span><code>{cat-green.900}</code></td><td>专程前往 · 徽标高光（渐隐）</td></tr>
+<tr><td><code>rank-theme/hotel/wash</code></td><td><span class="chip" style="--c:#E5EDFF"></span><code>{cat-indigo.100}</code></td><td><span class="chip" style="--c:#121451"></span><code>{cat-indigo.900}</code></td><td>酒店 · 卡头底色（自上而下渐隐至卡片底）</td></tr>
+<tr><td><code>rank-theme/hotel/badge</code></td><td><span class="chip" style="--c:#DBE4FD"></span><code>{cat-indigo.200}</code></td><td><span class="chip" style="--c:#171A88"></span><code>{cat-indigo.800}</code></td><td>酒店 · 右上箭头徽标</td></tr>
+<tr><td><code>rank-theme/hotel/glow</code></td><td><span class="chip" style="--c:#F2F1FD"></span><code>{cat-indigo.50}</code></td><td><span class="chip" style="--c:#121451"></span><code>{cat-indigo.900}</code></td><td>酒店 · 徽标高光（渐隐）</td></tr>
+<tr><td><code>rank-theme/local/wash</code></td><td><span class="chip" style="--c:#FFE5EF"></span><code>{cat-pink.50}</code></td><td><span class="chip" style="--c:#4A1326"></span><code>{cat-pink.900}</code></td><td>本地人爱去 · 卡头底色（自上而下渐隐至卡片底）</td></tr>
+<tr><td><code>rank-theme/local/badge</code></td><td><span class="chip" style="--c:#FFD8EB"></span><code>{cat-pink.100}</code></td><td><span class="chip" style="--c:#78193A"></span><code>{cat-pink.800}</code></td><td>本地人爱去 · 右上箭头徽标</td></tr>
+<tr><td><code>rank-theme/local/glow</code></td><td><span class="chip" style="--c:#FFE5EF"></span><code>{cat-pink.50}</code></td><td><span class="chip" style="--c:#4A1326"></span><code>{cat-pink.900}</code></td><td>本地人爱去 · 徽标高光（渐隐）</td></tr>
+<tr><td><code>rank-theme/tea/wash</code></td><td><span class="chip" style="--c:#FFF5E5"></span><code>{cat-amber.50}</code></td><td><span class="chip" style="--c:#453110"></span><code>{cat-amber.900}</code></td><td>下午茶 · 卡头底色（自上而下渐隐至卡片底）</td></tr>
+<tr><td><code>rank-theme/tea/badge</code></td><td><span class="chip" style="--c:#FFEED0"></span><code>{cat-amber.100}</code></td><td><span class="chip" style="--c:#6D4B14"></span><code>{cat-amber.800}</code></td><td>下午茶 · 右上箭头徽标</td></tr>
+<tr><td><code>rank-theme/tea/glow</code></td><td><span class="chip" style="--c:#FFF5E5"></span><code>{cat-amber.50}</code></td><td><span class="chip" style="--c:#453110"></span><code>{cat-amber.900}</code></td><td>下午茶 · 徽标高光（渐隐）</td></tr>
+<tr><td><code>rank-theme/relax/wash</code></td><td><span class="chip" style="--c:#F3E5FF"></span><code>{cat-purple.50}</code></td><td><span class="chip" style="--c:#301647"></span><code>{cat-purple.900}</code></td><td>休闲按摩 · 卡头底色（自上而下渐隐至卡片底）</td></tr>
+<tr><td><code>rank-theme/relax/badge</code></td><td><span class="chip" style="--c:#F2DDFF"></span><code>{cat-purple.100}</code></td><td><span class="chip" style="--c:#4B1E74"></span><code>{cat-purple.800}</code></td><td>休闲按摩 · 右上箭头徽标</td></tr>
+<tr><td><code>rank-theme/relax/glow</code></td><td><span class="chip" style="--c:#F3E5FF"></span><code>{cat-purple.50}</code></td><td><span class="chip" style="--c:#301647"></span><code>{cat-purple.900}</code></td><td>休闲按摩 · 徽标高光（渐隐）</td></tr>
+<tr><td><code>rank-theme/new/wash</code></td><td><span class="chip" style="--c:#FFE5E5"></span><code>{cat-red.50}</code></td><td><span class="chip" style="--c:#4D1111"></span><code>{cat-red.900}</code></td><td>近期新开 · 卡头底色（自上而下渐隐至卡片底）</td></tr>
+<tr><td><code>rank-theme/new/badge</code></td><td><span class="chip" style="--c:#FFDEDE"></span><code>{cat-red.100}</code></td><td><span class="chip" style="--c:#7E1515"></span><code>{cat-red.800}</code></td><td>近期新开 · 右上箭头徽标</td></tr>
+<tr><td><code>rank-theme/new/glow</code></td><td><span class="chip" style="--c:#FFE5E5"></span><code>{cat-red.50}</code></td><td><span class="chip" style="--c:#4D1111"></span><code>{cat-red.900}</code></td><td>近期新开 · 徽标高光（渐隐）</td></tr>
+<tr><td><code>rank-theme/slow/wash</code></td><td><span class="chip" style="--c:#F3FFE5"></span><code>{cat-lime.50}</code></td><td><span class="chip" style="--c:#2A3D15"></span><code>{cat-lime.900}</code></td><td>慢饮时光 · 卡头底色（自上而下渐隐至卡片底）</td></tr>
+<tr><td><code>rank-theme/slow/badge</code></td><td><span class="chip" style="--c:#DDFFD8"></span><code>{cat-lime.100}</code></td><td><span class="chip" style="--c:#3F5E1B"></span><code>{cat-lime.800}</code></td><td>慢饮时光 · 右上箭头徽标</td></tr>
+<tr><td><code>rank-theme/slow/glow</code></td><td><span class="chip" style="--c:#F3FFE5"></span><code>{cat-lime.50}</code></td><td><span class="chip" style="--c:#2A3D15"></span><code>{cat-lime.900}</code></td><td>慢饮时光 · 徽标高光（渐隐）</td></tr>
+</table>
+<h2>Status bundles</h2><p class="section-desc">四件套：bg + text + border + icon；必须配文字或图标形状。</p><div class="status-row">
+<div class="status-pair"><span class="status-tag" style="background:#E9FFED;color:#13713F;border-color:#A0DBA4">● 正在开放</span><span class="status-tag dark" style="background:#103B24;color:#16A85A;border-color:#13713F">● 正在开放</span><code>success</code></div>
+<div class="status-pair"><span class="status-tag" style="background:#FFF6E5;color:#CA7C1C;border-color:#F9E8C6">● 即将关门</span><span class="status-tag dark" style="background:#4E380D;color:#FAB428;border-color:#CA7C1C">● 即将关门</span><code>warning</code></div>
+<div class="status-pair"><span class="status-tag" style="background:#FFF1F0;color:#BE0817;border-color:#FAC8CC">● 已售罄</span><span class="status-tag dark" style="background:#520B11;color:#FF3041;border-color:#BE0817">● 已售罄</span><code>danger</code></div>
+<div class="status-pair"><span class="status-tag" style="background:#E5F2FF;color:#135BA9;border-color:#C8DEF7">● 今日限行</span><span class="status-tag dark" style="background:#102C4B;color:#2E8BF0;border-color:#135BA9">● 今日限行</span><code>info</code></div>
+</div></div>
+<div class="tabpanel" id="tab-color-gradient" style="display:none;"><h2>命名渐变</h2><p class="section-desc">受控集合，复用现有色阶；每个提供 Fill/Stroke × 水平/垂直。</p><div class="grad-grid">
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(90deg, #1A67FE 0%, #198AFE 100%)"></div><div class="swatch-label"><b>gradient/theme</b><code>brand.600 → brand.500 区间</code>主操作按钮（看团购、订门票蓝色实心）；两模式通用</div></div>
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(180deg, #E5F2FF 0%, #FEFEFE 51%)"></div><div class="swatch-label"><b>gradient/theme-light</b><code>cat-blue.50 → neutral.0</code>浅色卡头、弱背景</div></div>
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(180deg, #0B2A4B 0%, #191919 60%)"></div><div class="swatch-label"><b>gradient/theme-dark</b><code>brand.900 → neutral.900</code>theme-light 的暗色版</div></div>
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(90deg, #FF5B2E 0%, #FF7A3D 100%)"></div><div class="swatch-label"><b>gradient/commerce</b><code>commerce.500 → commerce.400</code>「去下单」「免密支付」商业主按钮</div></div>
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(90deg, #FCD6B8 10%, #FFF4E2 61%, #FFE3C9 100%)"></div><div class="swatch-label"><b>gradient/ranking-tag</b><code>ranking.200 → ranking.50</code>扫街榜标签底</div></div>
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(160deg, #FEE495 2%, #FEF6E2 48%, #FEE493 100%)"></div><div class="swatch-label"><b>gradient/medal-gold</b><code>金 · TOP 01 盾形底</code>榜单第 1 名角标底</div></div>
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(160deg, #DFE4ED 0%, #F7F8FE 43%, #DFE4ED 100%)"></div><div class="swatch-label"><b>gradient/medal-silver</b><code>银 · TOP 02 盾形底</code>榜单第 2 名角标底</div></div>
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(160deg, #F9DCC8 0%, #FCF3EE 49%, #F9DCC8 100%)"></div><div class="swatch-label"><b>gradient/medal-bronze</b><code>铜 · TOP 03 盾形底</code>榜单第 3 名角标底</div></div>
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(165deg, #F4BD8D 0%, #BF8249 100%)"></div><div class="swatch-label"><b>gradient/medal-gold-laurel</b><code>金 · TOP 01 麦穗</code>奖牌两侧麦穗</div></div>
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(165deg, #DBDBDB 0%, #B1B1B3 100%)"></div><div class="swatch-label"><b>gradient/medal-silver-laurel</b><code>银 · TOP 02 麦穗</code>奖牌两侧麦穗</div></div>
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(165deg, #EACAB5 0%, #D99D89 100%)"></div><div class="swatch-label"><b>gradient/medal-bronze-laurel</b><code>铜 · TOP 03 麦穗</code>奖牌两侧麦穗</div></div>
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(90deg, #FEFEFE 56%, rgba(254,254,254,0) 100%)"></div><div class="swatch-label"><b>gradient/header-fade</b><code>neutral.canvas → 透明</code>到达头部卡：压在右侧地图上，左侧承载文字</div></div>
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(90deg, #FFE9E7 0%, rgba(254,244,243,0) 100%)"></div><div class="swatch-label"><b>gradient/hot-review</b><code>cat-red.50 → 透明</code>扫街榜 POI 卡「热评」条底色，左→右渐隐</div></div>
+<div class="grad-card"><div class="grad-fill" style="background:linear-gradient(180deg, rgba(30,30,30,0) 0%, rgba(30,30,30,1) 79%)"></div><div class="swatch-label"><b>gradient/scrim-image</b><code>alpha-black 0 → 100%</code>图片卡底部渐隐，承载白字</div></div>
+</div></div></section>
+<section class="page" id="page-typography"><div class="page-hero"><div><h1>字体</h1><p class="desc">中英文 PingFang SC（回退 Noto Sans SC），数字 Helvetica Bold，奖牌 Khand。7 级字号中英共用，每级写死行高，最小 10px，中文字重只用 400/500/600；独立数字用 tabular-nums 等宽。值来自 <code>tokens/typography.md</code>。</p></div><div class="hero-demo"><div class="type-hero">
+  <div style="font:600 24px/30px var(--font-display-zh);color:#191919">已到达</div>
+  <div style="font:400 12px/17px var(--font-body-zh);color:#60636C">地铁2号线 · 钟楼(地铁站)</div>
+  <div style="margin-top:10px;display:flex;gap:14px;align-items:baseline">
+    <span style="font:500 14px/18px var(--font-body-zh);color:#191919">西安钟楼</span>
+    <span class="num" style="font:500 12px/14px var(--font-mono);color:#FF4D13">¥40</span>
+    <span class="num" style="font:700 14px/18px var(--font-mono);color:#191919">23:10</span>
+    <span style="font:600 16px/16px var(--font-medal);color:#4A240A;background:linear-gradient(160deg,#FEE495,#FEF6E2,#FEE493);padding:3px 6px 8px;clip-path:polygon(0 0,100% 0,100% 78%,50% 100%,0 78%)">01</span>
+  </div></div></div></div><div class="tabs"><div class="tab active" onclick="showTab(this,'type-scale')">字号层级 Scale</div><div class="tab" onclick="showTab(this,'type-family')">字族 Families</div><div class="tab" onclick="showTab(this,'type-numeric')">数字 Numerals</div></div><div class="tabpanel" id="tab-type-scale"><h2>中英双栏层级</h2><p class="section-desc">同一行中英同字号同行高；中文 letter-spacing 为 0。</p><table class="spec type-table"><tr><th>Token</th><th>中文</th><th>English</th><th>规格</th></tr>
+<tr><td><code>display</code><div class="muted">「已到达」页面标题</div></td><td style="font:600 24px/30px var(--font-body-zh);color:#191919">已到达</td><td style="font:600 24px/30px var(--font-body-en);letter-spacing:0px;color:#191919">Arrived</td><td><code>24/30 · 600</code><div class="muted">观测 24 Semibold</div></td></tr>
+<tr><td><code>heading</code><div class="muted">区块标题「扫街榜 · 猜你想去」「附近精选」</div></td><td style="font:600 16px/normal var(--font-body-zh);color:#191919">扫街榜 · 猜你想去</td><td style="font:600 16px/normal var(--font-body-en);letter-spacing:0px;color:#191919">Street Ranking · For You</td><td><code>16/auto · 600</code><div class="muted">变量「标题」</div></td></tr>
+<tr><td><code>subheading</code><div class="muted">POI 名、卡片标题</div></td><td style="font:500 14px/18px var(--font-body-zh);color:#191919">西安钟楼</td><td style="font:500 14px/18px var(--font-body-en);letter-spacing:0px;color:#191919">Xi'an Bell Tower</td><td><code>14/18 · 500</code><div class="muted">变量「卡片副标题」16.9→18</div></td></tr>
+<tr><td><code>body</code><div class="muted">卡片正文、元信息、推荐理由</div></td><td style="font:400 12px/17px var(--font-body-zh);color:#191919">古建登楼 · ¥40/人 · 4.5w+人导航过</td><td style="font:400 12px/17px var(--font-body-en);letter-spacing:0px;color:#191919">Ancient tower · ¥40/person · 45k+ navigated</td><td><code>12/17 · 400</code><div class="muted">变量「卡片正文」×335</div></td></tr>
+<tr><td><code>body-sm</code><div class="muted">列表次要信息、浮层说明</div></td><td style="font:400 11px/15px var(--font-body-zh);color:#191919">地铁2号线 · 钟楼(地铁站)</td><td style="font:400 11px/15px var(--font-body-en);letter-spacing:0px;color:#191919">Metro Line 2 · Bell Tower Stn</td><td><code>11/15 · 400</code><div class="muted">观测 11</div></td></tr>
+<tr><td><code>caption</code><div class="muted">标签、角标、状态标签、TOP 文字（原 8px 统一提到 10）</div></td><td style="font:400 10px/13px var(--font-body-zh);color:#191919">2026 上榜景区 · 正在开放</td><td style="font:400 10px/13px var(--font-body-en);letter-spacing:0px;color:#191919">2026 Top Pick · Open now</td><td><code>10/13 · 400</code><div class="muted">观测 10/13.4</div></td></tr>
+<tr><td><code>label</code><div class="muted">按钮文字、价格、团购标签</div></td><td style="font:500 12px/14px var(--font-body-zh);color:#191919">订门票 · 查看路线</td><td style="font:500 12px/14px var(--font-body-en);letter-spacing:0px;color:#191919">Book ticket · Route</td><td><code>12/14 · 500</code><div class="muted">变量「卡片团购价格」</div></td></tr>
+</table></div>
+<div class="tabpanel" id="tab-type-family" style="display:none;"><h2>中文</h2><table class="spec"><tr><th>角色</th><th>字族</th><th>依据</th></tr>
+<tr><td><code>display</code></td><td><code>"PingFang SC", "Noto Sans SC", sans-serif</code></td><td>PingFang SC（原稿 98% 文字图层）；非苹果平台回退 Noto Sans SC</td></tr>
+<tr><td><code>body</code></td><td><code>"PingFang SC", "Noto Sans SC", sans-serif</code></td><td>PingFang SC；非苹果平台回退 Noto Sans SC</td></tr>
+</table><h2>中文字重</h2><div class="weight-row">
+<div class="weight-card"><div style="font:400 28px var(--font-body-zh);color:#191919">到达</div><code>400 Regular</code></div>
+<div class="weight-card"><div style="font:500 28px var(--font-body-zh);color:#191919">到达</div><code>500 Medium</code></div>
+<div class="weight-card"><div style="font:600 28px var(--font-body-zh);color:#191919">到达</div><code>600 Semibold</code></div>
+</div><h2>English</h2><table class="spec"><tr><th>角色</th><th>字族</th><th>依据</th></tr>
+<tr><td><code>display</code></td><td><code>"PingFang SC", "Noto Sans SC", sans-serif</code></td><td>苹方；非苹果平台回退 Noto Sans SC（思源黑体）</td></tr>
+<tr><td><code>body</code></td><td><code>"PingFang SC", "Noto Sans SC", sans-serif</code></td><td>中英共用一个字族；回退 Noto Sans SC</td></tr>
+<tr><td><code>numeric</code></td><td><code>Helvetica, "Helvetica Neue", Arial, sans-serif</code></td><td>Helvetica Bold + tabular-nums（原稿观测）；Helvetica 无 Medium，三档数字均为 Bold</td></tr>
+<tr><td><code>numeric-medal</code></td><td><code>"Khand", sans-serif</code></td><td>例外：TOP 奖牌用 Khand SemiBold（SIL OFL，随包加载）</td></tr>
+</table></div>
+<div class="tabpanel" id="tab-type-numeric" style="display:none;"><h2>数字样式</h2><p class="section-desc">独立数字用 tabular-nums 等宽，价格跳动、时间刷新时不抖动。</p><table class="spec"><tr><th>Token</th><th>示例</th><th>规格</th><th>用途</th></tr>
+<tr><td><code>numeric-lg</code></td><td class="num" style="font:700 24px/28px var(--font-mono);color:#FF4D13">¥18.28</td><td><code>24/28 · 700</code></td><td>大号价格 / 合计金额（共计 ¥18.28）</td></tr>
+<tr><td><code>numeric-md</code></td><td class="num" style="font:700 14px/18px var(--font-mono);color:#191919">23:10  00:40</td><td><code>14/18 · 700</code></td><td>班车时间、数量</td></tr>
+<tr><td><code>numeric-sm</code></td><td class="num" style="font:700 12px/14px var(--font-mono);color:#FF4D13">¥40  ¥228  980米</td><td><code>12/14 · 700</code></td><td>价格「¥40」、距离数字</td></tr>
+<tr><td><code>numeric-medal</code></td><td class="num" style="font:600 24px/normal var(--font-medal);color:#4A240A">01 02 03</td><td><code>24/auto · 600</code></td><td>TOP 角标排名数字 01/02/03 · Khand SemiBold</td></tr>
+<tr><td><code>medal-label</code></td><td class="num" style="font:600 12px/13.44px var(--font-medal);color:#4A240A">TOP</td><td><code>12/13.44 · 600</code></td><td>TOP 角标「TOP」字样 · Khand SemiBold · 字间距 1</td></tr>
+</table></div></section>
+<section class="page" id="page-spacing">
+  <div class="page-hero"><div><h1>间距</h1>
+    <p class="desc">4px 基准，2px 只作标签半步。页面结构固定为「左右 16 · 区块 16 · 标题到内容 8 · 横滑 12」；按钮/列表卡的 10、14 只在组件内使用。值来自 <code>tokens/spacing.md</code>。</p></div>
+    <div class="hero-demo"><div class="sp-demo">
+  <div class="sp-phone">
+    <div class="sp-margin l"></div><div class="sp-margin r"></div>
+    <div class="sp-title">扫街榜 · 猜你想去</div>
+    <div class="sp-gap" style="height:8px"><span>8</span></div>
+    <div class="sp-cards"><div class="sp-card"><div class="sp-img"></div><div class="sp-t">西安钟楼</div><div class="sp-gap6"></div><div class="sp-m">古建登楼 · ¥40/人</div></div>
+      <div class="sp-hgap"><span>12</span></div><div class="sp-card"><div class="sp-img"></div><div class="sp-t">西安鼓楼</div><div class="sp-gap6"></div><div class="sp-m">古建登楼 · ¥35/人</div></div></div>
+    <div class="sp-gap" style="height:16px"><span>16</span></div>
+    <div class="sp-title">逛完还能待多久?</div>
+  </div><div class="sp-legend"><span class="k m"></span>页边距 16 <span class="k g"></span>间距标注</div></div></div></div>
+  <h2>通用阶梯 Scale</h2><p class="section-desc">原 3px → 2，5px → 4，不再出现零碎值。</p><div class="sp-scale"><div class="sp-row"><code>space/2xs</code><div class="sp-bar" style="width:12px"></div><span>2px</span><span class="muted">标签上下内边距、图标与 10px 小字之间</span></div><div class="sp-row"><code>space/xs</code><div class="sp-bar" style="width:24px"></div><span>4px</span><span class="muted">图标↔文字、元信息之间（古建登楼 · ¥40/人）、标签左右内边距</span></div><div class="sp-row"><code>space/sm</code><div class="sp-bar" style="width:36px"></div><span>6px</span><span class="muted">卡片内文字行之间（标题→元信息→标签）</span></div><div class="sp-row"><code>space/md</code><div class="sp-bar" style="width:48px"></div><span>8px</span><span class="muted">区块标题→内容、图片卡内边距、列表行之间</span></div><div class="sp-row"><code>space/lg</code><div class="sp-bar" style="width:72px"></div><span>12px</span><span class="muted">横滑卡片之间、列表卡内行间距</span></div><div class="sp-row"><code>space/xl</code><div class="sp-bar" style="width:96px"></div><span>16px</span><span class="muted">区块与区块之间</span></div><div class="sp-row"><code>space/2xl</code><div class="sp-bar" style="width:144px"></div><span>24px</span><span class="muted">页面顶部信息区 → 首个内容区（预留）</span></div></div>
+  <h2>页面布局 Layout</h2><table class="spec"><tr><th>Token</th><th>值</th><th>用途</th><th>依据</th></tr><tr><td><code>layout/page-margin</code></td><td>16px</td><td>页面左右安全边距</td><td class="muted">已确认由 18 统一为 16，与 xl 对齐</td></tr><tr><td><code>layout/section-gap</code></td><td>16px</td><td>区块与区块之间（= xl）</td><td class="muted">观测</td></tr><tr><td><code>layout/section-title-gap</code></td><td>8px</td><td>区块标题 → 区块内容（= md）</td><td class="muted">观测</td></tr><tr><td><code>layout/carousel-gap</code></td><td>12px</td><td>横滑卡片之间（= lg）</td><td class="muted">观测</td></tr></table>
+  <h2>组件专用 Component-only</h2><p class="section-desc">不进通用阶梯，只能在对应组件内部引用。</p>
+  <table class="spec"><tr><th>Token</th><th>值</th><th>用途</th><th>依据</th></tr><tr><td><code>component/control-padding-x</code></td><td>10px</td><td>按钮、服务入口胶囊左右内边距</td><td class="muted">观测 9/10 ×21、gap 10 ×125；只限组件内，不进通用阶梯</td></tr><tr><td><code>component/control-padding-y</code></td><td>8px</td><td>按钮上下内边距（9 → 8）</td><td class="muted">观测 9，吸附到 4 的倍数</td></tr><tr><td><code>component/card-inset-x</code></td><td>14px</td><td>列表卡左右内边距（今晚末班车时间卡）</td><td class="muted">观测 8/14/8/14；组件专用</td></tr><tr><td><code>component/tag-padding</code></td><td>2 / 4px</td><td>标签内边距（上下 / 左右）</td><td class="muted">观测 2/4 ×41</td></tr></table>
+</section>
+<section class="page" id="page-radius">
+  <div class="page-hero"><div><h1>圆角</h1>
+    <p class="desc">六档语义圆角，按嵌套关系递减：容器 16 › 内容卡 12 › 图片 8 › 按钮 4 › 标签 2；胶囊只给服务入口和角标。扫街榜标签保留专属不对称角。值来自 <code>tokens/radius.md</code>。</p></div>
+    <div class="hero-demo"><div class="rd-hero">
+  <div class="rd-container"><div class="rd-label">container 16</div>
+    <div class="rd-card"><div class="rd-label">component 12</div>
+      <div class="rd-img"><span class="rd-pill">★ 34.7w+</span></div>
+      <div class="rd-line"><span class="rd-tag">4.8</span><span class="rd-rank">扫街榜</span><span class="rd-ok">正在开放</span></div>
+      <div class="rd-btns"><span class="rd-btn solid">订门票</span><span class="rd-btn">查看路线</span></div>
+    </div></div></div></div></div>
+  <h2>语义圆角</h2><div class="rd-grid"><div class="rd-tile"><div class="rd-shape" style="border-radius:2px"></div><code>radius/element</code><b>2px</b><span class="muted">评分徽标「4.8」、团购/票务/状态标签、线路标</span></div><div class="rd-tile"><div class="rd-shape" style="border-radius:4px"></div><code>radius/control</code><b>4px</b><span class="muted">订门票 / 查看路线按钮、数量步进器、日期与场次选项</span></div><div class="rd-tile"><div class="rd-shape" style="border-radius:8px"></div><code>radius/media</code><b>8px</b><span class="muted">卡片内图片、缩略图、图片推荐卡（有 1 小时以上）</span></div><div class="rd-tile"><div class="rd-shape" style="border-radius:12px"></div><code>radius/component</code><b>12px</b><span class="muted">扫街榜 POI 卡、附近精选卡、横滑「查看更多」卡</span></div><div class="rd-tile"><div class="rd-shape" style="border-radius:16px"></div><code>radius/container</code><b>16px</b><span class="muted">列表卡（末班车、你的收藏）、浮层（POI 浮层、一键下单）</span></div><div class="rd-tile"><div class="rd-shape" style="border-radius:999px"></div><code>radius/pill</code><b>999px</b><span class="muted">服务入口胶囊、图片上热度/收藏角标</span></div></div>
+  <h2>专属形状</h2><p class="section-desc">不对称圆角，按 左上 / 右上 / 右下 / 左下 顺序。</p><div class="rd-grid"><div class="rd-tile"><div class="rd-shape" style="border-radius:16px 16px 0 0"></div><code>shape/sheet-top</code><b>16px 16px 0 0</b><span class="muted">底部浮层顶部</span></div><div class="rd-tile"><div class="rd-shape" style="border-radius:2px 0 4px 2px;background:linear-gradient(90deg,#FCD6B8,#FFF4E2,#FFE3C9)"></div><code>shape/ranking-tag</code><b>2px 0 4px 2px</b><span class="muted">扫街榜标签（左上 2 · 右上 0 · 右下 4 · 左下 2）</span></div><div class="rd-tile"><div class="rd-shape" style="border-radius:2px 2px 0 0;width:49px;height:57.5px;clip-path:polygon(0 0,100% 0,100% 78.3%,50% 100%,0 78.3%);background:linear-gradient(160deg,#FEE495 2%,#FEF6E2 48%,#FEE493);border:none"></div><code>shape/medal</code><b>2px 2px 0 0</b><span class="muted">TOP 01/02/03 盾形角标：49×57.5，顶角 2，底部为矢量尖角（侧边 45 处收向底部中点 57.5）</span></div><div class="rd-tile"><div class="rd-shape" style="border-radius:8px 8px 8px 0"></div><code>shape/bubble</code><b>8px 8px 8px 0</b><span class="muted">提示气泡（左下指向）</span></div></div>
+  <h2>规格表</h2><table class="spec"><tr><th>Token</th><th>值</th><th>组件</th><th>依据</th></tr><tr><td><code>radius/element</code></td><td>2px</td><td>评分徽标「4.8」、团购/票务/状态标签、线路标</td><td class="muted">观测 r3 ×41、r1/1.6 ×37 → 合并为 2</td></tr><tr><td><code>radius/control</code></td><td>4px</td><td>订门票 / 查看路线按钮、数量步进器、日期与场次选项</td><td class="muted">观测 r4 ×94；r5 ×19、r6 ×12 合并为 4</td></tr><tr><td><code>radius/media</code></td><td>8px</td><td>卡片内图片、缩略图、图片推荐卡（有 1 小时以上）</td><td class="muted">观测 r8 ×113</td></tr><tr><td><code>radius/component</code></td><td>12px</td><td>扫街榜 POI 卡、附近精选卡、横滑「查看更多」卡</td><td class="muted">观测 r12 ×41</td></tr><tr><td><code>radius/container</code></td><td>16px</td><td>列表卡（末班车、你的收藏）、浮层（POI 浮层、一键下单）</td><td class="muted">观测 r16 ×64</td></tr><tr><td><code>radius/pill</code></td><td>999px</td><td>服务入口胶囊、图片上热度/收藏角标</td><td class="muted">观测 r17.5/18/20/23/100 → 统一</td></tr></table>
+</section>
+<section class="page" id="page-effects">
+  <div class="page-hero"><div><h1>效果</h1>
+    <p class="desc">克制的层级：卡片统一 0.6px 描边，扫街榜卡片额外加 5% 投影；浮层不加投影，靠 70% 黑色遮罩分层；毛玻璃只用于图片角标。值来自 <code>tokens/effects.md</code>。</p></div>
+    <div class="hero-demo"><div class="fx-phone"><div class="fx-page">
+  <div class="fx-card" style="box-shadow:0 4px 14px rgba(19,19,19,0.05)"><div class="fx-img"><span class="fx-glass">★ 34.7w+</span></div><div class="fx-t">西安钟楼</div></div>
+  <div class="fx-card" style="box-shadow:0 4px 14px rgba(19,19,19,0.05)"><div class="fx-img b"><span class="fx-glass">收藏 ☆</span></div><div class="fx-t">西安鼓楼</div></div></div>
+  <div class="fx-scrim"></div>
+  <div class="fx-sheet"><div class="fx-st">饭店 POI 浮层</div><div class="fx-row" style="box-shadow:inset 0 0 0 1px #E8E9EB">【招牌】夏宫双人招牌套餐</div>
+    <div class="fx-bar" style="box-shadow:0 -1px 0 #F4F5F7"><b>¥98</b><span class="fx-btn" style="box-shadow:inset 0 -1px 0 rgba(255,255,255,0.25)">去下单</span></div></div></div></div></div>
+  <div class="tabs"><div class="tab active" onclick="showTab(this,'fx-shadow')">投影 Shadow</div><div class="tab" onclick="showTab(this,'fx-glass')">玻璃 · 模糊</div><div class="tab" onclick="showTab(this,'fx-state')">透明度 · 动效</div></div>
+  <div class="tabpanel" id="tab-fx-shadow"><h2>投影与内阴影</h2><div class="fx-grid"><div class="fx-tile"><div class="fx-sample" style="box-shadow:0 4px 14px rgba(19,19,19,0.05);background:#fff;border-radius:12px"></div><code>shadow/card</code><span class="muted">0 4px 14px · 5%</span></div><div class="fx-tile"><div class="fx-sample" style="box-shadow:0 -1px 0 #F4F5F7;background:#FCFCFC"></div><code>shadow/divider-top</code><span class="muted">0 -1px 0</span></div><div class="fx-tile"><div class="fx-sample" style="box-shadow:inset 0 0 0 1px #E8E9EB;background:#fff;border-radius:8px"></div><code>shadow/inset-border</code><span class="muted">inset 1px</span></div><div class="fx-tile"><div class="fx-sample" style="box-shadow:inset 0 0 0 1.5px #0980FE;background:#EBF3FE;border-radius:4px"></div><code>shadow/inset-selected</code><span class="muted">inset 1.5px</span></div><div class="fx-tile"><div class="fx-sample" style="box-shadow:inset 0 -1px 0 rgba(255,255,255,0.25);background:linear-gradient(90deg,#FF5B2E,#FF7A3D);border-radius:4px"></div><code>highlight/button</code><span class="muted">inset 0 -1px · white 25%</span></div></div>
+    <table class="spec"><tr><th>Token</th><th>值</th><th>用途</th><th>依据</th></tr><tr><td><code>stroke/card</code></td><td><code>0 0 0 0.6px {border/default}</code></td><td>所有卡片的描边（0.6px，不计入布局）——卡片的默认层级表达</td><td class="muted">Figma 变量 stroke/card = 0.6（2026-10-15 确认）</td></tr><tr><td><code>shadow/card</code></td><td><code>0 4px 14px {shadow/color}</code></td><td>扫街榜卡片（POI 卡、分榜卡）在描边之外额外加的轻投影</td><td class="muted">观测「卡片」变量 0 4 13.6 #000@5%（13.6→14）</td></tr><tr><td><code>shadow/divider-top</code></td><td><code>0 -1px 0 {border/subtle}</code></td><td>底部操作栏（去下单 / 免密支付栏）顶部分隔</td><td class="muted">观测 #EEE (0,-1) ×3</td></tr><tr><td><code>shadow/inset-border</code></td><td><code>inset 0 0 0 1px {border/default}</code></td><td>以内阴影描边的卡片与输入框（保留为效果）</td><td class="muted">观测 #E3E5E8 inset s1 ×16，颜色改引用 token</td></tr><tr><td><code>shadow/inset-selected</code></td><td><code>inset 0 0 0 1.5px {border/selected}</code></td><td>选中的日期 / 场次卡</td><td class="muted">观测 #1A67FE inset s1/s1.5</td></tr><tr><td><code>highlight/button</code></td><td><code>inset 0 -1px 0 {alpha-white.25}</code></td><td>渐变实心按钮（订门票 / 去下单）与 TOP 奖牌盾形底部高光</td><td class="muted">观测 white@25% (0,-1) ×9</td></tr></table></div>
+  <div class="tabpanel" id="tab-fx-glass" style="display:none;"><h2>毛玻璃与渐隐</h2><div class="fx-glass-stage"><span class="fx-glass big">★ 34.7w+</span><span class="fx-glass big">收藏 ☆</span>
+  <div class="fx-fade"><div class="fx-fade-card"></div><span>查看更多 ›</span></div></div>
+    <table class="spec"><tr><th>Token</th><th>值</th><th>用途</th><th>依据</th></tr><tr><td><code>glass/blur</code></td><td><code>backdrop-filter: blur(4px)</code></td><td>图片上的热度 / 收藏角标</td><td class="muted">观测 BACKGROUND_BLUR 4 ×67（5 ×9 合并为 4）</td></tr><tr><td><code>glass/background</code></td><td><code>{glass/background}</code></td><td>毛玻璃底色（Light 白 80% / Dark 黑 50%）</td><td class="muted">见 colors.md</td></tr><tr><td><code>glass/border</code></td><td><code>1px solid {glass/border}</code></td><td>毛玻璃发丝描边</td><td class="muted">见 colors.md</td></tr><tr><td><code>blur/fade-edge</code></td><td><code>filter: blur(16px)</code></td><td>横滑末尾「查看更多」渐隐卡</td><td class="muted">观测「卡片渐隐」变量 15.4（→16）</td></tr></table></div>
+  <div class="tabpanel" id="tab-fx-state" style="display:none;"><h2>透明度与状态层</h2>
+    <table class="spec"><tr><th>Token</th><th>值</th><th>用途</th><th>依据</th></tr><tr><td><code>opacity/disabled</code></td><td><code>0.4</code></td><td>不可选场次、禁用按钮</td><td class="muted">观测 40% 填充</td></tr><tr><td><code>state/pressed</code></td><td><code>{overlay/brand} 叠加</code></td><td>蓝色按钮 / 链接按下</td><td class="muted">扩展</td></tr><tr><td><code>overlay/scrim</code></td><td><code>{alpha-black.70}</code></td><td>浮层打开后的背景遮罩</td><td class="muted">原型 Open overlay：#000000 70%</td></tr><tr><td><code>overlay/image</code></td><td><code>{alpha-black.80} / scrim-image 渐变</code></td><td>图片角标底、图片底部承载白字</td><td class="muted">观测 #131313@80%</td></tr></table>
+    <h2>浮层动效（原型观测）</h2><table class="spec"><tr><th>Token</th><th>值</th><th>用途</th><th>依据</th></tr><tr><td><code>motion/overlay-enter</code></td><td><code>Move in · 自下而上 · 400ms · ease-in</code></td><td>浮层打开（Position: Bottom center）</td><td class="muted">原型观测</td></tr><tr><td><code>motion/overlay-dismiss</code></td><td><code>点击外部不关闭</code></td><td>浮层需通过关闭按钮 / 下滑收起</td><td class="muted">原型观测（Close when clicking outside 未勾选）</td></tr></table></div>
+</section>
+<section class="page" id="page-breakpoints">
+  <div class="page-hero"><div><h1>断点栅格</h1>
+    <p class="desc">只适配手机三档宽度：375 / 402（基准）/ 440。边距 16、间距与字号全部固定，只有内容区随宽度伸缩；扫街榜横滑卡固定 284，始终露出下一张。值来自 <code>tokens/breakpoints.md</code>。</p></div>
+    <div class="hero-demo"><div class="bp-row"><div class="bp-col"><div class="bp-phone" style="width:112.5px">
+  <div class="bp-cols" style="margin:0 4.8px;gap:3.5999999999999996px"><span></span><span></span><span></span><span></span></div>
+  <div class="bp-car" style="padding-left:4.8px;gap:3.5999999999999996px"><div class="bp-card" style="width:85.2px"></div><div class="bp-card" style="width:85.2px"></div></div>
+</div><code>device/compact</code><b>375pt</b><span class="muted">内容 343 · 露出 47pt</span></div><div class="bp-col"><div class="bp-phone" style="width:120.6px">
+  <div class="bp-cols" style="margin:0 4.8px;gap:3.5999999999999996px"><span></span><span></span><span></span><span></span></div>
+  <div class="bp-car" style="padding-left:4.8px;gap:3.5999999999999996px"><div class="bp-card" style="width:85.2px"></div><div class="bp-card" style="width:85.2px"></div></div>
+</div><code>device/base</code><b>402pt</b><span class="muted">内容 370 · 露出 74pt</span></div><div class="bp-col"><div class="bp-phone" style="width:132.0px">
+  <div class="bp-cols" style="margin:0 4.8px;gap:3.5999999999999996px"><span></span><span></span><span></span><span></span></div>
+  <div class="bp-car" style="padding-left:4.8px;gap:3.5999999999999996px"><div class="bp-card" style="width:85.2px"></div><div class="bp-card" style="width:85.2px"></div></div>
+</div><code>device/large</code><b>440pt</b><span class="muted">内容 408 · 露出 112pt</span></div></div></div></div>
+  <h2>设备宽度</h2><table class="spec"><tr><th>Token</th><th>宽度</th><th>内容区</th><th>4 列单列宽</th><th>设备</th></tr><tr><td><code>device/compact</code></td><td>375pt</td><td>343pt</td><td>76.8pt</td><td>iPhone SE / mini、部分安卓小屏</td></tr><tr><td><code>device/base</code></td><td>402pt</td><td>370pt</td><td>83.5pt</td><td>iPhone 16 Pro —— 设计基准</td></tr><tr><td><code>device/large</code></td><td>440pt</td><td>408pt</td><td>93.0pt</td><td>iPhone 16 Pro Max</td></tr></table>
+  <h2>栅格</h2><table class="spec"><tr><th>Token</th><th>值</th><th>用途</th><th>依据</th></tr><tr><td><code>grid/columns</code></td><td>4</td><td>普通内容区栅格</td><td class="muted">推导：移动端标准</td></tr><tr><td><code>grid/gutter</code></td><td>12px</td><td>列间距（= layout/carousel-gap）</td><td class="muted">观测</td></tr><tr><td><code>grid/margin</code></td><td>16px</td><td>左右边距（= layout/page-margin），各宽度固定</td><td class="muted">已确认</td></tr><tr><td><code>grid/content-width</code></td><td>100% − 2 × 16px</td><td>内容区随屏宽自适应：343 / 370 / 408</td><td class="muted">已确认</td></tr><tr><td><code>carousel/card-width</code></td><td>284px</td><td>扫街榜横滑卡，各宽度固定，始终露出下一张</td><td class="muted">观测，已确认固定</td></tr></table>
+</section>
+</div><nav class="toc" id="toc"></nav></div>
+<script>
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.rail-item').forEach(r => r.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.querySelector('.rail-item[data-page="' + id + '"]').classList.add('active');
+    buildTOC(id);
+  }
+  function showTab(el, panelId) {
+    const tabs = el.parentElement;
+    tabs.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    const panels = tabs.nextElementSibling.parentElement.querySelectorAll('.tabpanel');
+    panels.forEach(p => p.style.display = 'none');
+    document.getElementById('tab-' + panelId).style.display = 'block';
+  }
+  function buildTOC(pageId) {
+    const page = document.getElementById('page-' + pageId);
+    const headings = page.querySelectorAll('h2');
+    const toc = document.getElementById('toc');
+    toc.innerHTML = '<div class="toc-title">本页目录</div>' +
+      Array.from(headings).map((h, i) => {
+        if (!h.id) h.id = pageId + '-h' + i;
+        return '<a href="#' + h.id + '">' + h.textContent + '</a>';
+      }).join('');
+  }
+  buildTOC('overview');
+
+  const DEMO = {"light": {"--demo-bg-page": "#FEFEFE", "--demo-bg-page-subtle": "#F4F5F7", "--demo-bg-brand-soft": "#EBF3FE", "--demo-bg-commerce-soft": "#FFF3EB", "--demo-bg-ranking-soft": "#FFF4E2", "--demo-bg-ranking-tag": "rgba(255,227,201,0.4)", "--demo-bg-inverse": "#191919", "--demo-bg-disabled": "#F4F5F7", "--demo-surface-default": "#FFFFFF", "--demo-surface-card": "#FEFDFD", "--demo-surface-subtle": "#F8F8F8", "--demo-surface-elevated": "#FFFFFF", "--demo-surface-sunken": "#F4F5F7", "--demo-surface-glass": "rgba(255,255,255,0.8)", "--demo-surface-accent": "#EBF3FE", "--demo-surface-selected": "#D4E6FF", "--demo-surface-hover": "#F8F8F8", "--demo-surface-pressed": "#F4F5F7", "--demo-surface-disabled": "#F4F5F7", "--demo-text-primary": "#191919", "--demo-text-secondary": "#60636C", "--demo-text-tertiary": "#999999", "--demo-text-placeholder": "#C8C8C8", "--demo-text-disabled": "#C8C8C8", "--demo-text-inverse": "#FFFFFF", "--demo-text-accent": "#0980FE", "--demo-text-link": "#0980FE", "--demo-text-price": "#FF4D13", "--demo-text-ranking": "#835B32", "--demo-text-ranking-tag": "#8B4424", "--demo-text-success": "#13713F", "--demo-text-warning": "#CA7C1C", "--demo-text-danger": "#BE0817", "--demo-text-info": "#135BA9", "--demo-text-medal-gold": "#4A240A", "--demo-text-medal-silver": "#4F5568", "--demo-text-medal-bronze": "#7A4137", "--demo-icon-primary": "#191919", "--demo-icon-secondary": "#60636C", "--demo-icon-tertiary": "#999999", "--demo-icon-disabled": "#C8C8C8", "--demo-icon-inverse": "#FFFFFF", "--demo-icon-accent": "#0980FE", "--demo-icon-price": "#FF4D13", "--demo-icon-ranking": "#835B32", "--demo-icon-success": "#13713F", "--demo-icon-warning": "#FAB428", "--demo-icon-danger": "#BE0817", "--demo-icon-info": "#135BA9", "--demo-border-subtle": "#F4F5F7", "--demo-border-default": "#E8E9EB", "--demo-border-strong": "#999999", "--demo-border-accent": "#0980FE", "--demo-border-commerce": "#FFDEC8", "--demo-border-brand-soft": "#EBF3FE", "--demo-border-focus": "#0980FE", "--demo-border-selected": "#0980FE", "--demo-border-disabled": "#E8E9EB", "--demo-border-success": "#A0DBA4", "--demo-border-warning": "#F9E8C6", "--demo-border-danger": "#FAC8CC", "--demo-border-info": "#C8DEF7", "--demo-overlay-scrim": "rgba(0,0,0,0.7)", "--demo-overlay-image": "rgba(19,19,19,0.8)", "--demo-overlay-brand": "rgba(9,128,254,0.16)", "--demo-glass-background": "rgba(255,255,255,0.8)", "--demo-glass-border": "rgba(255,255,255,0.4)", "--demo-focus-ring": "rgba(9,128,254,0.24)", "--demo-focus-ring-strong": "#0980FE", "--demo-shadow-color": "rgba(19,19,19,0.05)", "--demo-shadow-color-strong": "rgba(19,19,19,0.12)", "--demo-rank-theme-smoky-wash": "#FFF3EB", "--demo-rank-theme-smoky-badge": "#FFEBDE", "--demo-rank-theme-smoky-glow": "#FFF3EB", "--demo-rank-theme-quality-wash": "#E5F2FF", "--demo-rank-theme-quality-badge": "#DFEBFB", "--demo-rank-theme-quality-glow": "#E5F2FF", "--demo-rank-theme-destination-wash": "#E5FFF0", "--demo-rank-theme-destination-badge": "#D8FDE4", "--demo-rank-theme-destination-glow": "#E5FFF0", "--demo-rank-theme-hotel-wash": "#E5EDFF", "--demo-rank-theme-hotel-badge": "#DBE4FD", "--demo-rank-theme-hotel-glow": "#F2F1FD", "--demo-rank-theme-local-wash": "#FFE5EF", "--demo-rank-theme-local-badge": "#FFD8EB", "--demo-rank-theme-local-glow": "#FFE5EF", "--demo-rank-theme-tea-wash": "#FFF5E5", "--demo-rank-theme-tea-badge": "#FFEED0", "--demo-rank-theme-tea-glow": "#FFF5E5", "--demo-rank-theme-relax-wash": "#F3E5FF", "--demo-rank-theme-relax-badge": "#F2DDFF", "--demo-rank-theme-relax-glow": "#F3E5FF", "--demo-rank-theme-new-wash": "#FFE5E5", "--demo-rank-theme-new-badge": "#FFDEDE", "--demo-rank-theme-new-glow": "#FFE5E5", "--demo-rank-theme-slow-wash": "#F3FFE5", "--demo-rank-theme-slow-badge": "#DDFFD8", "--demo-rank-theme-slow-glow": "#F3FFE5", "--demo-stage": "#F4F5F7"}, "dark": {"--demo-bg-page": "#0F1012", "--demo-bg-page-subtle": "#191919", "--demo-bg-brand-soft": "#0B2A4B", "--demo-bg-commerce-soft": "#4D1B0B", "--demo-bg-ranking-soft": "#4A240A", "--demo-bg-ranking-tag": "rgba(255,227,201,0.4)", "--demo-bg-inverse": "#F8F8F8", "--demo-bg-disabled": "#2A2B2F", "--demo-surface-default": "#191919", "--demo-surface-card": "#191919", "--demo-surface-subtle": "#0F1012", "--demo-surface-elevated": "#2A2B2F", "--demo-surface-sunken": "#0F1012", "--demo-surface-glass": "rgba(19,19,19,0.5)", "--demo-surface-accent": "#0B2A4B", "--demo-surface-selected": "#0B4078", "--demo-surface-hover": "#2A2B2F", "--demo-surface-pressed": "#51535A", "--demo-surface-disabled": "#2A2B2F", "--demo-text-primary": "#F8F8F8", "--demo-text-secondary": "#C8C8C8", "--demo-text-tertiary": "#7A7D86", "--demo-text-placeholder": "#60636C", "--demo-text-disabled": "#51535A", "--demo-text-inverse": "#191919", "--demo-text-accent": "#52A5FC", "--demo-text-link": "#52A5FC", "--demo-text-price": "#FF7A3D", "--demo-text-ranking": "#DAC1A7", "--demo-text-ranking-tag": "#8B4424", "--demo-text-success": "#16A85A", "--demo-text-warning": "#FAB428", "--demo-text-danger": "#FF3041", "--demo-text-info": "#2E8BF0", "--demo-text-medal-gold": "#4A240A", "--demo-text-medal-silver": "#4F5568", "--demo-text-medal-bronze": "#7A4137", "--demo-icon-primary": "#F8F8F8", "--demo-icon-secondary": "#C8C8C8", "--demo-icon-tertiary": "#7A7D86", "--demo-icon-disabled": "#51535A", "--demo-icon-inverse": "#191919", "--demo-icon-accent": "#52A5FC", "--demo-icon-price": "#FF7A3D", "--demo-icon-ranking": "#DAC1A7", "--demo-icon-success": "#16A85A", "--demo-icon-warning": "#FAB428", "--demo-icon-danger": "#FF3041", "--demo-icon-info": "#2E8BF0", "--demo-border-subtle": "#2A2B2F", "--demo-border-default": "#51535A", "--demo-border-strong": "#7A7D86", "--demo-border-accent": "#0980FE", "--demo-border-commerce": "#7C260A", "--demo-border-brand-soft": "#0B2A4B", "--demo-border-focus": "#52A5FC", "--demo-border-selected": "#0980FE", "--demo-border-disabled": "#2A2B2F", "--demo-border-success": "#13713F", "--demo-border-warning": "#CA7C1C", "--demo-border-danger": "#BE0817", "--demo-border-info": "#135BA9", "--demo-overlay-scrim": "rgba(0,0,0,0.7)", "--demo-overlay-image": "rgba(19,19,19,0.8)", "--demo-overlay-brand": "rgba(9,128,254,0.16)", "--demo-glass-background": "rgba(19,19,19,0.5)", "--demo-glass-border": "rgba(255,255,255,0.4)", "--demo-focus-ring": "#52A5FC", "--demo-focus-ring-strong": "#52A5FC", "--demo-shadow-color": "rgba(19,19,19,0.5)", "--demo-shadow-color-strong": "rgba(19,19,19,0.8)", "--demo-rank-theme-smoky-wash": "#4D1B0B", "--demo-rank-theme-smoky-badge": "#7C260A", "--demo-rank-theme-smoky-glow": "#4D1B0B", "--demo-rank-theme-quality-wash": "#102C4B", "--demo-rank-theme-quality-badge": "#134378", "--demo-rank-theme-quality-glow": "#102C4B", "--demo-rank-theme-destination-wash": "#123A26", "--demo-rank-theme-destination-badge": "#165435", "--demo-rank-theme-destination-glow": "#123A26", "--demo-rank-theme-hotel-wash": "#121451", "--demo-rank-theme-hotel-badge": "#171A88", "--demo-rank-theme-hotel-glow": "#121451", "--demo-rank-theme-local-wash": "#4A1326", "--demo-rank-theme-local-badge": "#78193A", "--demo-rank-theme-local-glow": "#4A1326", "--demo-rank-theme-tea-wash": "#453110", "--demo-rank-theme-tea-badge": "#6D4B14", "--demo-rank-theme-tea-glow": "#453110", "--demo-rank-theme-relax-wash": "#301647", "--demo-rank-theme-relax-badge": "#4B1E74", "--demo-rank-theme-relax-glow": "#301647", "--demo-rank-theme-new-wash": "#4D1111", "--demo-rank-theme-new-badge": "#7E1515", "--demo-rank-theme-new-glow": "#4D1111", "--demo-rank-theme-slow-wash": "#2A3D15", "--demo-rank-theme-slow-badge": "#3F5E1B", "--demo-rank-theme-slow-glow": "#2A3D15", "--demo-stage": "#0F1012"}};
+  function setMode(el, mode) {
+    el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    const s = document.getElementById('demo-stage');
+    Object.entries(DEMO[mode]).forEach(([k, v]) => s.style.setProperty(k, v));
+  }
+  (function () { const s = document.getElementById('demo-stage'); if (s) Object.entries(DEMO.light).forEach(([k, v]) => s.style.setProperty(k, v)); })();
+</script>
+</body></html>

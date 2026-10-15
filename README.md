@@ -1,5 +1,14 @@
 # 高德到达页 · 设计系统
 
+> **设计规范（2026-10-15 更新）**：完整设计系统文档见 [`docs/design-system/DESIGN.md`](docs/design-system/DESIGN.md)，与 Figma「高德地图主项目」中的变量、样式和组件一一对应：
+>
+> - 基础 token：[颜色](docs/design-system/tokens/colors.md) · [字体](docs/design-system/tokens/typography.md) · [间距](docs/design-system/tokens/spacing.md) · [圆角](docs/design-system/tokens/radius.md) · [效果](docs/design-system/tokens/effects.md) · [断点](docs/design-system/tokens/breakpoints.md)
+> - 可视化预览：[`docs/design-system/preview/index.html`](docs/design-system/preview/index.html)
+> - 字体：中文 PingFang SC（非苹果平台回退 Noto Sans SC），数字 Helvetica Bold，TOP 奖牌 Khand SemiBold。
+> - 卡片：统一 0.6px 描边（`stroke/card`）+ 16 圆角；仅扫街榜卡片额外加投影。
+>
+> 注意：下方组件代码仍引用旧的 `tokens/tokens.css`（`--ds-*` 变量），尚未按新规范对齐；新旧取值存在差异时，以 `docs/design-system/` 为准。
+
 逐个组件搭建。技术栈：原生 HTML / CSS 变量 / Web Component，无构建步骤，任何框架都能直接引用。
 
 ```
