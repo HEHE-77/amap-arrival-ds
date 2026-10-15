@@ -10,10 +10,10 @@
  *   <amap-rank-ribbon rank="1">               TOP 排名飘带，1 金 / 2 银 / 3 铜（tier 可覆盖）
  *   <amap-score-badge score="4.8" label="超棒"> 评分徽标
  *   <amap-status-tag text="营业中">            营业状态
- *   <amap-deal-tag type="团" price="98" discount="5.6折">  团购 / 代金券价格条
+ *   <amap-deal-tag type="团|票|券" price="￥98" discount="5.6折">  优惠标签（团购 / 门票 / 代金券）
  *   <amap-media-pill text="1/12" [icon="star"] [muted]>    压在图片上的深色胶囊
  *   <amap-button label="看团购" variant="primary|secondary|tonal" [price="9.9"] [shape="pill"]>  按钮，原生 click；pill 为胶囊形
- *   <amap-tag text tone="neutral|tenure|promo|outline|danger|deal" [size="m|l"]>  小标签；m 为 18 高，l 为 22 高
+ *   <amap-tag text tone="neutral|tenure|area|promo|outline|danger|deal" [size="m|l"]>  小标签；m 为 18 高，l 为 22 高
  *   <amap-quick-order image title tag spec note price>  一键下单卡片，派发 order-buy / order-swap
  *   <amap-hot-review text="…" count="252 人在说">          热评条，原生 click
  *
@@ -156,7 +156,7 @@
       const [o1, o2, o3] = RIBBON_STOPS[tier];
       const v = (k) => `var(--ds-rank-${tier}-${k})`;
       this.innerHTML = `
-        <span class="ds-ribbon" data-tier="${tier}" style="color:${v('num')}" aria-label="第 ${rank} 名">
+        <span class="ds-ribbon" data-tier="${tier}" style="color:var(--color-text-medal-${tier})" aria-label="第 ${rank} 名">
           <svg class="ds-ribbon__bg" width="49" height="57" viewBox="0 0 49 57" aria-hidden="true">
             <defs>
               <linearGradient id="${id}-bg" x1="10.5" y1="0" x2="32" y2="52.5" gradientUnits="userSpaceOnUse">
@@ -214,10 +214,13 @@
     static get observedAttributes() { return ['type', 'price', 'discount']; }
     render() {
       const discount = this.attr('discount');
+      // Figma「数字/Small」：￥ 与数字同字号同字重；兼容只传数字的旧写法
+      const raw = this.attr('price');
+      const price = raw && !/^[￥¥]/.test(raw) ? `￥${raw}` : raw;
       this.innerHTML = `
         <span class="ds-deal">
           <span class="ds-deal__type">${esc(this.attr('type', '团'))}</span>
-          <span class="ds-deal__price"><span class="ds-deal__currency">￥</span>${esc(this.attr('price'))}</span>
+          <span class="ds-deal__price">${esc(price)}</span>
           ${discount ? `<span class="ds-deal__discount">${esc(discount)}</span>` : ''}
         </span>`;
     }
@@ -256,7 +259,7 @@
   class AmapTag extends Base {
     static get observedAttributes() { return ['text', 'tone', 'size']; }
     render() {
-      const tone = ['neutral', 'tenure', 'promo', 'outline', 'danger', 'deal'].includes(this.attr('tone')) ? this.attr('tone') : 'neutral';
+      const tone = ['neutral', 'tenure', 'area', 'promo', 'outline', 'danger', 'deal'].includes(this.attr('tone')) ? this.attr('tone') : 'neutral';
       const size = ['m', 'l'].includes(this.attr('size')) ? this.attr('size') : 's';
       this.innerHTML = `<span class="ds-tag" data-tone="${tone}" data-size="${size}">${esc(this.attr('text'))}</span>`;
     }
@@ -278,7 +281,7 @@
                 <span class="ds-order__title">${esc(a('title'))}</span>
                 ${a('tag') ? `<amap-tag tone="promo" text="${esc(a('tag'))}"></amap-tag>` : ''}
               </span>
-              <span class="ds-order__desc">${a('spec') ? `<span class="ds-order__spec">${esc(a('spec'))}</span>` : ''}${esc(a('note'))}</span>
+              <span class="ds-order__desc">${esc(a('spec'))}${a('spec') && a('note') && !/^[｜|]/.test(a('note')) ? ' | ' : ''}${esc(a('note'))}</span>
             </span>
           </div>
           <div class="ds-order__actions">

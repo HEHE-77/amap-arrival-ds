@@ -1,3 +1,6 @@
+/* 新版 token（与 Figma 变量同名）；已迁移的组件只用这一套 */
+@import url('ds-tokens.css');
+
 @font-face {
   font-family: 'Khand';
   font-style: normal;

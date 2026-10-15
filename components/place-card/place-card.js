@@ -1,41 +1,39 @@
 /**
- * <amap-place-card> · 到达地点卡片（Figma 853:5068 及实例 853:6420）
+ * <amap-place-card> · 扫街榜 POI 卡片（Figma 956:2869「扫街榜POI卡片」，单一主组件）
  * 别名 <amap-restaurant-card>（等同 scene="restaurant"）
  * 依赖 components/primitives/primitives.js（需先加载）
  *
- * 场景 scene
- *   restaurant  饭店到达（默认）：热评 + 多条团购 + 看团购 / 查看路线
- *   attraction  景点到达：灰色信息标签、门票、订门票 / 查看路线
- *   commute     上班到达：收录年限标签、单条团购 + 查看更多、一键下单卡片
+ * 属性与 Figma 组件属性一一对应：
  *
- * 布局 layout
- *   （默认）   宽 301，排行榜等多卡场景
- *   single     宽 365，单 POI 导航到达（Figma 858:6486），通常不传 rank
- *   也可直接设置 CSS 变量 --place-card-width
+ *   Figma 属性             代码属性
+ *   ───────────────────    ──────────────────────────────────────────────
+ *   名称 / 距离             name / distance
+ *   显示 TOP 角标 + TOP 角标 rank：1 金 / 2 银 / 3 铜；不传不显示
+ *   显示附加标签 + 附加标签  extra-tag 文案 + extra-tag-type：tenure（收录年限，默认）| area（区域）
+ *   显示热评                review（文案）+ review-count
+ *   优惠标签 1 / 2          deals[0] / deals[1]：[{ type: '团'|'票'|'券', price, discount, title }]
+ *   显示第二条优惠           deals 传两条；Figma 最多两条，多余的忽略
+ *   显示查看更多            deal-more（文案，如「查看更多」），挂在第一条优惠右侧
+ *   CTA · 类型             cta：group（看团购，默认）| ticket（订门票）| order（一键下单）
+ *   评分（嵌套实例）         score / score-label
+ *   营业状态（嵌套实例）      status；closed 布尔改为灰色打烊标签
+ *   图片区                 image / saves（收藏数）/ image-index（页码）
  *
- * 通用属性
- *   rank            排名 → TOP 飘带（1 金 / 2 银 / 3 铜）；不传不显示
- *   name / distance 店名（超长省略）/ 距离
- *   score / score-label   评分徽标
- *   details         JSON 数组，「·」串联
- *   ranking         扫街榜标签文案
- *   info-tag        灰色信息标签，如「西安的市中心」
- *   tenure          收录年限标签，如「收录 2 年」
- *   status          营业状态，如「营业中」「正在开放」
- *   closed          布尔，打烊态：status 改用灰色标签（如「今日已打烊」）
- *   review / review-count  热评条
- *   deals           JSON 数组 [{ type: '团'|'券'|'票', price, discount, title }]
- *   deal-more       第一条团购右侧入口文案，如「查看更多」
- *   image / saves / image-index   主图 / 收藏数 / 页码
- *   primary-label / secondary-label  底部按钮；默认 看团购 | 订门票（景点）/ 查看路线（单 POI 稿中为「联系商家」）
- *   order           JSON，一键下单卡片 { image, title, tag, spec, note, price, actionLabel, swapLabel }；
- *                   有 order 时替代底部按钮
+ *   ranking         扫街榜标签文案（如「碑林区回头客榜单·第 1 名」）
+ *   details         JSON 数组，「·」串联（品类 / 人均 / 导航人数）
+ *   order           cta="order" 时的商品 JSON { image, title, tag, spec, note, price, actionLabel, swapLabel }
+ *   primary-label / secondary-label   覆盖 CTA 按钮文案（单 POI 稿中次按钮为「联系商家」）
+ *   layout="single" 宽 365（单 POI 导航到达），默认 301；也可设 --place-card-width
  *   asset-base      素材目录（子组件自动继承）
  *
+ * 兼容旧写法：scene（restaurant / attraction / commute）只用来推断默认 cta；
+ *   tenure → extra-tag（收录年限）；info-tag → extra-tag + extra-tag-type="area"；
+ *   传了 order 且未指定 cta 时 → cta="order"。
+ *
  * 事件（bubbles + composed）
- *   card-primary / card-secondary → { label }   底部主 / 次按钮
+ *   card-primary / card-secondary → { label }   CTA 主 / 次按钮（看团购、订门票 / 查看路线）
  *   card-review                  热评条
- *   card-deal → { index, deal }  某条团购
+ *   card-deal → { index, deal }  某条优惠
  *   card-more                    查看更多
  *   card-order-buy / card-order-swap   一键下单 / 换一杯
  */
@@ -44,26 +42,67 @@
     String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const has = (v) => v != null && v !== '';
   const parse = (v, fallback) => { try { return v ? JSON.parse(v) : fallback; } catch { return fallback; } };
-  const SCENES = ['restaurant', 'attraction', 'commute'];
-  const PRIMARY_DEFAULT = { restaurant: '看团购', attraction: '订门票', commute: '看团购' };
+
+  // Figma「扫街榜POI卡片/CTA」类型：一键下单 / 看团购 / 订门票
+  const CTA = { group: '看团购', ticket: '订门票', order: '一键下单' };
+  const CTA_OF_SCENE = { restaurant: 'group', attraction: 'ticket', commute: 'order' };
+  const MAX_DEALS = 2;
 
   class AmapPlaceCard extends HTMLElement {
     static get observedAttributes() {
-      return ['scene', 'rank', 'name', 'distance', 'score', 'score-label', 'details', 'ranking', 'info-tag', 'tenure', 'status', 'closed',
-        'review', 'review-count', 'deals', 'deal-more', 'image', 'saves', 'image-index', 'primary-label', 'secondary-label', 'order', 'layout', 'asset-base'];
+      return ['scene', 'cta', 'rank', 'name', 'distance', 'score', 'score-label', 'details', 'ranking',
+        'extra-tag', 'extra-tag-type', 'info-tag', 'tenure', 'status', 'closed',
+        'review', 'review-count', 'deals', 'deal-more', 'image', 'saves', 'image-index',
+        'primary-label', 'secondary-label', 'order', 'layout', 'asset-base'];
     }
     get defaultScene() { return 'restaurant'; }
     connectedCallback() { this.render(); }
     attributeChangedCallback() { if (this.isConnected) this.render(); }
     attr(n, d = '') { return this.getAttribute(n) ?? d; }
 
+    /** 由属性解析出与 Figma 组件属性对应的配置 */
+    config() {
+      const a = (n, d) => this.attr(n, d);
+      const order = parse(a('order'), null);
+      const scene = a('scene', this.defaultScene);
+      let cta = a('cta');
+      if (!CTA[cta]) cta = order ? 'order' : (CTA_OF_SCENE[scene] === 'order' ? 'group' : CTA_OF_SCENE[scene] ?? 'group');
+      if (cta === 'order' && !order) cta = 'group';
+
+      let extra = null;
+      if (has(a('extra-tag'))) extra = { text: a('extra-tag'), type: a('extra-tag-type') === 'area' ? 'area' : 'tenure' };
+      else if (has(a('tenure'))) extra = { text: a('tenure'), type: 'tenure' };
+      else if (has(a('info-tag'))) extra = { text: a('info-tag'), type: 'area' };
+
+      return {
+        cta, order, extra,
+        deals: parse(a('deals'), []).slice(0, MAX_DEALS),
+        details: parse(a('details'), []),
+        rank: [1, 2, 3].includes(Number(a('rank'))) ? Number(a('rank')) : null,
+      };
+    }
+
+    ctaHTML({ cta, order }) {
+      const a = (n, d) => this.attr(n, d);
+      if (cta === 'order') {
+        return `
+          <amap-quick-order class="amap-place__cta amap-place__order" image="${esc(order.image ?? '')}" title="${esc(order.title)}"
+            tag="${esc(order.tag ?? '')}" spec="${esc(order.spec ?? '')}" note="${esc(order.note ?? '')}" price="${esc(order.price ?? '')}"
+            action-label="${esc(order.actionLabel ?? CTA.order)}" swap-label="${esc(order.swapLabel ?? '换一杯')}"></amap-quick-order>`;
+      }
+      return `
+        <div class="amap-place__cta amap-place__actions" data-cta="${cta}">
+          <amap-button class="amap-place__primary" variant="primary" label="${esc(a('primary-label', CTA[cta]))}"></amap-button>
+          <amap-button class="amap-place__secondary" variant="secondary" label="${esc(a('secondary-label', '查看路线'))}"></amap-button>
+        </div>`;
+    }
+
     render() {
       const a = (n, d) => this.attr(n, d);
-      const scene = SCENES.includes(a('scene')) ? a('scene') : this.defaultScene;
-      const deals = parse(a('deals'), []);
-      const details = parse(a('details'), []);
-      const order = parse(a('order'), null);
+      const cfg = this.config();
+      const { deals, details, extra, rank } = cfg;
       const dealMore = a('deal-more');
+      const closed = this.hasAttribute('closed');
 
       const dealRow = (d, i) => `
         <div class="amap-place__row amap-place__deal-row">
@@ -74,16 +113,18 @@
           ${i === 0 && has(dealMore) ? `<amap-link class="amap-place__more" label="${esc(dealMore)}"></amap-link>` : ''}
         </div>`;
 
-      const badges = [
+      // 标签行：榜单标签 → 附加标签 → 营业状态（Figma 956:2889）
+      const tags = [
         has(a('ranking')) ? `<amap-ranking-tag text="${esc(a('ranking'))}"></amap-ranking-tag>` : '',
-        has(a('info-tag')) ? `<amap-tag tone="neutral" text="${esc(a('info-tag'))}"></amap-tag>` : '',
-        has(a('tenure')) ? `<amap-tag tone="tenure" text="${esc(a('tenure'))}"></amap-tag>` : '',
-        has(a('status')) ? (this.hasAttribute('closed') ? `<amap-tag tone="neutral" text="${esc(a('status'))}"></amap-tag>` : `<amap-status-tag text="${esc(a('status'))}"></amap-status-tag>`) : '',
+        extra ? `<amap-tag tone="${extra.type}" text="${esc(extra.text)}"></amap-tag>` : '',
+        has(a('status'))
+          ? (closed ? `<amap-tag tone="area" text="${esc(a('status'))}"></amap-tag>` : `<amap-status-tag text="${esc(a('status'))}"></amap-status-tag>`)
+          : '',
       ].join('');
 
       this.innerHTML = `
-        <article class="amap-place" data-scene="${scene}" aria-label="${esc(a('name'))}">
-          ${has(a('rank')) ? `<amap-rank-ribbon class="amap-place__ribbon" rank="${esc(a('rank'))}"></amap-rank-ribbon>` : ''}
+        <article class="amap-place" data-cta="${cfg.cta}" aria-label="${esc(a('name'))}">
+          ${rank ? `<amap-rank-ribbon class="amap-place__ribbon" rank="${rank}"></amap-rank-ribbon>` : ''}
 
           <div class="amap-place__media">
             ${has(a('image')) ? `<img class="amap-place__photo" src="${esc(a('image'))}" alt="">` : ''}
@@ -100,25 +141,20 @@
               ${has(a('score')) ? `<amap-score-badge score="${esc(a('score'))}" label="${esc(a('score-label'))}"></amap-score-badge>` : ''}
               <amap-meta-line sep="·" items="${esc(JSON.stringify(details))}"></amap-meta-line>
             </div>
-            ${badges ? `<div class="amap-place__row amap-place__badges">${badges}</div>` : ''}
+            ${tags ? `<div class="amap-place__row amap-place__tags">${tags}</div>` : ''}
             ${has(a('review')) ? `<amap-hot-review class="amap-place__review" text="${esc(a('review'))}" count="${esc(a('review-count'))}"></amap-hot-review>` : ''}
             ${deals.map(dealRow).join('')}
           </div>
 
-          ${order ? `
-            <amap-quick-order class="amap-place__order" image="${esc(order.image ?? '')}" title="${esc(order.title)}" tag="${esc(order.tag ?? '')}"
-              spec="${esc(order.spec ?? '')}" note="${esc(order.note ?? '')}" price="${esc(order.price ?? '')}"
-              action-label="${esc(order.actionLabel ?? '一键下单')}" swap-label="${esc(order.swapLabel ?? '换一杯')}"></amap-quick-order>` : `
-            <div class="amap-place__actions">
-              <amap-button class="amap-place__primary" variant="primary" label="${esc(a('primary-label', PRIMARY_DEFAULT[scene]))}"></amap-button>
-              <amap-button class="amap-place__secondary" variant="secondary" label="${esc(a('secondary-label', '查看路线'))}"></amap-button>
-            </div>`}
+          ${this.ctaHTML(cfg)}
         </article>`;
 
       const fire = (type, detail) => this.dispatchEvent(new CustomEvent(type, { bubbles: true, composed: true, detail }));
       const on = (sel, ev, fn) => this.querySelector(sel)?.addEventListener(ev, fn);
-      on('.amap-place__primary', 'click', () => fire('card-primary', { label: a('primary-label', PRIMARY_DEFAULT[scene]) }));
-      on('.amap-place__secondary', 'click', () => fire('card-secondary', { label: a('secondary-label', '查看路线') }));
+      const primary = a('primary-label', CTA[cfg.cta]);
+      const secondary = a('secondary-label', '查看路线');
+      on('.amap-place__primary', 'click', () => fire('card-primary', { label: primary }));
+      on('.amap-place__secondary', 'click', () => fire('card-secondary', { label: secondary }));
       on('.amap-place__review', 'click', () => fire('card-review'));
       on('.amap-place__more', 'click', () => fire('card-more'));
       on('.amap-place__order', 'order-buy', (e) => { e.stopPropagation(); fire('card-order-buy'); });

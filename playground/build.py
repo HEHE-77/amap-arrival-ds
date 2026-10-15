@@ -6,7 +6,7 @@ import shutil
 
 root = Path(__file__).resolve().parent.parent
 tpl = (root / 'playground/playground.template.html').read_text()
-css = (root / 'tokens/tokens.css').read_text() + '\n' + (root / 'components/header/header.css').read_text()
+css = (root / 'tokens/ds-tokens.css').read_text() + '\n' + (root / 'tokens/tokens.css').read_text().replace("@import url('ds-tokens.css');", '') + '\n' + (root / 'components/header/header.css').read_text()
 js = (root / 'components/header/header.js').read_text()
 
 out = tpl.replace('/*__COMPONENT_CSS__*/', css).replace('/*__COMPONENT_JS__*/', js)

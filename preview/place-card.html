@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>到达地点卡片 · 到达页设计系统</title>
+  <title>扫街榜 POI 卡片 · 到达页设计系统</title>
   <link rel="stylesheet" href="../tokens/tokens.css">
   <link rel="stylesheet" href="../components/primitives/primitives.css">
   <link rel="stylesheet" href="../components/place-card/place-card.css">
   <style>
-    body { margin: 0; padding: 24px 16px; background: #eef0f2; font-family: var(--ds-font-family-base); color: #191919; }
+    body { margin: 0; padding: 24px 16px; background: #eef0f2; font-family: var(--font-family-zh); color: #191919; }
     h2.label { font-size: 13px; font-weight: 500; color: #60636c; margin: 36px 0 18px; }
     h2.label:first-of-type { margin-top: 0; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, 301px); gap: 30px 12px; align-items: start; }
@@ -17,6 +17,8 @@
   </style>
 </head>
 <body>
+  <h2 class="label">Figma 组件实例 · 扫街榜POI卡片（956:2869，场景实例 949:2281）</h2>
+  <div class="grid" data-group="figma"></div>
   <h2 class="label">单 POI 导航到达 · layout="single"（Figma 858:6486）</h2>
   <div data-group="single"></div>
   <h2 class="label">上班到达 · scene="commute"</h2>
@@ -34,6 +36,22 @@
   <script>
     // 文案逐字取自 Figma 各实例；图片按像素比对 Figma 对应，缺失时显示占位底色
     const CARDS = [
+      // ── Figma 949:2281：上班到达（CTA 一键下单 + 附加标签收录 + 查看更多）/ 饭店到达（CTA 看团购）/ 景点到达（CTA 订门票 + 附加标签区域） ──
+      { g: 'figma', node: 'CTA=一键下单', cta: 'order', rank: 1, name: 'Grid Coffee(万象城店)', image: '../assets/restaurant/samples/grid-coffee.jpg', distance: '<100 米', score: '4.8', scoreLabel: '超棒',
+        details: ['奶茶/甜品', '￥27/人', '662 人导航过'], ranking: '雁塔区咖啡榜·第 2 名', extraTag: '收录 2 年', status: '正在营业',
+        deals: [{ type: '团', price: '￥9.9', discount: '6.7折', title: '大杯葡萄冷萃美式' }], dealMore: '查看更多', saves: '4.7k+', page: '1/12',
+        order: { image: '../assets/restaurant/samples/order-oat-latte.jpg', title: '燕麦拿铁', tag: '上次那杯', spec: '大杯·少冰·标准糖', note: '随时退 | 不限购', price: '9.9' } },
+      { g: 'figma', node: 'CTA=看团购', cta: 'group', rank: 1, name: '胡大饭馆 24h (砺街总店)', distance: '<100 米', score: '4.8', scoreLabel: '超棒',
+        details: ['川菜', '￥150/人', '3652 人导航过'], ranking: '碑林区回头客榜单·第 1 名', status: '正在营业',
+        review: '关晓彤推荐来的! 冲他家的蒜蓉酸辣螃蟹...', reviewCount: '252 人在说',
+        deals: [{ type: '团', price: '￥98', discount: '5.6折', title: '夏宫双人招牌套餐 (需提前预约)' }, { type: '券', price: '￥88', discount: '8.8折', title: '100 元代金券' }],
+        image: '../assets/restaurant/samples/huda-fanguan.jpg', saves: '10.7w+', page: '1/12' },
+      { g: 'figma', node: 'CTA=订门票', cta: 'ticket', rank: 1, name: '西安钟楼', image: '../assets/restaurant/samples/xian-bell-tower.jpg', distance: '<100 米', score: '4.8', scoreLabel: '超棒',
+        details: ['古建登楼', '￥40/人', '4.5w+ 人导航过'], ranking: '2026 上榜景区', extraTag: '西安的市中心', extraTagType: 'area', status: '正在开放',
+        review: '中国现存最大且保存最完整的明代钟楼，全木构架靠榫卯咬合未用一颗铁钉', reviewCount: '198 人在说',
+        deals: [{ type: '票', price: '￥40', discount: '省 2 元', title: '钟楼成人票（当日有效，刷身份证入园）' }, { type: '票', price: '￥50', discount: '8.0折', title: '钟鼓楼联票｜两天内分次使用' }],
+        saves: '34.7w+', page: '1/12' },
+
       { g: 'single', node: '858:6486', layout: 'single', name: '胡大饭馆 24h (砺街总店)', distance: '距您 62 米', score: '4.8', scoreLabel: '超棒',
         details: ['川菜', '￥150/人', '3652 人导航过'], ranking: '碑林区川菜榜单·第 1 名', status: '营业中',
         review: '关晓彤推荐来的! 冲他家的蒜蓉酸辣螃蟹...', reviewCount: '252 人在说',
@@ -98,10 +116,10 @@
     const log = (t) => { document.getElementById('log').textContent = t + ' · ' + new Date().toLocaleTimeString(); };
     for (const c of CARDS) {
       const cell = document.createElement('div');
-      cell.innerHTML = `<span class="cap">${c.layout ? 'layout=' + c.layout : (c.scene || 'restaurant')} · ${c.node}</span>`;
+      cell.innerHTML = `<span class="cap">${c.layout ? 'layout=' + c.layout : c.cta ? 'cta=' + c.cta : (c.scene || 'restaurant')} · ${c.node}</span>`;
       const el = document.createElement('amap-place-card');
       const set = (k, v) => v != null && el.setAttribute(k, typeof v === 'string' || typeof v === 'number' ? v : JSON.stringify(v));
-      set('asset-base', '../assets/'); set('layout', c.layout); set('secondary-label', c.secondaryLabel); set('scene', c.scene); set('rank', c.rank); set('name', c.name); set('distance', c.distance);
+      set('asset-base', '../assets/'); set('cta', c.cta); set('extra-tag', c.extraTag); set('extra-tag-type', c.extraTagType); set('layout', c.layout); set('secondary-label', c.secondaryLabel); set('scene', c.scene); set('rank', c.rank); set('name', c.name); set('distance', c.distance);
       set('score', c.score); set('score-label', c.scoreLabel); set('details', c.details); set('ranking', c.ranking);
       set('info-tag', c.infoTag); set('tenure', c.tenure); set('status', c.status); set('review', c.review); set('review-count', c.reviewCount);
       set('deals', c.deals); set('deal-more', c.dealMore); set('image', c.image); set('saves', c.saves); set('image-index', c.page); set('order', c.order);

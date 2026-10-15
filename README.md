@@ -7,7 +7,9 @@
 > - 字体：中文 PingFang SC（非苹果平台回退 Noto Sans SC），数字 Helvetica Bold，TOP 奖牌 Khand SemiBold。
 > - 卡片：统一 0.6px 描边（`stroke/card`）+ 16 圆角；仅扫街榜卡片额外加投影。
 >
-> 注意：下方组件代码仍引用旧的 `tokens/tokens.css`（`--ds-*` 变量），尚未按新规范对齐；新旧取值存在差异时，以 `docs/design-system/` 为准。
+> 新版 token：`tokens/ds-tokens.css`，由 `python3 tokens/build_tokens.py` 从 `DESIGN.md` 生成，变量名与 Figma 变量的 code syntax 一致（如 `--color-text-primary`、`--space-md`），已通过 `tokens.css` 顶部的 `@import` 自动加载。
+>
+> 迁移进度：✅ 扫街榜 POI 卡片（`place-card`）及其用到的基础组件（评分、营业状态、优惠标签、热评、一键下单、图片胶囊、主 / 次按钮、扫街榜标签、TOP 角标）。其余组件仍引用旧的 `--ds-*` 变量，逐个对齐中。
 
 逐个组件搭建。技术栈：原生 HTML / CSS 变量 / Web Component，无构建步骤，任何框架都能直接引用。
 
@@ -34,7 +36,7 @@ assets/      从 Figma 导出的素材
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（三种场景共 9 个实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）、`reminders.html`（限行 / 末班车）、`nav-bar.html`、`place-row.html`（收藏地点）、`more-card.html`、`facility-bar.html`。事件会显示在页面上。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（Figma 三个场景实例 + 9 个页面实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）、`reminders.html`（限行 / 末班车）、`nav-bar.html`、`place-row.html`（收藏地点）、`more-card.html`、`facility-bar.html`。事件会显示在页面上。
 
 加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
 
@@ -150,54 +152,53 @@ assets/      从 Figma 导出的素材
 
 箭头用全局 `icon-chevron-right.svg`；星标与水印内联在组件中。收藏态填充 `--ds-color-favorite`（暂定 `#FFB300`）。
 
-### 3. 到达地点卡片（Figma `853:5068`，实例 `853:6420`，单 POI `858:6486`）
+### 3. 扫街榜 POI 卡片（Figma `956:2869`「扫街榜POI卡片」，场景实例 `949:2281`，单 POI `858:6486`）
 
-`<amap-place-card scene>`，三种场景共用一个组件；`<amap-restaurant-card>` 保留为别名（等同 `scene="restaurant"`）。
+> 2026-10-15 已按新版 Figma 组件对齐：单一主组件 + 属性组合，只引用新版 token（`tokens/ds-tokens.css`）。
 
-| 场景 | `scene` | 特有内容 | 高度 |
-|---|---|---|---|
-| 饭店到达 | `restaurant`（默认） | 热评、多条团购、看团购 / 查看路线 | 370 |
-| 景点到达 | `attraction` | 灰色信息标签、门票（票 / 省 N 元 / 起）、订门票 / 查看路线 | 370 |
-| 上班到达 | `commute` | 收录年限、单条团购 + 查看更多、一键下单卡片 | 390 |
+`<amap-place-card>`；`<amap-restaurant-card>` 保留为别名。属性与 Figma 组件属性一一对应：
+
+| Figma 属性 | 代码属性 |
+|---|---|
+| 名称 / 距离 | `name` / `distance` |
+| 显示 TOP 角标 + TOP 角标（01 / 02 / 03） | `rank`：1 / 2 / 3，不传不显示 |
+| 显示附加标签 + 附加标签 | `extra-tag` 文案 + `extra-tag-type`：`tenure`（收录年限，默认）/ `area`（区域，如「西安的市中心」） |
+| 显示热评 | `review` + `review-count` |
+| 优惠标签 1 / 2（团 / 票 / 券）、显示第二条优惠 | `deals` JSON，最多两条 `[{ type, price, discount, title }]`；`price` 可写「￥98」或「98」 |
+| 显示查看更多 | `deal-more`（文案） |
+| CTA · 类型 | `cta`：`group` 看团购（默认）/ `ticket` 订门票 / `order` 一键下单（需同时传 `order`） |
+| 评分 / 营业状态（嵌套实例） | `score` + `score-label` / `status`（`closed` 改为灰色打烊标签） |
+
+| Figma 场景实例 | 属性组合 |
+|---|---|
+| 上班到达 | `cta="order"` + `extra-tag="收录 2 年"` + `deal-more` + 一条优惠，无热评 |
+| 饭店到达 | `cta="group"` + 热评 + 团 / 券两条优惠 |
+| 景点到达 | `cta="ticket"` + `extra-tag-type="area"` + 热评 + 两条门票 |
 
 | 布局 | `layout` | 宽 | 用途 |
 |---|---|---|---|
 | 默认 | — | 301 | 排行榜等多卡并列 |
 | 单 POI | `single` | 365 | 单 POI 导航到达（Figma `858:6486`），通常不传 `rank`，次按钮如「联系商家」 |
 
-卡片宽度跟随宿主，也可直接设置 CSS 变量 `--place-card-width`。
-
 ```html
 <link rel="stylesheet" href="components/place-card/place-card.css">
 <script src="components/place-card/place-card.js"></script>
 
-<amap-place-card scene="commute" rank="1" name="Grid Coffee(万象城店)" distance="<100 米"
+<amap-place-card cta="order" rank="1" name="Grid Coffee(万象城店)" distance="<100 米"
   score="4.8" score-label="超棒" details='["奶茶/甜品","￥27/人","662 人导航过"]'
-  ranking="雁塔区咖啡榜·第 2 名" tenure="收录 2 年" status="正在营业"
-  deals='[{"type":"团","price":"9.9","discount":"6.7折","title":"大杯葡萄冷萃美式"}]' deal-more="查看更多"
-  order='{"title":"燕麦拿铁","tag":"上次那杯","spec":"大杯·少冰·标准糖","note":"｜随时退｜不限购","price":"9.9"}'
+  ranking="雁塔区咖啡榜·第 2 名" extra-tag="收录 2 年" status="正在营业"
+  deals='[{"type":"团","price":"￥9.9","discount":"6.7折","title":"大杯葡萄冷萃美式"}]' deal-more="查看更多"
+  order='{"title":"燕麦拿铁","tag":"上次那杯","spec":"大杯·少冰·标准糖","note":"随时退 | 不限购","price":"9.9"}'
   saves="4.7k+" image-index="1/12"></amap-place-card>
 ```
 
-| 属性 | 说明 |
-|---|---|
-| `scene` | `restaurant` / `attraction` / `commute`，决定默认按钮文案与间距 |
-| `layout` | 不传为 301 宽；`single` 为 365 宽 |
-| `rank` | 排名 → 飘带，1 金 / 2 银 / 3 铜（第 4 名起暂用铜） |
-| `name` / `distance` | 店名（超长省略）/ 距离 |
-| `score` / `score-label` | 评分徽标 |
-| `details` | JSON 数组，「·」串联 |
-| `ranking` / `info-tag` / `tenure` / `status` | 扫街榜 / 灰色信息 / 收录年限 / 营业状态，均可不传 |
-| `review` / `review-count` | 热评条 |
-| `deals` | JSON 数组 `[{ type: '团'\|'券'\|'票', price, discount, title }]`；`price` 可带「起」，`discount` 可写「省 2 元」 |
-| `deal-more` | 第一条团购右侧入口，如「查看更多」 |
-| `image` / `saves` / `image-index` | 主图 / 收藏数 / 页码 |
-| `primary-label` / `secondary-label` | 底部按钮，默认 看团购（景点：订门票）/ 查看路线 |
-| `order` | JSON `{ image, title, tag, spec, note, price, actionLabel, swapLabel }`；有它时替代底部按钮 |
+其余属性：`ranking`（扫街榜标签文案）、`details`（JSON，「·」串联）、`image` / `saves` / `image-index`、`primary-label` / `secondary-label`（覆盖 CTA 文案）、`order`（JSON `{ image, title, tag, spec, note, price, actionLabel, swapLabel }`）。
+
+兼容旧写法：`scene`（restaurant / attraction / commute）只用来推断默认 `cta`；`tenure` → `extra-tag`；`info-tag` → `extra-tag` + `extra-tag-type="area"`；传了 `order` 且没写 `cta` 时自动为一键下单。
 
 事件：`card-primary` / `card-secondary`（`{ label }`，次按钮可能是「查看路线」或「联系商家」）、`card-review`、`card-deal`（`{ index, deal }`）、`card-more`、`card-order-buy`、`card-order-swap`。
 
-素材（`assets/restaurant/`，SVG 由 Figma 插件 API 直接导出；飘带与麦穗改为组件内联 SVG，颜色走 `--ds-rank-{gold|silver|bronze}-*`）：
+素材（`assets/restaurant/`，SVG 由 Figma 插件 API 直接导出；奖牌与麦穗为组件内联 SVG，数字色走 `--color-text-medal-*`）：
 
 | 文件名 | Figma 节点 | 尺寸 |
 |---|---|---|
