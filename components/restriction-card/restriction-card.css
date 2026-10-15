@@ -58,8 +58,8 @@ amap-restriction-card {
 
 .amap-rc__desc {
   margin: 0;
-  font-size: var(--font-size-body);
-  line-height: normal;   /* Figma「卡片正文」行高 100% */
+  font-size: var(--font-size-body);  /* 中文/Body · text/secondary */
+  line-height: var(--line-height-body);
   color: var(--color-text-secondary);
 }
 
