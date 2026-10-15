@@ -70,9 +70,8 @@ amap-tag, amap-quick-order {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* 照片上的扫街榜标签（Figma 762:3747）：半透明暖底 + 白字（推荐卡尚未迁移，沿用旧值） */
-.ds-ranking-tag.is-on-photo { background: var(--ds-color-surface-ranking-tag-on-photo); }
-.ds-ranking-tag.is-on-photo .ds-ranking-tag__text { color: var(--ds-color-text-on-photo); }
+/* 照片上的扫街榜标签（Figma 996:4764）：同样 bg/ranking-tag 底，文字 text/inverse */
+.ds-ranking-tag.is-on-photo .ds-ranking-tag__text { color: var(--color-text-inverse); }
 
 /* ── amap-rank-thumb：缩略图 + 排名（Figma 942:812「扫街榜分榜/POI 行」Thumbnail） ── */
 .ds-rank-thumb {

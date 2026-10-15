@@ -1,5 +1,5 @@
 /**
- * <amap-poi-recommend> · 单 POI 推荐卡（Figma 858:6713 及实例 858:6809 内 8 张）
+ * <amap-poi-recommend> · POI 推荐卡（Figma 996:4773，168×168）
  * 依赖 components/primitives/primitives.js（扫街榜标签 amap-ranking-tag on-photo）
  *
  * 属性
@@ -7,7 +7,7 @@
  *   tag         扫街榜标签文案，如「特色街区」；不传则隐藏
  *   saves       收藏人数文案，如「44.6w+人收藏」
  *   image       图片（原图即可，渐进模糊由组件生成）
- *   tint        底部渐变主色（取自图片主色），如 #23406D
+ *   tint        底部遮罩主色（取自图片主色），如 #23406D；不传时用 Gradient/Scrim Image
  *   tint-end    渐变底端颜色，不传同 tint
  *   fav-label   收藏按钮文案，默认「收藏」
  *   favorited   收藏态（星标填充 --ds-color-favorite）
@@ -46,7 +46,7 @@
       if (has(a('tint-end'))) this.style.setProperty('--rec-tint-end', a('tint-end')); else this.style.removeProperty('--rec-tint-end');
 
       this.innerHTML = `
-        <article class="amap-rec">
+        <article class="amap-rec${has(a('tint')) ? ' has-tint' : ''}">
           ${has(image) ? `
             <div class="amap-rec__media" aria-hidden="true">
               <img class="amap-rec__photo" src="${esc(image)}" alt="">
