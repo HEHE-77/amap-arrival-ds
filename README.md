@@ -9,7 +9,7 @@
 >
 > 新版 token：`tokens/ds-tokens.css`，由 `python3 tokens/build_tokens.py` 从 `DESIGN.md` 生成，变量名与 Figma 变量的 code syntax 一致（如 `--color-text-primary`、`--space-md`），已通过 `tokens.css` 顶部的 `@import` 自动加载。
 >
-> 迁移进度：✅ 到达头部卡（`header`）、必吃榜菜品卡（`dish-card`）、扫街榜分榜卡片（`poi-card`）、扫街榜 POI 卡片（`place-card`）及其用到的基础组件（排名缩略图、收藏星标、评分、营业状态、优惠标签、热评、一键下单、图片胶囊、主 / 次按钮、扫街榜标签、TOP 角标）。其余组件仍引用旧的 `--ds-*` 变量，逐个对齐中。
+> 迁移进度：✅ 到达头部卡（`header`）、POI 推荐卡（`poi-recommend`）、必吃榜菜品卡（`dish-card`）、扫街榜分榜卡片（`poi-card`）、扫街榜 POI 卡片（`place-card`）及其用到的基础组件（排名缩略图、收藏星标、评分、营业状态、优惠标签、热评、一键下单、图片胶囊、主 / 次按钮、扫街榜标签、TOP 角标）。其余组件仍引用旧的 `--ds-*` 变量，逐个对齐中。
 
 逐个组件搭建。技术栈：原生 HTML / CSS 变量 / Web Component，无构建步骤，任何框架都能直接引用。
 
@@ -211,7 +211,9 @@ assets/      从 Figma 导出的素材
 | `icon-star-white.svg` | `853:5072` Star 3 | 15×14 |
 | `samples/*.jpg` | 主图 284×156 与一键下单商品图 48×48，仅预览用（按像素比对 Figma 对应到卡片；huda-fanguan 与 huda-fanguan-wide 为 1x，其余 @3x） | — |
 
-### 4. 单 POI 推荐卡（Figma `858:6713`，实例在 `858:6809`）
+### 4. POI 推荐卡（Figma `996:4773`，168×168）
+
+> 2026-10-15 已按新版 Figma 组件对齐 token（素材不变）。不传 `tint` 时底部遮罩默认 `Gradient/Scrim Image`；传 `tint` 按图片主色覆盖。
 
 168×168 的图片卡：渐进模糊 + 底部主色渐变 + 名称 / 扫街榜标签 / 收藏人数 + 右上玻璃收藏按钮。
 
