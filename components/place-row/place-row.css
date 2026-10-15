@@ -1,25 +1,23 @@
-/* <amap-place-row> · 收藏地点行卡（Figma 766:8580「收藏」）
- * 依赖 tokens/tokens.css、components/primitives/primitives.css（amap-meta-line / amap-button tonal）
+/* <amap-place-row> · 收藏卡（Figma 766:8580「收藏卡」，同规格卡片族）
+ * 只引用新版 token（tokens/ds-tokens.css）；依赖 components/primitives/primitives.css（amap-meta-line / amap-button tonal）
  */
 amap-place-row {
-  --row-pad: var(--ds-space-8);
-  --row-border: 0.6px;
   --row-image: 56px;
 
   display: block;
   width: 100%;
-  font-family: var(--ds-font-family-base);
+  font-family: var(--font-family-zh);
 }
 
 .amap-prow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: calc(var(--row-pad) + var(--row-border));
-  border-radius: var(--ds-radius-16);
-  background: var(--ds-color-surface-card-neutral);
-  box-shadow: inset 0 0 0 var(--row-border) var(--ds-color-border-card);
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  border-radius: var(--radius-container);
+  background: var(--color-surface-card);
+  box-shadow: inset 0 0 0 var(--stroke-card) var(--color-border-default);  /* stroke/card 不计入布局 */
 }
 
 .amap-prow__main {
@@ -27,7 +25,7 @@ amap-place-row {
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-lg);
   margin: 0;
   padding: 0;
   border: 0;
@@ -38,29 +36,32 @@ amap-place-row {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.amap-prow__main:focus-visible { outline: 2px solid var(--ds-color-focus-ring); outline-offset: 2px; border-radius: var(--ds-radius-8); }
+.amap-prow__main:focus-visible { outline: 2px solid var(--color-focus-ring-strong); outline-offset: 2px; border-radius: var(--radius-media); }
 
 .amap-prow__media {
   flex: none;
   width: var(--row-image);
   height: var(--row-image);
-  border-radius: var(--ds-radius-8);
+  border-radius: var(--radius-media);
   overflow: hidden;
-  background: var(--ds-color-tag-neutral-surface);
+  background: var(--color-surface-sunken);
 }
 .amap-prow__photo { display: block; width: 100%; height: 100%; object-fit: cover; }
 .amap-prow__photo.is-missing { visibility: hidden; }
 
-.amap-prow__text { min-width: 0; display: flex; flex-direction: column; gap: var(--ds-space-3); }
-.amap-prow__name {
-  font-size: var(--ds-type-subtitle-m-size);
-  font-weight: var(--ds-type-subtitle-m-weight);
-  line-height: 18.2px;
-  color: var(--ds-color-text-primary);
+.amap-prow__text { min-width: 0; display: flex; flex-direction: column; gap: var(--space-xs); }
+.amap-prow__name {  /* 中文/Heading */
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-heading);
+  line-height: var(--line-height-heading);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.amap-prow__meta { --meta-gap: 2px; max-width: 100%; }
+/* 元信息：距离 text/ranking，评分 / 类型 text/secondary，「·」text/tertiary，中文/Body，间距 space/xs */
+.amap-prow__meta { --meta-gap: var(--space-xs); --meta-sep-color: var(--color-text-tertiary); max-width: 100%; }
+.amap-prow__meta .ds-meta-line { font-size: var(--font-size-body); line-height: var(--line-height-body); color: var(--color-text-secondary); }
+.amap-prow__meta .ds-meta-line__item.is-accent { color: var(--color-text-ranking); }
 
 .amap-prow__action { flex: none; }
