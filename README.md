@@ -9,7 +9,7 @@
 >
 > 新版 token：`tokens/ds-tokens.css`，由 `python3 tokens/build_tokens.py` 从 `DESIGN.md` 生成，变量名与 Figma 变量的 code syntax 一致（如 `--color-text-primary`、`--space-md`），已通过 `tokens.css` 顶部的 `@import` 自动加载。
 >
-> 迁移进度：✅ 扫街榜分榜卡片（`poi-card`）、扫街榜 POI 卡片（`place-card`）及其用到的基础组件（排名缩略图、收藏星标、评分、营业状态、优惠标签、热评、一键下单、图片胶囊、主 / 次按钮、扫街榜标签、TOP 角标）。其余组件仍引用旧的 `--ds-*` 变量，逐个对齐中。
+> 迁移进度：✅ 到达头部卡（`header`）、扫街榜分榜卡片（`poi-card`）、扫街榜 POI 卡片（`place-card`）及其用到的基础组件（排名缩略图、收藏星标、评分、营业状态、优惠标签、热评、一键下单、图片胶囊、主 / 次按钮、扫街榜标签、TOP 角标）。其余组件仍引用旧的 `--ds-*` 变量，逐个对齐中。
 
 逐个组件搭建。技术栈：原生 HTML / CSS 变量 / Web Component，无构建步骤，任何框架都能直接引用。
 
@@ -73,12 +73,14 @@ assets/      从 Figma 导出的素材
 
 ## 组件
 
-### 1. Header
+### 1. 到达头部卡（Figma `981:3041`）
+
+> 2026-10-15 已按新版 Figma 组件对齐 token（地图素材不变）。
 
 | 变体 | `variant` | Figma | 高度 |
 |---|---|---|---|
-| 常规到达 | `regular`（默认） | `849:2920` | 72 |
-| 打车到达 | `taxi` | `849:2938` | 84，内容垂直居中 |
+| 常规到达 | `regular`（默认） | `981:3018` | 78 |
+| 打车到达 | `taxi` | `981:3039` | 78，内容垂直居中 |
 
 ```html
 <link rel="stylesheet" href="tokens/tokens.css">

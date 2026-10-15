@@ -1,21 +1,18 @@
-/* Header · Figma 849:2976
- * 依赖 tokens/tokens.css
+/* 到达头部卡 · Figma 981:3041（类型：常规到达 981:3018 / 打车到达 981:3039）
+ * 只引用新版 token（tokens/ds-tokens.css）
  */
 .amap-header {
   /* ── Component tokens ── */
   --header-width: 366px;
-  --header-height: 72px;
-  --header-radius-end: var(--ds-radius-16);
-  --header-fade-color: var(--ds-color-surface-page);
-  --header-fade-stop: 64.247%;
-  --header-gap-title-meta: var(--ds-space-8);
-  --header-gap-meta-rows: var(--ds-space-6);
-  --header-gap-actions: var(--ds-space-8);
-  --header-gap-icon-label: var(--ds-space-2);
+  --header-height: 78px;       /* 两种类型同高 */
+  --header-gap-title-meta: var(--space-sm);
+  --header-gap-meta-rows: var(--space-sm);
+  --header-gap-actions: var(--space-md);
+  --header-gap-icon-label: var(--space-2xs);
   --header-thumb-width: 212px; /* 地图缩略图 = header 内可见区域，素材按此尺寸 @3x 裁好 */
   --header-eco-icon-w: 18px;
   --header-eco-icon-h: 17px;
-  --header-gap-inline: var(--ds-space-2);
+  --header-gap-inline: var(--space-2xs);
   --header-dot-width: 6px; /* 「·」固定宽度，避免不同字体下位移 */
   --header-content-align: flex-start;
   --header-meta-reserve: 120px; /* 右侧留给地图终点标记的宽度 */
@@ -26,8 +23,9 @@
   max-width: 100%;
   height: var(--header-height);
   overflow: hidden;
-  border-radius: 0 var(--header-radius-end) var(--header-radius-end) 0;
-  font-family: var(--ds-font-family-base);
+  border-radius: 0 var(--radius-container) var(--radius-container) 0;  /* 右侧圆角 radius/container */
+  background: var(--color-surface-card);
+  font-family: var(--font-family-zh);
   font-style: normal;
 }
 
@@ -52,20 +50,15 @@
   align-items: flex-start;
   justify-content: var(--header-content-align);
   gap: var(--header-gap-title-meta);
-  background: linear-gradient(
-    to right,
-    var(--header-fade-color) var(--header-fade-stop),
-    color-mix(in srgb, var(--header-fade-color) 0%, transparent)
-  );
+  background: var(--gradient-header-fade);  /* Gradient/Header Fade：#FEFEFE 56% → 透明 */
 }
 
 .amap-header__title {
   margin: 0;
-  height: 23px;
-  font-size: var(--ds-type-title-l-size);
-  font-weight: var(--ds-type-title-l-weight);
-  line-height: var(--ds-type-title-l-line);
-  color: var(--ds-color-text-primary);
+  font-size: var(--font-size-display);  /* 中文/Display 24/30 */
+  font-weight: var(--font-weight-display);
+  line-height: var(--line-height-display);
+  color: var(--color-text-primary);
   white-space: nowrap;
 }
 
@@ -81,11 +74,11 @@
 .amap-header__address {
   margin: 0;
   max-width: 100%;
-  height: var(--ds-type-body-s-line);
-  font-size: var(--ds-type-body-s-size);
-  font-weight: var(--ds-type-body-s-weight);
-  line-height: var(--ds-type-body-s-line);
-  color: var(--ds-color-text-muted);
+  height: var(--line-height-body);
+  font-size: var(--font-size-body);  /* 中文/Body · text/secondary */
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body);
+  color: var(--color-text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -101,7 +94,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--header-gap-icon-label);
-  height: var(--ds-type-body-s-line);
+  height: var(--line-height-body);
 }
 
 .amap-header__eco-icon {
@@ -112,10 +105,10 @@
 }
 
 .amap-header__eco-label {
-  font-size: var(--ds-type-body-s-strong-size);
-  font-weight: var(--ds-type-body-s-strong-weight);
-  line-height: var(--ds-type-body-s-strong-line);
-  color: var(--ds-color-text-eco);
+  font-size: var(--font-size-label);  /* 中文/Label 12/14 · text/success */
+  font-weight: var(--font-weight-label);
+  line-height: var(--line-height-label);
+  color: var(--color-text-success);
   white-space: nowrap;
 }
 
@@ -124,7 +117,6 @@
 
 /* ── 变体：打车到达（Figma 849:2938） ── */
 .amap-header--taxi {
-  --header-height: 84px;
   --header-content-align: center;
   --header-thumb-width: 319px;
   --header-meta-reserve: 96px;
@@ -137,10 +129,10 @@
   gap: var(--header-gap-inline);
   max-width: 100%;
   margin: 0;
-  font-size: var(--ds-type-body-s-size);
-  font-weight: var(--ds-type-body-s-weight);
-  line-height: var(--ds-type-body-s-line);
-  color: var(--ds-color-text-muted);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body);
+  color: var(--color-text-secondary);
   white-space: nowrap;
 }
 .amap-header__seg:last-child,
@@ -152,10 +144,11 @@
 .amap-header__dot { flex: none; }
 .amap-header__dot { width: var(--header-dot-width); display: flex; justify-content: center; } /* 字形宽于格子时对称溢出 */
 
-.amap-header__ride { line-height: var(--ds-type-body-s-strong-line); }
-.amap-header__provider {
-  font-weight: var(--ds-type-body-s-strong-weight);
-  color: var(--ds-color-text-ride-provider);
+.amap-header__ride { line-height: var(--line-height-body); }
+.amap-header__provider {  /* 车型：中文/Label · text/warning */
+  font-weight: var(--font-weight-label);
+  line-height: var(--line-height-label);
+  color: var(--color-text-warning);
 }
 
 /* 素材缺失时显示等尺寸占位，便于核对布局 */
