@@ -9,7 +9,7 @@
 >
 > 新版 token：`tokens/ds-tokens.css`，由 `python3 tokens/build_tokens.py` 从 `DESIGN.md` 生成，变量名与 Figma 变量的 code syntax 一致（如 `--color-text-primary`、`--space-md`），已通过 `tokens.css` 顶部的 `@import` 自动加载。
 >
-> 迁移进度：✅ 到达头部卡（`header`）、打车费用账单（`taxi-bill`）、收藏卡（`place-row`）、限行提醒卡（`restriction-card`）、停车场 / 加油站 / 代驾卡（`service-card`）、末班车列表（`transit-list`）、POI 推荐卡（`poi-recommend`）、必吃榜菜品卡（`dish-card`）、扫街榜分榜卡片（`poi-card`）、扫街榜 POI 卡片（`place-card`）及其用到的基础组件（排名缩略图、收藏星标、评分、营业状态、优惠标签、热评、一键下单、图片胶囊、主 / 次按钮、扫街榜标签、TOP 角标）。其余组件仍引用旧的 `--ds-*` 变量，逐个对齐中。
+> 迁移进度：✅ 全部组件与页面布局已对齐新版 Figma / token（2026-10-15）。旧 `--ds-*` 只剩两处：收藏态星标黄 `--ds-color-favorite`（Figma 暂无对应变量）、TOP 奖牌 SVG 渐变色标 `--ds-rank-*`（数值与 `gradient/medal-*` 一致）。到店受阻提示条 `amap-notice` Figma 暂无设计，按 DESIGN.md 用 warning 状态色暂定。
 
 逐个组件搭建。技术栈：原生 HTML / CSS 变量 / Web Component，无构建步骤，任何框架都能直接引用。
 
@@ -28,7 +28,7 @@ assets/      从 Figma 导出的素材
 - 「本次调用结果」按页面顺序列出模块，点击定位到手机里对应位置；手机里点按钮、卡片会在下方显示触发的事件。
 - `app/intent.js`：维度、编排规则（原表 `layout()`）与各模块数据；`app/render.js`：把模块映射到组件；`app/app.js`：面板与交互。
 
-页面布局（取自三张 Figma 整页）：状态栏 51（常规到达上方另有 4），顶部区块为导航栏 / Header / 设施入口，间距 8；模块之间统一间距 16；左右边距 18；页面底色 `#FBFBFB`；底部留出 home indicator。
+页面布局（场景页 Figma `925:8719`）：状态栏 51（常规到达上方另有 4），顶部区块为导航栏 / Header / 设施入口，间距 `space/md` 8；模块之间 `space/section-gap` 16；左右边距 `space/page-margin` 16；页面底色 `bg/page` #FEFEFE；底部留出 home indicator。
 
 新增组件：`<amap-tier-label>`（「还有 20 分钟」「有 1 小时以上」分档小标题，Figma `765:5257`）、`<amap-notice>`（到店受阻提示条，Figma 暂无，样式暂定）；`amap-service-card` 新增 `avatar`（代驾卡，Figma `765:5304`）；`amap-place-card` 新增 `closed`（打烊态）；`amap-section` 新增 `subheading`；`amap-arrival-header` 的 `asset-base` 可从祖先继承。素材：`assets/page/`（状态栏、分档图标）、`assets/drive/daijia-avatar.jpg`。
 

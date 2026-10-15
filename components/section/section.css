@@ -1,17 +1,15 @@
-/* <amap-section> · 模块容器：标题 + 内容（Figma 停车场 / 加油站提示 中的 Section Header + section-content）
- * 依赖 tokens/tokens.css
+/* <amap-section> · 模块容器：标题 + 内容（场景页 Figma 各模块的 Section Header + section-content）
+ * 只引用新版 token（tokens/ds-tokens.css）
  */
 amap-section {
-  /* 组件变量，可覆盖 */
-  --section-inset: 18px;          /* 页面左右边距，全页统一 18（已确认） */
-  --section-gap: var(--ds-space-8);  /* 标题与内容、内容各项之间 */
+  --section-inset: var(--space-page-margin);      /* 页面左右边距 16 */
+  --section-gap: var(--space-section-title-gap);  /* 标题 → 内容、内容各项之间 8 */
 
   display: block;
   width: var(--section-width, 402px);
   max-width: 100%;
-  font-family: var(--ds-font-family-base);
+  font-family: var(--font-family-zh);
 }
-
 .amap-section {
   display: flex;
   flex-direction: column;
@@ -21,27 +19,27 @@ amap-section {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--ds-space-8);
+  gap: var(--space-md);
   padding: 0 var(--section-inset);
 }
-.amap-section__title {
+.amap-section__title {  /* 中文/Heading */
   margin: 0;
   min-width: 0;
-  font-size: var(--ds-type-title-m-size);
-  font-weight: var(--ds-type-title-m-weight);
-  line-height: var(--ds-type-title-m-line);
-  color: var(--ds-color-text-primary);
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-heading);
+  line-height: var(--line-height-heading);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .amap-section__header[hidden] { display: none; }
-.amap-section__sub {
-  margin: -4px 0 0;
+.amap-section__sub {  /* 中文/Body · text/secondary */
+  margin: calc(var(--space-xs) * -1) 0 0;
   padding: 0 var(--section-inset);
-  font-size: var(--ds-type-body-s-size);
-  line-height: var(--ds-type-body-s-line);
-  color: var(--ds-color-text-muted);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  color: var(--color-text-secondary);
 }
 .amap-section__sub[hidden] { display: none; }
 .amap-section__more { flex: none; display: flex; }
@@ -52,12 +50,12 @@ amap-section {
   gap: var(--section-gap);
   padding: 0 var(--section-inset);
 }
-/* 横向滑动的内容（如当地特色菜）：<amap-section layout="scroll"> */
+/* 横向滑动的内容：<amap-section layout="scroll">；卡片间距默认 carousel-gap 12 */
 amap-section[layout="scroll"] .amap-section__body {
   flex-direction: row;
-  gap: var(--section-row-gap, var(--section-gap));   /* 横向卡片间距，榜单 / 推荐卡为 12 */
+  gap: var(--section-row-gap, var(--space-carousel-gap));
   overflow-x: auto;
   scrollbar-width: none;
 }
 amap-section[layout="scroll"] .amap-section__body::-webkit-scrollbar { display: none; }
-amap-section[layout="scroll"] .amap-section__body > * { flex: none; }   /* 横向滑动时卡片保持原宽 */
+amap-section[layout="scroll"] .amap-section__body > * { flex: none; }

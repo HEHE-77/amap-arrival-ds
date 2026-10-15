@@ -1,22 +1,23 @@
 /* <amap-notice> · 到店受阻提示条（排队 / 打烊）
- * 意图识别表 v17.2 的 POI 分支用到，Figma 暂无对应设计，样式为暂定：复用优惠色系
+ * Figma 暂无对应设计，样式暂定：按 DESIGN.md 用 warning 状态四件套；只引用新版 token
  */
 amap-notice {
   display: block;
-  padding: 0 var(--notice-inset, 18px);
-  font-family: var(--ds-font-family-base);
+  padding: 0 var(--notice-inset, var(--space-page-margin));
+  font-family: var(--font-family-zh);
 }
 .amap-notice {
   display: flex;
   align-items: center;
-  gap: var(--ds-space-6);
-  padding: 9px 12px;
-  border-radius: var(--ds-radius-12);
-  background: var(--ds-color-deal-surface);
-  color: var(--ds-color-deal);
-  font-size: var(--ds-type-body-s-size);
-  font-weight: var(--ds-font-weight-medium);
-  line-height: var(--ds-type-body-s-line);
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-component);
+  background: var(--color-status-warning-bg);
+  color: var(--color-status-warning-text);
+  box-shadow: inset 0 0 0 var(--stroke-card) var(--color-status-warning-border);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-label);
+  line-height: var(--line-height-body);
 }
 .amap-notice::before {
   content: '!';
@@ -25,11 +26,11 @@ amap-notice {
   place-items: center;
   width: 14px;
   height: 14px;
-  border-radius: 50%;
-  background: var(--ds-color-deal);
-  color: var(--ds-white);
-  font-size: 10px;
-  font-weight: var(--ds-font-weight-semibold);
+  border-radius: var(--radius-pill);
+  background: var(--color-status-warning-icon);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
   line-height: 1;
 }
-.amap-notice__sub { margin: 6px 0 0; color: var(--ds-color-text-muted); font-size: var(--ds-type-body-s-size); line-height: var(--ds-type-body-s-line); }
+.amap-notice__sub { margin: var(--space-sm) 0 0; color: var(--color-text-secondary); font-size: var(--font-size-body); line-height: var(--line-height-body); }
