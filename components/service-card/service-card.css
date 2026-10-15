@@ -82,15 +82,14 @@ amap-service-card {
 .amap-svc .ds-tag[data-tone="deal"]    { background: var(--color-bg-commerce-soft); color: var(--color-text-price); font-weight: var(--font-weight-semibold); }
 .amap-svc .ds-tag[data-tone="neutral"] { background: var(--color-bg-page-subtle); color: var(--color-text-secondary); }
 
-/* 头像版（代驾卡）：44 圆形头像 + 15 号名称，名称与说明间距 4（Figma 尚未出新版，仅换 token） */
+/* 头像版（代驾卡，Figma 1016:5251）：44 圆形头像 bg/brand-soft · radius/pill，名称与说明间距 space/xs */
 .amap-svc__avatar {
   flex: none;
   width: 44px;
   height: 44px;
-  border-radius: 50%;
+  border-radius: var(--radius-pill);
   object-fit: cover;
   background: var(--color-bg-brand-soft);
 }
-.amap-svc.has-avatar { justify-content: flex-start; }
+.amap-svc.has-avatar { justify-content: flex-start; box-sizing: border-box; min-height: 70px; }  /* Figma 固定高 70 */
 .amap-svc.has-avatar .amap-svc__info { --svc-info-gap: var(--space-xs); max-width: none; }
-.amap-svc.has-avatar .amap-svc__name { font-size: 15px; line-height: 21px; }

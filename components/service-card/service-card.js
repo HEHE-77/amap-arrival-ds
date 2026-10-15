@@ -6,7 +6,7 @@
  * 属性
  *   name          名称（16 Semibold，超长省略）
  *   badge         名称前的小标识文字，如「团」；不传不显示
- *   avatar        左侧 44 圆形头像图（代驾卡，Figma 765:5304）；有头像时名称为 15 号
+ *   avatar        左侧 44 圆形头像图（代驾卡，Figma 1016:5251）
  *   meta          JSON 数组，「|」串联，如 ["步行 8 分钟", "距终点 450 米"]
  *   tags          JSON 数组 [{ text, tone }]：outline 停车类型 | danger 车位紧张 | success 车位充裕 | deal 优惠 | neutral 服务
  *   action-label  右侧浅底按钮文案，如「去停车」「去加油」；不传不显示
