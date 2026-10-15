@@ -156,7 +156,7 @@ assets/      从 Figma 导出的素材
 
 箭头用全局 `icon-chevron-right.svg`；星标与水印内联在组件中。未收藏描边 `--color-icon-secondary`；收藏态填充 `--ds-color-favorite`（暂定 `#FFB300`，Figma 暂无对应变量）。
 
-### 3. 扫街榜 POI 卡片（Figma `956:2869`「扫街榜POI卡片」，场景实例 `949:2281`，单 POI `858:6486`）
+### 3. 扫街榜 POI 卡片（Figma `956:2869`「扫街榜POI卡片」，场景实例 `949:2281`，单 POI `1056:5349`）
 
 > 2026-10-15 已按新版 Figma 组件对齐：单一主组件 + 属性组合，只引用新版 token（`tokens/ds-tokens.css`）。
 
@@ -182,7 +182,7 @@ assets/      从 Figma 导出的素材
 | 布局 | `layout` | 宽 | 用途 |
 |---|---|---|---|
 | 默认 | — | 301 | 排行榜等多卡并列 |
-| 单 POI | `single` | 365 | 单 POI 导航到达（Figma `858:6486`），通常不传 `rank`，次按钮如「联系商家」 |
+| 单 POI | `single` | 365 | 单 POI 到达场景（Figma `1056:5349`）：不显示 TOP 角标、无投影，次按钮默认「联系商家」 |
 
 ```html
 <link rel="stylesheet" href="components/place-card/place-card.css">
