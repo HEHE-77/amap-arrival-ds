@@ -186,6 +186,7 @@ components:
     name: "{typography.zh-heading}"
     meta: "{typography.zh-body}"
     tag: { radius: "{rounded.element}", type: "{typography.zh-caption}" }
+    extra-tag: { tenure: { fill: "{colors.semantic.bg.light.commerce-soft}", text: "{colors.semantic.text.light.ranking-tag}" }, area: { fill: "{colors.semantic.bg.light.page-subtle}", text: "{colors.semantic.text.light.secondary}" }, padding-x: "{spacing.2xs}", radius: "{rounded.element}", type: "{typography.zh-caption}" }
     price: { color: "{colors.semantic.text.light.price}", type: "{typography.numeric-sm}" }
     hot-review: "{colors.gradients.hot-review}"
     button: { primary: "{colors.gradients.theme}", radius: "{rounded.media}" }
@@ -282,7 +283,7 @@ components:
 - `{colors.semantic.bg.light.page}` / `{colors.semantic.bg.dark.page}` — 到达页整页底色（#FEFEFE，原稿指定）。Light `neutral.canvas`（#FEFEFE），Dark `neutral.950`（#0F1012）。
 - `{colors.semantic.bg.light.page-subtle}` / `{colors.semantic.bg.dark.page-subtle}` — 分组区块底、横滑「查看更多」底。Light `neutral.100`（#F4F5F7），Dark `neutral.900`（#191919）。
 - `{colors.semantic.bg.light.brand-soft}` / `{colors.semantic.bg.dark.brand-soft}` — 蓝色弱强调区（导航过去按钮底）。Light `brand.50`（#EBF3FE），Dark `brand.900`（#0B2A4B）。
-- `{colors.semantic.bg.light.commerce-soft}` / `{colors.semantic.bg.dark.commerce-soft}` — 团购/优惠信息条底。Light `commerce.50`（#FFF3EB），Dark `commerce.900`（#4D1B0B）。
+- `{colors.semantic.bg.light.commerce-soft}` / `{colors.semantic.bg.dark.commerce-soft}` — 团购/优惠信息条底、POI 卡「收录年限」附加标签底。Light `commerce.50`（#FFF3EB），Dark `commerce.900`（#4D1B0B）。
 - `{colors.semantic.bg.light.ranking-soft}` / `{colors.semantic.bg.dark.ranking-soft}` — 扫街榜标签与榜单卡头底。Light `ranking.50`（#FFF4E2），Dark `ranking.900`（#4A240A）。
 - `{colors.semantic.bg.light.ranking-tag}` / `{colors.semantic.bg.dark.ranking-tag}` — 列表/榜单内「扫街榜」小标签浅金底（#FFE3C9 40%，固定）。Light `alpha-ranking.40`（rgba(255,227,201,0.4)），Dark `alpha-ranking.40`（rgba(255,227,201,0.4)）。
 - `{colors.semantic.bg.light.inverse}` / `{colors.semantic.bg.dark.inverse}` — 反色 Toast、深色角标。Light `neutral.900`（#191919），Dark `neutral.50`（#F8F8F8）。
@@ -567,6 +568,7 @@ PingFang SC 与 Helvetica 为 Apple 系统字体，只在苹果设备上可用�
 - 外壳：`{colors.semantic.surface.light.card}` 底 + `{rounded.container}` + `{elevation.shadow-card}`，内边距 `{spacing.md}`；图片 `{rounded.media}`，图上热度与页码角标 `{rounded.pill}` + `{elevation.glass-blur}`。
 - 文字：店名 `{typography.zh-heading}`，元信息 `{typography.zh-body}`，标签 `{typography.zh-caption}`（强调用 600 字重的「中文/Caption Strong」），价格数字 `{typography.numeric-sm}` + `{colors.semantic.text.light.price}`；标签圆角 `{rounded.element}`，CTA 按钮 `{rounded.media}`（三种类型统一），主按钮 `{colors.gradients.theme}`；热评条 `{colors.gradients.hot-review}`。
 - 操作区为嵌套组件 `扫街榜POI卡片/CTA`，「类型」三选一：一键下单（整块一键下单卡片：商品图、商品名、规格 + 一键下单/换一杯按钮）/ 看团购 + 查看路线 / 订门票 + 查看路线；主按钮 `{colors.gradients.theme}`，按钮间距 `{spacing.md}`，按钮左右内边距 `{spacing.lg}`，两按钮等宽填充。
+- 附加标签（16 高、左右 `{spacing.2xs}`、`{rounded.element}`、`{typography.zh-caption}`）：收录年限 = `{colors.semantic.bg.light.commerce-soft}` 底 + `{colors.semantic.text.light.ranking-tag}` 字；区域 = `{colors.semantic.bg.light.page-subtle}` 底 + `{colors.semantic.text.light.secondary}` 字。
 - 属性：名称、距离（TEXT）；TOP 角标、附加标签、优惠标签 1/2（实例替换）；显示 TOP 角标、显示附加标签、显示热评、显示查看更多、显示第二条优惠（布尔）；CTA 类型（暴露的嵌套实例）。团 / 票 / 券、营业状态、评分、榜单标签、一键下单卡片为暴露的嵌套实例，各自带价格、折扣、状态、文案等文本属性。
 
 ### `{components.dish-card}` 必吃榜菜品卡

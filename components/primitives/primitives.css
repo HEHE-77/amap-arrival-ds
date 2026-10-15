@@ -292,11 +292,11 @@ amap-button > .ds-btn { flex: 1 1 auto; }
   white-space: nowrap;
 }
 .ds-tag[data-tone="neutral"] { background: var(--ds-color-tag-neutral-surface); color: var(--ds-color-text-muted); }
-/* POI 卡「附加标签」（Figma 769:8945 收录年限 / 769:8918 区域）：16 高，左右 2，圆角 element，中文/Caption */
+/* POI 卡「附加标签」（Figma 场景实例 949:2281：收录年限 / 区域）：16 高，左右 2，圆角 element，中文/Caption */
 .ds-tag[data-tone="tenure"],
 .ds-tag[data-tone="area"]    { padding: 0 var(--space-2xs); border-radius: var(--radius-element); font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
-.ds-tag[data-tone="tenure"]  { background: var(--color-bg-ranking-tag); color: var(--color-text-ranking-tag); }
-.ds-tag[data-tone="area"]    { background: var(--color-surface-sunken); color: var(--color-text-secondary); }
+.ds-tag[data-tone="tenure"]  { background: var(--color-bg-commerce-soft); color: var(--color-text-ranking-tag); }  /* 2026-10-15 Figma 更新：底改 bg/commerce-soft */
+.ds-tag[data-tone="area"]    { background: var(--color-bg-page-subtle); color: var(--color-text-secondary); }
 /* 一键下单商品标签（Figma 一键下单卡片「上次那杯」）：左右 6、上下 2 */
 .ds-tag[data-tone="promo"]   { height: auto; padding: var(--space-2xs) var(--space-sm); border-radius: var(--radius-element); background: var(--color-bg-commerce-soft); color: var(--color-text-price); font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
 .ds-tag[data-tone="outline"] { box-shadow: inset 0 0 0 1px var(--ds-color-action-secondary); color: var(--ds-color-action-secondary); }

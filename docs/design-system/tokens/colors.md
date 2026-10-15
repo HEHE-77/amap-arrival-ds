@@ -107,7 +107,7 @@ _white.80/.90、black.80（图片角标底 #131313@80%）、black.05（卡片投
 | `bg/page` | `{neutral.canvas}` | `{neutral.950}` | 到达页整页底色（#FEFEFE，原稿指定） |
 | `bg/page-subtle` | `{neutral.100}` | `{neutral.900}` | 分组区块底、横滑「查看更多」底 |
 | `bg/brand-soft` | `{brand.50}` | `{brand.900}` | 蓝色弱强调区（导航过去按钮底） |
-| `bg/commerce-soft` | `{commerce.50}` | `{commerce.900}` | 团购/优惠信息条底 |
+| `bg/commerce-soft` | `{commerce.50}` | `{commerce.900}` | 团购/优惠信息条底、POI 卡「收录年限」附加标签底 |
 | `bg/ranking-soft` | `{ranking.50}` | `{ranking.900}` | 扫街榜标签与榜单卡头底 |
 | `bg/ranking-tag` | `{alpha-ranking.40}` | `{alpha-ranking.40}` | 列表/榜单内「扫街榜」小标签浅金底（#FFE3C9 40%，固定） |
 | `bg/inverse` | `{neutral.900}` | `{neutral.50}` | 反色 Toast、深色角标 |
