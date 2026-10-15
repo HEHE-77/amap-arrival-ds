@@ -50,6 +50,9 @@
     pay: '<svg viewBox="0 0 20 20" aria-hidden="true"><path fill="#00C800" d="M7.6 3C4.5 3 2 5.1 2 7.7c0 1.5.8 2.8 2.1 3.7l-.5 1.6 1.9-1c.6.2 1.3.3 2.1.3h.4a4.3 4.3 0 0 1-.2-1.2c0-2.6 2.5-4.6 5.5-4.6h.4C13.2 4.6 10.7 3 7.6 3Z"/><path fill="#00C800" d="M18 11.2c0-2.2-2.1-3.9-4.7-3.9s-4.7 1.7-4.7 3.9 2.1 3.9 4.7 3.9c.5 0 1.1-.1 1.6-.2l1.6.9-.4-1.4c1.1-.8 1.9-1.9 1.9-3.2Z"/><circle cx="5.7" cy="6.6" r=".75" fill="#fff"/><circle cx="9.5" cy="6.6" r=".75" fill="#fff"/><circle cx="11.8" cy="10.4" r=".6" fill="#fff"/><circle cx="14.8" cy="10.4" r=".6" fill="#fff"/></svg>',
   };
 
+  // 缺图占位：配图待补（设计后续提供）
+  const PH = '<span class="os-ph">配图待补</span>';
+
   class Base extends HTMLElement {
     connectedCallback() { this.render(); }
     attributeChangedCallback() { if (this.isConnected) this.render(); }
@@ -95,7 +98,9 @@
     option(item, i) {
       const sel = i === this.selected;
       const dis = !!item.disabled;
-      const price = (p) => `<span class="os-opt__price"><small>¥</small>${esc(p)}</span>`;
+      const price = (p) => (has(item.priceText)
+        ? `<span class="os-opt__price">${esc(item.priceText)}</span>`
+        : `<span class="os-opt__price"><small>¥</small>${esc(p)}</span>`);
       let body = '';
       switch (this.kind) {
         case 'set':
@@ -151,7 +156,7 @@
       this.innerHTML = `
         <section class="os-block os-detail">
           <div class="os-detail__info">
-            <div class="os-detail__media">${has(this.attr('image')) ? `<img src="${esc(this.attr('image'))}" alt="">` : ''}</div>
+            <div class="os-detail__media">${has(this.attr('image')) ? `<img src="${esc(this.attr('image'))}" alt="">` : PH}</div>
             <div class="os-detail__text">
               <h3 class="os-detail__name">${esc(this.attr('name'))}</h3>
               ${has(this.attr('rules')) ? `<p class="os-detail__rules">${esc(this.attr('rules'))}</p>` : ''}
@@ -196,7 +201,7 @@
     render() {
       this.innerHTML = `
         <section class="os-block os-item">
-          <div class="os-item__media">${has(this.attr('image')) ? `<img src="${esc(this.attr('image'))}" alt="">` : ''}</div>
+          <div class="os-item__media">${has(this.attr('image')) ? `<img src="${esc(this.attr('image'))}" alt="">` : PH}</div>
           <div class="os-item__text">
             <div class="os-item__title"><h3>${esc(this.attr('name'))}</h3>${has(this.attr('tag')) ? `<span class="os-item__tag">${esc(this.attr('tag'))}</span>` : ''}</div>
             <div class="os-item__spec"><span>${esc(this.attr('spec'))}</span>
@@ -222,7 +227,7 @@
           ${titleRow(this.attr('heading'), this.attr('desc'))}
           <div class="os-opts os-opts--addon">${items.map((it, i) => `
             <div class="os-addon" data-tone="${ADDON_TONE.includes(it.tone) ? it.tone : ADDON_TONE[i % 4]}">
-              <div class="os-addon__media">${has(it.image) ? `<img src="${esc(it.image)}" alt="">` : ''}</div>
+              <div class="os-addon__media">${has(it.image) ? `<img src="${esc(it.image)}" alt="">` : PH}</div>
               <div class="os-addon__info">
                 <span class="os-addon__name">${esc(it.name)}</span>
                 ${has(it.tag) ? `<amap-tag tone="tenure" text="${esc(it.tag)}"></amap-tag>` : ''}
@@ -375,7 +380,8 @@
       if (!d) return;
       const detail = item.detail || {};
       d.setAttribute('name', detail.name ?? item.name.replace(/\n/g, ''));
-      if (detail.image) d.setAttribute('image', detail.image);
+      if (detail.image) d.setAttribute('image', detail.image); else d.removeAttribute('image');
+      d.setAttribute('heading', detail.heading ?? '套餐内容');
       d.setAttribute('rules', detail.rules ?? d.getAttribute('rules') ?? '');
       d.setAttribute('summary', detail.summary ?? '');
       d.setAttribute('groups', JSON.stringify(detail.groups ?? []));
@@ -390,10 +396,12 @@
       let now = price * qty, orig = was * qty;
       for (const a of (this._addons || new Map()).values()) { now += Number(a.price); orig += Number(a.original ?? a.price); }
       const save = orig - now;
+      if (!f.dataset.action) f.dataset.action = this._unit.action ? '去下单' : (f.getAttribute('action-label') || '去下单');
+      f.setAttribute('action-label', this._unit.action || f.dataset.action);
       f.setAttribute('price', yuan(now));
       if (orig > now) f.setAttribute('original', yuan(orig)); else f.removeAttribute('original');
-      const tail = f.dataset.noteTail ?? (f.getAttribute('note') || '').split('·').slice(1).join('·').trim();
-      f.dataset.noteTail = tail;
+      const tail = this._unit.action ? '' : (f.dataset.noteTail ?? (f.getAttribute('note') || '').split('·').map((x) => x.trim()).filter((x) => x && !x.startsWith('已优惠')).join(' · '));
+      if (f.dataset.noteTail == null) f.dataset.noteTail = tail;
       f.setAttribute('note', [save > 0 ? `已优惠 ¥${yuan(save)}` : '', tail].filter(Boolean).join(' · '));
     }
 

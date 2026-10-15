@@ -350,3 +350,13 @@ amap-order-sheet[data-state="leaving"] .os-sheet__panel { transition-timing-func
   font-size: var(--font-size-heading); font-weight: var(--font-weight-heading); line-height: var(--line-height-heading);
 }
 .os-footer__action:active { opacity: 0.85; }
+
+/* 缺图占位：配图待补 */
+.os-ph {
+  display: grid; place-items: center;
+  width: 100%; height: 100%; box-sizing: border-box;
+  border: 1px dashed var(--color-border-strong); border-radius: inherit;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+}
+.os-addon__media { border-radius: var(--radius-control); }

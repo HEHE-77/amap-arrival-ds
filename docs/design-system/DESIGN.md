@@ -623,6 +623,7 @@ Figma `1057:4138`（下单组件库）；整屏稿 `812:7855` 饭店 POI 浮层�
 - **底部栏**：padding 12/16/28/16，`{colors.semantic.surface.light.default}` + 顶部分割阴影；现价 `{typography.numeric-lg}`（¥ 用 `{typography.zh-subheading}`）· price，原价划线 tertiary，优惠说明 `{typography.zh-body-sm}` · price；按钮 140×46 胶囊 `{colors.gradients.commerce}`，`{typography.zh-heading}` · inverse（「去下单」/「免密支付」）。
 - **一键下单专用**：已选商品卡（56 图 + 名称 heading + 「上次那杯」`{colors.semantic.bg.light.ranking-tag}` 标签 + 规格行与「改规格」链接 + 「换一杯」胶囊 brand-soft 按钮）；加购卡 120×160，四种底色 brand-soft / status-warning-bg / status-success-bg / rank-theme-local-wash，加购按钮 16×16 radius 4 `{colors.gradients.theme}`；杯数 + 支付方式卡（左右 12，行间 subtle 分割线）；条款 `{typography.zh-body-sm}` · tertiary 居中，贴在底部栏上方。
 - **联动**：选中的套餐 / 票种单价 × 数量 + 已加购商品 = 底部栏现价，原价同理，优惠说明自动重算。
+- **内容随 POI 变化**：标题 = 店名，副标题 = 距离 + 可用范围；选项 = 卡片上的优惠（团 / 券 / 票），从卡片优惠行进入时选中该条；满减券显示「免费领」，底部按钮改为「免费领取」；非餐饮商品的详情标题用「包含内容」；景点场次按当前时间置灰；一键下单商品 = 卡片推荐商品。缺图时显示「配图待补」虚线占位。
 
 ## Responsive Behavior
 

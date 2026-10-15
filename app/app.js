@@ -86,23 +86,26 @@
     $('log').innerHTML = `最近交互：<b>${esc(type)}</b> ${esc(d)}`;
   }));
 
-  // CTA → 下单浮层（Figma 1057:4138）：看团购 / 看优惠 → 饭店；订门票 → 景点；一键下单 → 一键下单
-  const ORDER_OF_CTA = { group: 'restaurant', ticket: 'scenic' };
+  // CTA → 下单浮层（Figma 1057:4138）：内容按点开的那张卡生成（app/orders.js）
+  // 看团购 / 看优惠 / 订门票 → 卡片上的优惠或门票；点卡片上的某条优惠 → 打开时选中它；一键下单 → 该店推荐商品
   const assetBase = () => document.querySelector('[asset-base]')?.getAttribute('asset-base') ?? '../assets/';
-  function openOrder(kind) {
+  function openOrder(e, opts = {}) {
+    const el = e.target.closest('amap-place-card, amap-restaurant-card');
+    const card = el && R.card(el.dataset.card);
+    if (!card) return;
     const screen = $('screen');
-    let sheet = screen.querySelector(`amap-order-sheet[data-order="${kind}"]`);
-    if (sheet) sheet.remove();   // 每次重新打开都从初始选择开始
-    screen.insertAdjacentHTML('beforeend', window.ArrivalOrders.html(kind, assetBase()));
-    sheet = screen.querySelector(`amap-order-sheet[data-order="${kind}"]`);
+    screen.querySelectorAll('amap-order-sheet').forEach((x) => x.remove());
+    screen.insertAdjacentHTML('beforeend', window.ArrivalOrders.forCard(card, s, assetBase(), opts));
+    const sheet = screen.querySelector('amap-order-sheet');
+    window.ArrivalOrders.bind(sheet);
     requestAnimationFrame(() => sheet.open());
   }
-  $('page').addEventListener('card-primary', (e) => {
-    const card = e.target.closest('amap-place-card, amap-restaurant-card');
-    const kind = ORDER_OF_CTA[card?.querySelector('.amap-place')?.dataset.cta];
-    if (kind) openOrder(kind);
+  $('page').addEventListener('card-primary', (e) => openOrder(e));
+  $('page').addEventListener('card-order-buy', (e) => openOrder(e));
+  $('page').addEventListener('card-deal', (e) => {
+    const card = R.card(e.target.closest('amap-place-card')?.dataset.card);
+    if (card && card.kind !== 'cafe') openOrder(e, { deal: e.detail.index });
   });
-  $('page').addEventListener('card-order-buy', () => openOrder('quick'));
   ['option-select', 'quantity-change', 'addon-change', 'order-submit', 'sheet-close'].forEach((type) => $('screen').addEventListener(type, (e) => {
     if (e.target.closest('#page')) return;
     const d = e.detail ? JSON.stringify(e.detail, (k, v) => (k === 'item' ? undefined : v)) : '';

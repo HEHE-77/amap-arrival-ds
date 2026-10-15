@@ -13,6 +13,7 @@
     .row { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
     .cell { display: flex; flex-direction: column; gap: 8px; }
     .cap { font-size: 12px; color: #60636c; font-family: ui-monospace, Menlo, monospace; display: flex; justify-content: space-between; align-items: center; }
+    .cap select { font: inherit; font-size: 12px; max-width: 190px; }
     .cap button { font: inherit; font-size: 12px; padding: 4px 10px; border: 1px solid #c9ccd3; border-radius: 6px; background: #fff; cursor: pointer; }
     /* 402×874 手机屏，浮层贴底 */
     .screen { position: relative; width: 402px; height: 874px; overflow: hidden; border-radius: 32px; background: var(--color-bg-page); }
@@ -21,25 +22,42 @@
   </style>
 </head>
 <body>
-  <h2 class="label">下单浮层（Figma 1057:4138 组件库 · 整屏稿 812:7855 / 812:7856 / 812:7857）· 点 × 关闭，点遮罩不关闭</h2>
+  <h2 class="label">下单浮层（Figma 1057:4138 组件库 · 整屏稿 812:7855 / 812:7856 / 812:7857）· 内容按卡片生成，下拉切换 POI · 点 × 关闭，点遮罩不关闭</h2>
   <div class="row" id="row"></div>
   <div id="log">选择套餐 / 票种 / 场次、加减数量、加购，事件显示在这里</div>
 
   <script src="../components/primitives/primitives.js"></script>
   <script src="../components/order-sheet/order-sheet.js"></script>
+  <script src="../app/intent.js"></script>
   <script src="../app/orders.js"></script>
   <script>
-    const CAPS = { restaurant: '饭店 POI 浮层 · 看团购', scenic: '景点 POI 浮层 · 订门票', quick: '一键下单浮层' };
+    // 每部手机一种 CTA；下拉切换卡片，浮层内容按卡片数据生成
+    const I = window.ArrivalIntent;
+    const GROUPS = [
+      { key: 'food', cap: '看团购 / 看优惠', time: 'meal', cards: [...I.TOP.shop_eat.cards, I.POICARD, ...I.TOP.shop_go.cards].map((c, i, a) => ({ c, kind: i > 3 ? 'go' : 'food' })) },
+      { key: 'scenic', cap: '订门票', time: 'other', cards: I.TOP.explore.cards.map((c) => ({ c, kind: 'scenic' })) },
+      { key: 'cafe', cap: '一键下单', time: 'am', cards: I.TOP.commute.cards.map((c) => ({ c, kind: 'cafe', tag: c.rec.why })) },
+    ];
     const row = document.getElementById('row');
-    row.innerHTML = ArrivalOrders.kinds.map((k) => `
+    row.innerHTML = GROUPS.map((g) => `
       <div class="cell">
-        <div class="cap"><span>${CAPS[k]}</span><button type="button" data-open="${k}">重新打开</button></div>
-        <div class="screen" data-theme="light" data-screen="${k}">${ArrivalOrders.html(k, '../assets/')}</div>
+        <div class="cap"><select data-pick="${g.key}">${g.cards.map((x, i) => `<option value="${i}">${x.c.t}</option>`).join('')}</select>
+          <span>${g.cap} · ${I.CLOCK[g.time]}</span><button type="button" data-open="${g.key}">重新打开</button></div>
+        <div class="screen" data-theme="light" data-screen="${g.key}"></div>
       </div>`).join('');
-    requestAnimationFrame(() => document.querySelectorAll('amap-order-sheet').forEach((s) => s.open()));
+    function mount(key, i = 0, animate = true) {
+      const g = GROUPS.find((x) => x.key === key);
+      const scr = document.querySelector(`[data-screen="${key}"]`);
+      scr.innerHTML = ArrivalOrders.forCard(g.cards[i], { time: g.time }, '../assets/');
+      const sh = scr.querySelector('amap-order-sheet');
+      ArrivalOrders.bind(sh);
+      requestAnimationFrame(() => sh.open());
+    }
+    GROUPS.forEach((g) => mount(g.key));
+    row.addEventListener('change', (e) => { const sel = e.target.closest('[data-pick]'); if (sel) mount(sel.dataset.pick, Number(sel.value)); });
     row.addEventListener('click', (e) => {
       const b = e.target.closest('[data-open]');
-      if (b) document.querySelector(`[data-screen="${b.dataset.open}"] amap-order-sheet`).open();
+      if (b) mount(b.dataset.open, Number(document.querySelector(`[data-pick="${b.dataset.open}"]`).value));
     });
     const log = document.getElementById('log');
     ['option-select', 'option-more', 'quantity-change', 'addon-change', 'item-spec', 'item-swap', 'payment-change', 'notice-more', 'order-submit', 'sheet-open', 'sheet-close']
