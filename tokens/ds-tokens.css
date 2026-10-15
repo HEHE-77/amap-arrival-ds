@@ -74,9 +74,9 @@
   --color-icon-accent: var(--color-brand-500);
   --color-icon-price: var(--color-commerce-500);
   --color-icon-ranking: var(--color-ranking-700);
-  --color-icon-success: var(--color-success-700);
+  --color-icon-success: var(--color-success-500);
   --color-icon-warning: var(--color-warning-500);
-  --color-icon-danger: var(--color-danger-700);
+  --color-icon-danger: var(--color-danger-500);
   --color-icon-info: var(--color-info-700);
   /* border */
   --color-border-subtle: var(--color-neutral-100);

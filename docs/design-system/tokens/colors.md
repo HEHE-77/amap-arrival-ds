@@ -164,9 +164,9 @@ _white.80/.90、black.80（图片角标底 #131313@80%）、black.05（卡片投
 | `icon/accent` | `{brand.500}` | `{brand.400}` | 「还有 20 分钟」时间图标 |
 | `icon/price` | `{commerce.500}` | `{commerce.400}` | 热议火焰、团购图标 |
 | `icon/ranking` | `{ranking.700}` | `{ranking.300}` | 扫街榜图标 |
-| `icon/success` | `{success.700}` | `{success.500}` | 绿色能量叶子 |
+| `icon/success` | `{success.500}` | `{success.500}` | 绿色能量叶子、打车起点圆点（Light 按 Figma 变量，2026-10-15） |
 | `icon/warning` | `{warning.500}` | `{warning.500}` | 评分星（实心填充，两模式不变） |
-| `icon/danger` | `{danger.700}` | `{danger.500}` | 错误 |
+| `icon/danger` | `{danger.500}` | `{danger.500}` | 错误、打车终点圆点（Light 按 Figma 变量，2026-10-15） |
 | `icon/info` | `{info.700}` | `{info.500}` | 信息 |
 
 ### Border

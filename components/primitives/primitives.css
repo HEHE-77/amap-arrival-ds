@@ -277,7 +277,7 @@ amap-button > .ds-btn { flex: 1 1 auto; }
   font-weight: var(--font-weight-subheading);
   line-height: var(--line-height-subheading);
 }
-.ds-btn--pill { border-radius: var(--ds-radius-pill); padding: 0 var(--ds-space-16); }
+.ds-btn--pill { border-radius: var(--radius-pill); padding: 0 var(--space-xl); }  /* 立即支付（Figma 617:1813）：Gradient/Theme · radius/pill */
 
 /* ── amap-tag：小标签 ── */
 .ds-tag {
