@@ -79,6 +79,7 @@
         { name: '巴斯克芝士蛋糕', tag: '收录 2 年', price: 5.9, original: 16, image: `${base}order/samples/basque-cheesecake.jpg`, tone: 'brand' },
         { name: '焦糖奶油布丁', tag: '有 21 人换购', price: 3.9, original: 12, image: `${base}order/samples/caramel-pudding.jpg`, tone: 'warning' },
         { name: '巧克力曲奇', tag: '有 8 人换购', price: 3.9, original: 16, image: `${base}order/samples/choco-cookie.jpg`, tone: 'success' },
+        { name: '草莓杯子蛋糕', tag: '收录 2 年', price: 4.9, original: 12, image: `${base}order/samples/strawberry-cupcake.jpg`, tone: 'pink' },
       ];
       return `
         <amap-order-sheet heading="Grid Coffee (万象城店)" subtitle="距你 32m · 11 家门店可用" data-order="quick">
