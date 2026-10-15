@@ -6,7 +6,7 @@ amap-nearby-list {
   --nearby-row-h: 66px;
 
   display: block;
-  width: var(--nearby-width, 366px);
+  width: var(--nearby-width, 100%);   /* 随容器撑满（场景页 370） */
   max-width: 100%;
   font-family: var(--font-family-zh);
 }

@@ -67,7 +67,7 @@
       const c = I.POICARD;
       const closed = s.poi === 'closed';
       const card = placeCard({ ...c, st: closed ? '今日已打烊' : c.st }, null, 'food', s,
-        `layout="single" secondary-label="联系商家"${closed ? ' closed' : ''}`);
+        `layout="single"${closed ? ' closed' : ''}`);
       return `<div class="pg-stack">${st.alert ? `<amap-notice text="${esc(st.alert)}"></amap-notice>` : ''}<div class="pg-pad">${card}</div></div>`;
     },
 

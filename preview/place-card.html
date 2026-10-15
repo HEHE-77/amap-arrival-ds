@@ -14,12 +14,13 @@
     .grid { display: grid; grid-template-columns: repeat(auto-fill, 301px); gap: 30px 12px; align-items: start; }
     .cap { display: block; font-size: 12px; color: #60636c; font-family: ui-monospace, Menlo, monospace; margin-bottom: 8px; }
     #log { margin-top: 24px; font-size: 12px; color: #00a27f; min-height: 16px; font-family: ui-monospace, Menlo, monospace; }
+      [data-group="single"] amap-place-card { --place-card-width: 365px; }   /* 单 POI 组件稿宽 365（页面里撑满） */
   </style>
 </head>
 <body>
   <h2 class="label">Figma 组件实例 · 扫街榜POI卡片（956:2869，场景实例 949:2281）</h2>
   <div class="grid" data-group="figma"></div>
-  <h2 class="label">单 POI 导航到达 · layout="single"（Figma 858:6486）</h2>
+  <h2 class="label">单 POI 到达场景 · layout="single"（Figma 1056:5349）</h2>
   <div data-group="single"></div>
   <h2 class="label">上班到达 · scene="commute"</h2>
   <div class="grid" data-group="commute"></div>
@@ -52,7 +53,7 @@
         deals: [{ type: '票', price: '￥40', discount: '省 2 元', title: '钟楼成人票（当日有效，刷身份证入园）' }, { type: '票', price: '￥50', discount: '8.0折', title: '钟鼓楼联票｜两天内分次使用' }],
         saves: '34.7w+', page: '1/12' },
 
-      { g: 'single', node: '858:6486', layout: 'single', name: '胡大饭馆 24h (砺街总店)', distance: '距您 62 米', score: '4.8', scoreLabel: '超棒',
+      { g: 'single', node: '1056:5349', layout: 'single', name: '胡大饭馆 24h (砺街总店)', distance: '距您 62 米', score: '4.8', scoreLabel: '超棒',
         details: ['川菜', '￥150/人', '3652 人导航过'], ranking: '碑林区川菜榜单·第 1 名', status: '营业中',
         review: '关晓彤推荐来的! 冲他家的蒜蓉酸辣螃蟹...', reviewCount: '252 人在说',
         deals: [{ type: '团', price: '98', discount: '5.6折', title: '夏宫双人招牌套餐 (提前一天预约)' }, { type: '团', price: '128', discount: '6.8折', title: '满汉全席招牌套餐 (提前一天预约)' }],

@@ -22,8 +22,8 @@
  *   ranking         扫街榜标签文案（如「碑林区回头客榜单·第 1 名」）
  *   details         JSON 数组，「·」串联（品类 / 人均 / 导航人数）
  *   order           cta="order" 时的商品 JSON { image, title, tag, spec, note, price, actionLabel, swapLabel }
- *   primary-label / secondary-label   覆盖 CTA 按钮文案（单 POI 稿中次按钮为「联系商家」）
- *   layout="single" 宽 365（单 POI 导航到达），默认 301；也可设 --place-card-width
+ *   primary-label / secondary-label   覆盖 CTA 按钮文案；次按钮默认「查看路线」，layout="single" 时默认「联系商家」
+ *   layout="single" 单 POI 到达场景（Figma 1056:5349）：宽 365、不显示 TOP 角标、无投影；默认 301；也可设 --place-card-width
  *   asset-base      素材目录（子组件自动继承）
  *
  * 兼容旧写法：scene（restaurant / attraction / commute）只用来推断默认 cta；
@@ -59,6 +59,8 @@
     connectedCallback() { this.render(); }
     attributeChangedCallback() { if (this.isConnected) this.render(); }
     attr(n, d = '') { return this.getAttribute(n) ?? d; }
+    get isSingle() { return this.getAttribute('layout') === 'single'; }
+    get defaultSecondary() { return this.isSingle ? '联系商家' : '查看路线'; }
 
     /** 由属性解析出与 Figma 组件属性对应的配置 */
     config() {
@@ -78,7 +80,7 @@
         cta, order, extra,
         deals: parse(a('deals'), []).slice(0, MAX_DEALS),
         details: parse(a('details'), []),
-        rank: [1, 2, 3].includes(Number(a('rank'))) ? Number(a('rank')) : null,
+        rank: !this.isSingle && [1, 2, 3].includes(Number(a('rank'))) ? Number(a('rank')) : null,  // 单 POI 无 TOP 角标
       };
     }
 
@@ -93,7 +95,7 @@
       return `
         <div class="amap-place__cta amap-place__actions" data-cta="${cta}">
           <amap-button class="amap-place__primary" variant="primary" label="${esc(a('primary-label', CTA[cta]))}"></amap-button>
-          <amap-button class="amap-place__secondary" variant="secondary" label="${esc(a('secondary-label', '查看路线'))}"></amap-button>
+          <amap-button class="amap-place__secondary" variant="secondary" label="${esc(a('secondary-label', this.defaultSecondary))}"></amap-button>
         </div>`;
     }
 
@@ -152,7 +154,7 @@
       const fire = (type, detail) => this.dispatchEvent(new CustomEvent(type, { bubbles: true, composed: true, detail }));
       const on = (sel, ev, fn) => this.querySelector(sel)?.addEventListener(ev, fn);
       const primary = a('primary-label', CTA[cfg.cta]);
-      const secondary = a('secondary-label', '查看路线');
+      const secondary = a('secondary-label', this.defaultSecondary);
       on('.amap-place__primary', 'click', () => fire('card-primary', { label: primary }));
       on('.amap-place__secondary', 'click', () => fire('card-secondary', { label: secondary }));
       on('.amap-place__review', 'click', () => fire('card-review'));

@@ -1,5 +1,5 @@
 /* 扫街榜 POI 卡片 · Figma 956:2869「扫街榜POI卡片」（单一主组件）
- * 场景实例：上班到达 / 饭店到达 / 景点到达（949:2281）；单 POI 宽版 858:6486
+ * 场景实例：上班到达 / 饭店到达 / 景点到达（949:2281）；单 POI 到达场景 1056:5349（layout="single"）
  * 只引用新版 token（tokens/ds-tokens.css），依赖 components/primitives/primitives.css
  */
 amap-place-card, amap-restaurant-card {
@@ -7,8 +7,13 @@ amap-place-card, amap-restaurant-card {
   width: var(--place-card-width, 301px);
   max-width: 100%;
 }
-/* 单 POI 导航到达（Figma 858:6486）：宽 365 */
-amap-place-card[layout="single"], amap-restaurant-card[layout="single"] { --place-card-width: 365px; }
+/* 单 POI 到达场景（Figma 1056:5349）：宽 365，结构同主组件；无 TOP 角标、无投影（不是扫街榜卡片），图片角标距右 12 */
+amap-place-card[layout="single"], amap-restaurant-card[layout="single"] { --place-card-width: 100%; }   /* 随容器撑满（组件稿 365，页面里左右页边距 16） */
+amap-place-card[layout="single"] .amap-place,
+amap-restaurant-card[layout="single"] .amap-place {
+  --place-pill-end: 12px;
+  box-shadow: inset 0 0 0 var(--stroke-card) var(--color-border-default);
+}
 
 .amap-place {
   /* ── Component tokens ── */

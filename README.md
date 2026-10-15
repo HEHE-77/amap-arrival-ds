@@ -156,7 +156,7 @@ assets/      从 Figma 导出的素材
 
 箭头用全局 `icon-chevron-right.svg`；星标与水印内联在组件中。未收藏描边 `--color-icon-secondary`；收藏态填充 `--ds-color-favorite`（暂定 `#FFB300`，Figma 暂无对应变量）。
 
-### 3. 扫街榜 POI 卡片（Figma `956:2869`「扫街榜POI卡片」，场景实例 `949:2281`，单 POI `858:6486`）
+### 3. 扫街榜 POI 卡片（Figma `956:2869`「扫街榜POI卡片」，场景实例 `949:2281`，单 POI `1056:5349`）
 
 > 2026-10-15 已按新版 Figma 组件对齐：单一主组件 + 属性组合，只引用新版 token（`tokens/ds-tokens.css`）。
 
@@ -182,7 +182,7 @@ assets/      从 Figma 导出的素材
 | 布局 | `layout` | 宽 | 用途 |
 |---|---|---|---|
 | 默认 | — | 301 | 排行榜等多卡并列 |
-| 单 POI | `single` | 365 | 单 POI 导航到达（Figma `858:6486`），通常不传 `rank`，次按钮如「联系商家」 |
+| 单 POI | `single` | 365 | 单 POI 到达场景（Figma `1056:5349`）：不显示 TOP 角标、无投影，次按钮默认「联系商家」 |
 
 ```html
 <link rel="stylesheet" href="components/place-card/place-card.css">
@@ -275,7 +275,7 @@ assets/      从 Figma 导出的素材
 
 ### 6. 附近 POI 列表（Figma `765:5256` 附近景点POI，实例 `765:5259` / `765:5757` / `765:7054`）
 
-宽 366 的竖向列表：每行 50×50 图 + 名称 / 「距离｜说明…」+ 右侧「查看详情 >」，行顶 1px 分隔线。Figma 中固定 2 行，组件支持任意行数。
+宽随容器撑满（场景页 370）的竖向列表：每行 50×50 图 + 名称 / 「距离｜说明…」+ 右侧「查看详情 >」，行顶 1px 分隔线。Figma 中固定 2 行，组件支持任意行数。
 
 ```html
 <link rel="stylesheet" href="components/nearby-list/nearby-list.css">
@@ -300,7 +300,7 @@ assets/      从 Figma 导出的素材
 
 ### 7. 打车费用账单（Figma `765:7097`，实例 `765:7098`）
 
-366×133 卡片：上半区为起终点（绿 / 红圆点）与「共计 18.28 元」「费用说明 >」，下半区为「⋮ / 物品遗失 / 联系司机」与胶囊形「立即支付」。
+宽随容器撑满（场景页 370）、高 127 的卡片：上半区为起终点（绿 / 红圆点）与「共计 18.28 元」「费用说明 >」，下半区为「⋮ / 物品遗失 / 联系司机」与胶囊形「立即支付」。
 
 ```html
 <link rel="stylesheet" href="components/taxi-bill/taxi-bill.css">
