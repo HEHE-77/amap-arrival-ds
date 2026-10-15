@@ -63,20 +63,19 @@ amap-restriction-card {
   color: var(--color-text-secondary);
 }
 
-/* 规则标签：上下 4 左右 8，radius/element；限行时段 10 Semibold · status/danger，其余 11 Regular · bg/page-subtle */
+/* 规则标签：上下 4 左右 8，radius/element；限行时段 中文/Caption Strong · status/danger，其余 中文/Caption · bg/page-subtle */
 .amap-rc__tags { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
 .amap-rc .ds-tag[data-size="l"] {
   height: auto;
   padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius-element);
-  font-size: var(--font-size-body-sm);
+  font-size: var(--font-size-caption);
   font-weight: var(--font-weight-regular);
-  line-height: normal;
+  line-height: var(--line-height-caption);
 }
 .amap-rc .ds-tag[data-size="l"][data-tone="danger"] {
   background: var(--color-status-danger-bg);
   color: var(--color-text-danger);
-  font-size: var(--font-size-caption);
   font-weight: var(--font-weight-semibold);
 }
 .amap-rc .ds-tag[data-size="l"][data-tone="neutral"] { background: var(--color-bg-page-subtle); color: var(--color-text-secondary); }
