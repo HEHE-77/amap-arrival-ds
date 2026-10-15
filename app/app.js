@@ -43,7 +43,7 @@
     page.className = `page${s.move === 'taxi' ? ' is-taxi' : ''}`;
     page.innerHTML = R.page(s);
     $('clock').textContent = I.CLOCK[s.time];
-    $('statusbar').className = `statusbar${s.move === 'taxi' ? '' : ' is-regular'}`;
+    $('statusbar').className = 'statusbar is-regular';   // 三个场景 Figma 顶部都有 4 的内边距
     if (resetScroll) $('scroll').scrollTop = 0;
   }
 

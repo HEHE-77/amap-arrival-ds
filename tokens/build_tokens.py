@@ -101,7 +101,8 @@ for name, t in doc['typography'].items():
     if name.startswith('zh-'):
         continue  # 与同名英文 token 取值一致
     lh = t['lineHeight']
-    lh = 'normal' if lh == 'auto' else lh
+    # Figma「自动」行高在苹方下为字号 × 1.375（16 → 22）；写死数值，避免回退字体下 normal 变高
+    lh = f"{round(int(str(t['fontSize']).rstrip('px')) * 1.375)}px" if lh == 'auto' else lh
     add(f"  --font-size-{name}: {t['fontSize']}; --line-height-{name}: {lh}; --font-weight-{name}: {t['fontWeight']};")
 
 # ── Radius / Spacing / Layout ──

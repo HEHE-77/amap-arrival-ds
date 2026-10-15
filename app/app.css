@@ -124,7 +124,7 @@ button { font: inherit; }
   background: var(--color-bg-page);
 }
 .statusbar img { position: absolute; left: 0; top: 0; width: 402px; height: 51px; }
-/* 常规到达：Figma 顶部区块有 4 的上内边距，状态栏整体下移 4；打车到达没有 */
+/* Figma 三个场景顶部都有 4 的上内边距，状态栏整体下移 4 */
 .statusbar.is-regular { height: 55px; }
 .statusbar.is-regular img, .statusbar.is-regular .statusbar__time { transform: translateY(4px); }
 .statusbar__time {

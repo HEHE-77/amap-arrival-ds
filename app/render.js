@@ -50,7 +50,7 @@
   }
 
   const scrollSection = (heading, inner, more) =>
-    `<amap-section heading="${esc(heading)}" layout="scroll" style="--section-row-gap: 12px">${inner}${more ? `<amap-more-card label="${esc(more)}"></amap-more-card>` : ''}</amap-section>`;
+    `<amap-section heading="${esc(heading)}" layout="scroll">${inner}${more ? `<amap-more-card label="${esc(more)}"></amap-more-card>` : ''}</amap-section>`;
   const recommendRow = (keys) => keys.map((k) => {
     const p = I.SPOT[k];
     return `<amap-poi-recommend name="${esc(p.name)}" tag="${esc(p.tag)}" saves="${esc(p.saves)}" tint="${esc(p.tint)}"${p.tintEnd ? ` tint-end="${esc(p.tintEnd)}"` : ''} image="${esc(img(p.image))}"></amap-poi-recommend>`;
@@ -102,7 +102,7 @@
           ${scrollSection('', recommendRow(d.long), '查看更多')}
         </div></div>`;
     },
-    rest: () => `<amap-section heading="工作休息出来走走" style="--section-gap: 0px">${nearby(I.DWELL.commute.rest)}</amap-section>`,
+    rest: () => `<amap-section heading="工作休息出来走走">${nearby(I.DWELL.commute.rest)}</amap-section>`,
     offwork: () => scrollSection('下班好去处', recommendRow(I.OFFWORK), '查看更多'),
 
     fav: () => `<amap-section heading="你的收藏就在附近">${I.FAVS.map((f) =>
