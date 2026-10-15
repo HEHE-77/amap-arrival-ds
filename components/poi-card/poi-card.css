@@ -127,7 +127,7 @@
 .amap-poi__info {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2xs);
+  gap: var(--space-xs);  /* 店名 → 说明行（Figma Info gap 4） */
   /* 占满到星标前的剩余宽度（Figma 中三段说明会溢出名义宽 157 到 171） */
   min-width: 0;
   flex: 1 1 0;
