@@ -2,8 +2,8 @@
  * 只引用新版 token（tokens/ds-tokens.css）；列表卡沿用同规格卡片族
  */
 amap-transit-list {
-  --tr-pad-y: var(--space-md);
-  --tr-pad-x: var(--space-component-card-inset-x);   /* 14 */
+  --tr-pad-y: var(--space-xs);    /* Figma 列表卡上下 4 */
+  --tr-pad-x: var(--space-lg);    /* 左右 12 */
   --tr-icon-w: 48px;     /* 图标位固定 48 宽，无图标也占位 */
   --tr-row-h: 50px;
 

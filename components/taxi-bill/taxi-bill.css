@@ -86,7 +86,7 @@ amap-taxi-bill {
 }
 
 /* ── 分隔线：border/subtle 0.6，与内容左右对齐 ── */
-.amap-bill__divider { height: 0; margin: 0; border: 0; border-top: var(--stroke-card) solid var(--color-border-subtle); }
+.amap-bill__divider { height: 0; margin: 0 0 calc(var(--stroke-card) * -1); border: 0; border-top: var(--stroke-card) solid var(--color-border-subtle); }  /* 不占高度 */
 
 /* ── 操作：快捷操作 + 立即支付 ── */
 .amap-bill__bottom {

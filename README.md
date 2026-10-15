@@ -28,7 +28,7 @@ assets/      从 Figma 导出的素材
 - 「本次调用结果」按页面顺序列出模块，点击定位到手机里对应位置；手机里点按钮、卡片会在下方显示触发的事件。
 - `app/intent.js`：维度、编排规则（原表 `layout()`）与各模块数据；`app/render.js`：把模块映射到组件；`app/app.js`：面板与交互。
 
-页面布局（场景页 Figma `925:8719`）：状态栏 51（常规到达上方另有 4），顶部区块为导航栏 / Header / 设施入口，间距 `space/md` 8；模块之间 `space/section-gap` 16；左右边距 `space/page-margin` 16；页面底色 `bg/page` #FEFEFE；底部留出 home indicator。
+页面布局（场景页 Figma `925:8719` / `925:9812` / `925:10541`）：状态栏 51，上方另有 4，顶部区块为导航栏 / Header / 设施入口，间距 `space/md` 8；模块之间 `space/section-gap` 16；左右边距 `space/page-margin` 16；页面底色 `bg/page` #FEFEFE；底部留出 home indicator。
 
 新增组件：`<amap-tier-label>`（「还有 20 分钟」「有 1 小时以上」分档小标题，Figma `765:5257`）、`<amap-notice>`（到店受阻提示条，Figma 暂无，样式暂定）；`amap-service-card` 新增 `avatar`（代驾卡，Figma `765:5304`）；`amap-place-card` 新增 `closed`（打烊态）；`amap-section` 新增 `subheading`；`amap-arrival-header` 的 `asset-base` 可从祖先继承。素材：`assets/page/`（状态栏、分档图标）、`assets/drive/daijia-avatar.jpg`。
 

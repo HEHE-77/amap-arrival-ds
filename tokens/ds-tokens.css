@@ -171,7 +171,7 @@
   --font-family-medal: 'Khand', var(--font-family-zh);
   --font-weight-regular: 400; --font-weight-medium: 500; --font-weight-semibold: 600; --font-weight-bold: 700;
   --font-size-display: 24px; --line-height-display: 30px; --font-weight-display: 600;
-  --font-size-heading: 16px; --line-height-heading: normal; --font-weight-heading: 600;
+  --font-size-heading: 16px; --line-height-heading: 22px; --font-weight-heading: 600;
   --font-size-subheading: 14px; --line-height-subheading: 18px; --font-weight-subheading: 500;
   --font-size-body: 12px; --line-height-body: 17px; --font-weight-body: 400;
   --font-size-body-sm: 11px; --line-height-body-sm: 15px; --font-weight-body-sm: 400;
@@ -180,7 +180,7 @@
   --font-size-numeric-lg: 24px; --line-height-numeric-lg: 28px; --font-weight-numeric-lg: 700;
   --font-size-numeric-md: 14px; --line-height-numeric-md: 18px; --font-weight-numeric-md: 700;
   --font-size-numeric-sm: 12px; --line-height-numeric-sm: 14px; --font-weight-numeric-sm: 700;
-  --font-size-numeric-medal: 24px; --line-height-numeric-medal: normal; --font-weight-numeric-medal: 600;
+  --font-size-numeric-medal: 24px; --line-height-numeric-medal: 33px; --font-weight-numeric-medal: 600;
   --font-size-medal-label: 12px; --line-height-medal-label: 13.44px; --font-weight-medal-label: 600;
   /* ── Radius ── */
   --radius-element: 2px;
