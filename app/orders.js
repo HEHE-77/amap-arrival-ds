@@ -104,14 +104,14 @@
     '早安山丘（银泰 B 座 B1）': { where: '到店自取', original: 26, prep: 8, unit: '份数', swap: '换一份',
       addons: [
         { name: '黄油可颂', tag: '有 36 人换购', price: 6.9, original: 12, image: 'order/samples/croissant.jpg' },
-        { name: '肉桂卷', tag: '收录 2 年', price: 7.9, original: 15, image: 'order/samples/cinnamon-roll.jpg' },
+        { name: '肉桂卷', tag: '有 24 人换购', price: 7.9, original: 15, image: 'order/samples/cinnamon-roll.jpg' },
         { name: '海盐碱水结', tag: '有 12 人换购', price: 5.9, original: 10, image: 'order/samples/pretzel.jpg' }] },
     '小面日记（万象天地店）': { where: '到店自取', original: 28, prep: 6, unit: '份数', swap: '换一份',
       addons: [
         { name: '卤蛋', tag: '有 52 人换购', price: 2, original: 3, image: 'order/samples/lu-egg.jpg' },
         { name: '肉夹馍', tag: '收录 2 年', price: 9.9, original: 15, image: 'order/samples/roujiamo.jpg' },
-        { name: '秦镇凉皮', tag: '有 18 人换购', price: 7.9, original: 12, image: 'order/samples/liangpi.jpg' },
-        { name: '冰峰汽水', tag: '有 30 人换购', price: 3, original: 5, image: 'order/samples/bingfeng.jpg' }] },
+        { name: '秦镇凉皮', tag: '有 18 人换购', price: 7.9, original: 12, image: 'order/samples/liangpi.jpg', tone: 'pink' },
+        { name: '冰峰汽水', tag: '有 30 人换购', price: 3, original: 5, image: 'order/samples/bingfeng.jpg', tone: 'success' }] },
   };
 
   /* ───────── 工具 ───────── */
@@ -226,7 +226,7 @@
       { time: '更多', note: '选其他时间' },
     ];
     const tones = ['brand', 'warning', 'success', 'pink'];
-    const addons = X.addons.map((a, i) => ({ ...a, image: a.image ? base + a.image : '', tone: tones[i % 4] }));
+    const addons = X.addons.map((a, i) => ({ ...a, image: a.image ? base + a.image : '', tone: a.tone || tones[i % 4] }));
     return sheet(c, X.where || '到店自取', 'quick', `
       <amap-order-item${rec.img ? ` image="${esc(base + rec.img)}"` : ''} name="${esc(rec.n)}" tag="${esc(tag || rec.why || '')}" spec="${esc(String(rec.spec || '').replace(/·/g, ' · '))}" link-label="改规格" swap-label="${esc(X.swap)}"></amap-order-item>
       <amap-order-options kind="pickup" heading="什么时候取" desc="到点做好，不用等" selected="0" items="${json(pickup)}"></amap-order-options>
