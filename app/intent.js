@@ -115,7 +115,7 @@
   const POICARD = { t: '胡大饭馆 24h（砺街总店）', d: '距您 62 米', sc: '4.8', sl: '超棒', cat: '川菜', pp: '¥150/人', nav: '3652', fav: '10.7w+', pg: '1/12',
     img: IMG + 'huda-fanguan-wide.jpg', rank: '碑林区川菜榜单 · 第 1 名', st: '营业中', rev: '关晓彤推荐来的！冲他家的蒜蓉酸辣螃蟹…', rc: 252,
     deals: [['团', '98', '5.6折', '夏宫双人招牌套餐（提前一天预约）'], ['团', '128', '6.8折', '满汉全席招牌套餐（提前一天预约）']] };
-  const TOP_SPARE = { t: '老孙家泡馍（东大街店）', d: '520 米', sc: '4.7', sl: '超棒', cat: '泡馍', pp: '¥48/人', nav: '2210', fav: '5.2w+', pg: '1/14',
+  const TOP_SPARE = { t: '老孙家泡馍（东大街店）', d: '520 米', sc: '4.7', sl: '超棒', cat: '泡馍', pp: '¥48/人', nav: '2210', fav: '5.2w+', pg: '1/14', img: IMG + 'laosunjia.jpg',
     rank: '碑林区陕菜榜 · 第 2 名', st: '营业中', rev: '掰馍掰到手酸，汤是真的鲜…', rc: 176,
     deals: [['团', '58', '7.2折', '单人泡馍套餐'], ['团', '108', '6.9折', '双人优选套餐']] };
   const topKey = (s) => (s.scene === 'shop'
@@ -175,7 +175,9 @@
   const PICK_IMG = [['老白家', 'laobai-hulatang'], ['甑糕', 'zhubashi-zenggao'], ['隐庐', 'yinlu-kaiseki'], ['翠园', 'cuiyuan-dimsum'],
     ['油茶麻花', 'youcha-mahua'], ['老焦', 'laojiao-dabing'], ['洒金桥菜市', 'sajinqiao-market'], ['德福巷', 'defuxiang-cafe'],
     ['亚朵', 'atour-hotel'], ['CitiGO', 'citigo-hotel'], ['Arabica', 'arabica'], ['喜茶', 'heytea'], ['松筋堂', 'songjintang'],
-    ['筋膜', 'jinmo-lab'], ['巷子里的面', 'xiangzi-noodle'], ['松川', 'songchuan-tang'], ['Manner', 'manner'], ['蓝瓶', 'blue-bottle']];
+    ['筋膜', 'jinmo-lab'], ['巷子里的面', 'xiangzi-noodle'], ['松川', 'songchuan-tang'], ['Manner', 'manner'], ['蓝瓶', 'blue-bottle'],
+    ['老陕面馆', 'laoshan-noodle'], ['凉皮铺', 'liangpi-shop'], ['全季', 'ji-hotel'], ['奈雪', 'naixue'],
+    ['南稍门手工面', 'nanshaomen-noodle'], ['中贸后街肉夹馍', 'zhongmao-roujiamo'], ['桔子水晶', 'orange-crystal-hotel']];
   const pickImg = (name) => { const m = PICK_IMG.find(([k]) => name.includes(k)); return m ? PS + m[1] + '.png' : ''; };
   const PICK = {
     fire:    { src: '烟火小店榜', t: '藏在街巷的烟火气', sub: '精选 13 个热门店铺', tint: 'peach', food: true, items: {

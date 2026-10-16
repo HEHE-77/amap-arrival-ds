@@ -28,6 +28,7 @@
 
   /* ───────── 扫街榜卡片 → amap-place-card ───────── */
   const SCENE_OF = { food: 'restaurant', go: 'restaurant', scenic: 'attraction', cafe: 'commute' };
+  const CARDS = [];   // 本次渲染的卡片数据，按 data-card 取
   function placeCard(c, i, kind, s, extra = '') {
     const deals = c.deals.map(([type, price, discount, title]) => ({ type, price, discount, title }));
     const attrs = {
@@ -45,6 +46,9 @@
       attrs.order = JSON.stringify({ image: img(c.rec.img), title: c.rec.n, tag: why, spec: c.rec.spec, note: c.rec.note,
         price: c.rec.p, actionLabel: '一键下单', swapLabel: '换一杯' });
     }
+    // 登记卡片数据，点 CTA / 优惠时按这张卡生成下单浮层（app/orders.js）
+    const tag = kind === 'cafe' ? ((i === 0 && s.grid !== 'high' && c.rec.whyLow) ? c.rec.whyLow : c.rec.why) : '';
+    attrs['data-card'] = String(CARDS.push({ c, kind, tag }) - 1);
     const a = Object.entries(attrs).filter(([, v]) => v !== '' && v != null).map(([k, v]) => `${k}="${esc(v)}"`).join(' ');
     return `<amap-place-card ${a} deals="${json(deals)}" ${extra}></amap-place-card>`;
   }
@@ -126,6 +130,7 @@
   };
 
   function page(s) {
+    CARDS.length = 0;
     const L = I.layout(s);
     const mods = L.filter((k) => k !== 'util').map((k) => {
       const html = R[k](s);
@@ -135,5 +140,5 @@
     return `${head(s)}${mods}`;
   }
 
-  window.ArrivalRender = { page };
+  window.ArrivalRender = { page, card: (k) => CARDS[Number(k)] };
 })();

@@ -32,11 +32,13 @@ assets/      从 Figma 导出的素材
 
 新增组件：`<amap-tier-label>`（「还有 20 分钟」「有 1 小时以上」分档小标题，Figma `765:5257`）、`<amap-notice>`（到店受阻提示条，Figma 暂无，样式暂定）；`amap-service-card` 新增 `avatar`（代驾卡，Figma `765:5304`）；`amap-place-card` 新增 `closed`（打烊态）；`amap-section` 新增 `subheading`；`amap-arrival-header` 的 `asset-base` 可从祖先继承。素材：`assets/page/`（状态栏、分档图标）、`assets/drive/daijia-avatar.jpg`。
 
+下单浮层（Figma `1057:4138` 组件库，整屏稿 `812:7855` 饭店 / `812:7856` 景点 / `812:7857` 一键下单）：手机里点「看团购 / 看优惠」打开饭店浮层，「订门票」打开景点浮层，一键下单卡打开一键下单浮层。遮罩 `overlay/scrim`，面板自底部移入 400ms，点遮罩不关闭，只能点 × 关闭；选套餐 / 票种、加减数量、加购会联动底部栏价格。浮层内容按点开的那张卡生成：标题是店名，选项是卡片上的团购 / 券 / 门票（点卡片上的某条优惠会直接选中它），原价由折扣推算，满减券为免费领取；订门票的日期从今天起，场次按当前时段置灰已过场次；一键下单的取餐时间按当前时段推算，加购为该店商品。缺配图处显示「配图待补」。组件见 `components/order-sheet/`（`<amap-order-sheet>` 容器 + `amap-order-options` / `amap-order-set-detail` / `amap-order-quantity` / `amap-stepper` / `amap-order-item` / `amap-order-addons` / `amap-order-payment` / `amap-order-terms` / `amap-order-notice` / `amap-order-footer`），各店补充内容（菜品、规则、场次、加购）在 `app/orders.js`，素材 `assets/order/samples/`。
+
 与 Figma 整页的差异（来自意图表规则，模拟器以意图表为准）：设施入口顺序按「出行方式首项 + 场景项」生成；外地游客「平时」的附近精选首张为下午茶榜；末班车排在收藏之前；商场样例为常驻城市，不出异地限行。
 
 ## 查看交互效果
 
-在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（Figma 三个场景实例 + 9 个页面实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）、`reminders.html`（限行 / 末班车）、`nav-bar.html`、`place-row.html`（收藏地点）、`more-card.html`、`facility-bar.html`。事件会显示在页面上。
+在浏览器打开 `preview/` 下对应页面：`primitives.html`（基础组件）、`header.html`、`poi-card.html`（Figma 全部 9 个实例 + 边界情况）、`place-card.html`（Figma 三个场景实例 + 9 个页面实例 + 边界情况）、`poi-recommend.html`（9 个实例 + 状态）、`dish-card.html`（6 个实例 + 边界情况）、`nearby-list.html`（3 个实例 + 边界情况）、`taxi-bill.html`、`service-card.html`（停车场 / 加油站）、`reminders.html`（限行 / 末班车）、`nav-bar.html`、`place-row.html`（收藏地点）、`more-card.html`、`facility-bar.html`、`order-sheet.html`（三个下单浮层）。事件会显示在页面上。
 
 加载顺序：`tokens.css` → `primitives.css/js` → 复合组件。
 

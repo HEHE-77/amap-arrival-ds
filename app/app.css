@@ -135,7 +135,7 @@ button { font: inherit; }
   color: #646464;
 }
 .home-indicator {
-  position: absolute; left: 50%; bottom: 8px; z-index: 6;
+  position: absolute; left: 50%; bottom: 8px; z-index: 7;   /* 压在下单浮层（z 6）之上 */
   width: 134px; height: 5px; margin-left: -67px;
   border-radius: 100px; background: var(--ds-color-text-primary);
   pointer-events: none;
