@@ -98,13 +98,13 @@
         rank: '烟火小店榜 · 第 2 名', st: '营业中', rev: '打包回家当宵夜刚好，卤大肠…', rc: 198,
         deals: [['团', '88', '4.8折', '招牌卤味拼盘'], ['团', '45', '6.6折', '四人份宵夜打包装']] }] },
     shop_go: { kind: 'go', cards: [
-      { t: '泡泡玛特城市乐园', d: '200 米', sc: '4.7', sl: '超棒', cat: '潮玩', pp: '¥80/人', nav: '1.2w+', fav: '3.4w+', pg: '1/14',
+      { t: '泡泡玛特城市乐园', img: IMG + 'popmart-land.jpg', d: '200 米', sc: '4.7', sl: '超棒', cat: '潮玩', pp: '¥80/人', nav: '1.2w+', fav: '3.4w+', pg: '1/14',
         rank: '雁塔区潮玩榜 · 第 1 名', st: '营业中', rev: '限定款只有这家有，排队…', rc: 176,
         deals: [['券', '59', '8.0折', '城市限定盲盒两件套'], ['券', '20', '满减', '满 200 减 20 店铺券']] },
-      { t: '言几又书店（万象城店）', d: '260 米', sc: '4.6', sl: '很棒', cat: '书店', pp: '¥35/人', nav: '8600', fav: '2.1w+', pg: '1/9',
+      { t: '言几又书店（万象城店）', img: IMG + 'yanjiyou-store.jpg', d: '260 米', sc: '4.6', sl: '很棒', cat: '书店', pp: '¥35/人', nav: '8600', fav: '2.1w+', pg: '1/9',
         rank: '雁塔区书店榜 · 第 2 名', st: '营业中', rev: '下午坐一坐，咖啡区很安静…', rc: 132,
         deals: [['团', '29', '7.0折', '图书 + 手冲咖啡套餐'], ['券', '15', '满减', '饮品满 50 减 15']] },
-      { t: '话梅 HARMAY（万象城店）', d: '120 米', sc: '4.7', sl: '超棒', cat: '美妆集合', pp: '¥120/人', nav: '5200', fav: '1.9w+', pg: '1/11',
+      { t: '话梅 HARMAY（万象城店）', img: IMG + 'harmay-store.jpg', d: '120 米', sc: '4.7', sl: '超棒', cat: '美妆集合', pp: '¥120/人', nav: '5200', fav: '1.9w+', pg: '1/11',
         rank: '雁塔区美妆榜 · 第 3 名', st: '营业中', rev: '小样区可以随便试，逛很久…', rc: 98,
         deals: [['券', '30', '满减', '满 300 减 30'], ['团', '9.9', '', '旅行装三件体验']] }] },
     explore: { kind: 'scenic', cards: [
@@ -231,7 +231,8 @@
     ['亚朵', 'atour-hotel'], ['CitiGO', 'citigo-hotel'], ['Arabica', 'arabica'], ['喜茶', 'heytea'], ['松筋堂', 'songjintang'],
     ['筋膜', 'jinmo-lab'], ['巷子里的面', 'xiangzi-noodle'], ['松川', 'songchuan-tang'], ['Manner', 'manner'], ['蓝瓶', 'blue-bottle'],
     ['老陕面馆', 'laoshan-noodle'], ['凉皮铺', 'liangpi-shop'], ['全季', 'ji-hotel'], ['奈雪', 'naixue'],
-    ['南稍门手工面', 'nanshaomen-noodle'], ['中贸后街肉夹馍', 'zhongmao-roujiamo'], ['桔子水晶', 'orange-crystal-hotel']];
+    ['南稍门手工面', 'nanshaomen-noodle'], ['中贸后街肉夹馍', 'zhongmao-roujiamo'], ['桔子水晶', 'orange-crystal-hotel'],
+    ['足道 · 小憩', 'zudao-xiaoqi'], ['一坐一忘', 'yizuo-yiwang'], ['粉巷新开', 'fenxiang-tea'], ['张记炒饭', 'zhangji-chaofan'], ['望京小面', 'wangjing-noodle']];
   const pickImg = (name) => { const m = PICK_IMG.find(([k]) => name.includes(k)); return m ? PS + m[1] + '.png' : ''; };
   const PICK = {
     fire:    { src: '烟火小店榜', t: '藏在街巷的烟火气', sub: '精选 13 个热门店铺', tint: 'peach', food: true, items: {
