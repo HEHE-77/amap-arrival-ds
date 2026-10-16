@@ -21,7 +21,7 @@
   function renderPanel() {
     $('scenes').innerHTML = Object.entries(I.SCENE).map(([k, v]) => `
       <button type="button" class="scene" data-scene="${k}" aria-pressed="${sampleOn(k)}">
-        <b>${esc(v.n)}</b><span>${esc(v.short)}</span><em>Figma ${esc(v.figma)}</em>
+        <b>${esc(v.n)}</b><span>${esc(v.short)}</span>
       </button>`).join('');
 
     $('dims').innerHTML = DIM_ORDER.map((key) => {
