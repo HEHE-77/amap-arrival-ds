@@ -176,7 +176,8 @@
     ['油茶麻花', 'youcha-mahua'], ['老焦', 'laojiao-dabing'], ['洒金桥菜市', 'sajinqiao-market'], ['德福巷', 'defuxiang-cafe'],
     ['亚朵', 'atour-hotel'], ['CitiGO', 'citigo-hotel'], ['Arabica', 'arabica'], ['喜茶', 'heytea'], ['松筋堂', 'songjintang'],
     ['筋膜', 'jinmo-lab'], ['巷子里的面', 'xiangzi-noodle'], ['松川', 'songchuan-tang'], ['Manner', 'manner'], ['蓝瓶', 'blue-bottle'],
-    ['老陕面馆', 'laoshan-noodle'], ['凉皮铺', 'liangpi-shop'], ['全季', 'ji-hotel'], ['奈雪', 'naixue']];
+    ['老陕面馆', 'laoshan-noodle'], ['凉皮铺', 'liangpi-shop'], ['全季', 'ji-hotel'], ['奈雪', 'naixue'],
+    ['南稍门手工面', 'nanshaomen-noodle'], ['中贸后街肉夹馍', 'zhongmao-roujiamo'], ['桔子水晶', 'orange-crystal-hotel']];
   const pickImg = (name) => { const m = PICK_IMG.find(([k]) => name.includes(k)); return m ? PS + m[1] + '.png' : ''; };
   const PICK = {
     fire:    { src: '烟火小店榜', t: '藏在街巷的烟火气', sub: '精选 13 个热门店铺', tint: 'peach', food: true, items: {
