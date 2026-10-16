@@ -382,6 +382,7 @@
     if (k === 'rest') return visitorOf(s) ? '到早了先坐会儿' : '工作休息出来走走';
     return NAME[k];
   };
+  const emptyOf = (s) => ({ dwell: !dwellQ(s), picks: !picksOn(s).length, lunch: !picksOn(s, lunchAt(s)).length, rest: !restOf(s).length, offwork: !offworkOf(s).length });
   const layout = (s) => {
     const L = ['util'];
     if (s.move === 'taxi') L.push('pay');
@@ -396,16 +397,16 @@
     } else if (s.scene === 'explore') {
       L.push('top', 'picks'); if (s.city === 'out') L.push('dish'); L.push('dwell');   // 附近精选紧跟扫街榜
     } else {
-      L.push('top'); if (s.city === 'out') L.push('dish');
-      if (s.time === 'am') L.push('rest', 'lunch', 'offwork');
-      else if (s.time === 'meal') L.push('lunch', 'offwork');
-      else if (s.time === 'other') L.push('rest', 'offwork');
-      else L.push('offwork');
+      // 写字楼：当地特色菜不抢前排——至少排在第 3 个推荐模块；平时（下午）放到所有推荐之后
+      const rec = ['top'].concat({ am: ['rest', 'lunch', 'offwork'], meal: ['lunch', 'offwork'], other: ['rest', 'offwork'], night: ['offwork'] }[s.time])
+        .filter((k) => !emptyOf(s)[k]);
+      if (s.city === 'out') rec.splice(s.time === 'other' ? rec.length : Math.min(2, rec.length), 0, 'dish');
+      L.push(...rec);
     }
     if (busOn(s) && s.time !== 'night') L.push('bus');
     if (s.fav === 'yes') L.push('fav');
     if (s.move === 'car') L.push('drive');
-    const empty = { dwell: !dwellQ(s), picks: !picksOn(s).length, lunch: !picksOn(s, lunchAt(s)).length, rest: !restOf(s).length, offwork: !offworkOf(s).length };
+    const empty = emptyOf(s);
     return L.filter((k) => !empty[k]);
   };
   const NAME = { pay: '打车付款', util: '周边服务', bus: '今晚末班车', shop: '到达商家卡', top: '扫街榜 TOP 3', dish: '当地特色菜',
