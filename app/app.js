@@ -29,7 +29,7 @@
       const off = key === 'poi' && s.abs !== 'point';
       const cur = key === 'dest' ? destOf() : s[key];
       return `<div class="dim"${off ? ' data-disabled' : ''}>
-        <div class="dim__head"><span class="dim__label">${esc(d.label)}</span><span class="dim__hint">${esc(d.hint)}</span></div>
+        <div class="dim__head"><span class="dim__label">${esc(d.label)}</span></div>
         <div class="chips" role="group" aria-label="${esc(d.label)}">${Object.entries(d.opts).map(([v, n]) => {
           const dis = off;
           return `<button type="button" class="chip" data-k="${key}" data-v="${v}" aria-pressed="${cur === v && !dis}"${dis ? ' disabled' : ''}>${esc(n)}</button>`;

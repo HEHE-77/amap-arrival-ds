@@ -8,9 +8,9 @@
 (() => {
   /* ───────── 维度（左侧面板） ───────── */
   const SCENE = {
-    shop:    { n: '开车去商场',       short: '商场 · 消费',   figma: '812:7852',
+    shop:    { n: '本地人开车去商场', short: '商场 · 消费',   figma: '812:7852',
                preset: { move: 'car',   grid: 'mid',  city: 'in',  abs: 'area', time: 'meal',  fav: 'no',  poi: 'ok' } },
-    explore: { n: '外地游客到钟楼',   short: '景区 · 体验',   figma: '812:7853',
+    explore: { n: '外地游客到景区',   short: '景区 · 体验',   figma: '812:7853',
                preset: { move: 'metro', grid: 'low',  city: 'out', abs: 'area', time: 'other', fav: 'yes', poi: 'ok' } },
     commute: { n: '上班族打车到公司', short: '写字楼 · 通勤', figma: '812:7854',
                preset: { move: 'taxi',  grid: 'high', city: 'in',  abs: 'area', time: 'am',    fav: 'no',  poi: 'ok' } },
