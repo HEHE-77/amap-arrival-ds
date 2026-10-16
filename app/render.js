@@ -64,7 +64,8 @@
   /* ───────── 模块 ───────── */
   const R = {
     util: () => '',                                   // 设施入口已在页头区块内
-    pay: () => `<div class="pg-pad"><amap-taxi-bill from="汇通太古城英皇之都(西1门)" to="中贸广场 B 座(南门)" amount="18.28"></amap-taxi-bill></div>`,
+    pay: (s) => { const t = I.taxiOf(s);   // 终点跟着到达的 AOI / 单店
+      return `<div class="pg-pad"><amap-taxi-bill from="${esc(t.from)}" to="${esc(t.to)}" amount="${esc(t.amount)}"></amap-taxi-bill></div>`; },
 
     shop: (s) => {
       const st = I.POIST[s.poi];

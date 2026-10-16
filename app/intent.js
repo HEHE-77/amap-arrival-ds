@@ -41,10 +41,23 @@
 
   /* ───────── 页头 ───────── */
   const HEAD = {
-    shop:    { area:  { address: '长安南路 289 号 · 西安万象城(生命之树)', energy: '28' },
+    shop:    { area:  { address: '长安南路 289 号 · 西安万象城(生命之树)', energy: '28', place: '西安万象城(生命之树)', street: '长安南路 289 号' },
                point: { address: '胡大饭馆 24h（砺街总店）· 碑林区砺街 18 号', energy: '28' } },
-    explore: { area:  { address: '地铁2号线 · 钟楼(地铁站)', energy: '54' } },
+    explore: { area:  { address: '地铁2号线 · 钟楼(地铁站)', energy: '54', place: '西安钟楼(东北角下客点)', street: '东大街与北大街交汇处' } },
     commute: { area:  { address: '中贸广场 B 座 · 长安南路 79 号', energy: '28', place: '中贸广场 B 座', street: '长安南路 79 号' } },
+  };
+  /* 打车付款卡：终点跟着到达的 AOI / 单店走，车费按片区 */
+  const TAXI = {
+    from: '汇通太古城英皇之都(西1门)',
+    shop:    { to: '西安万象城(生命之树)', amount: '23.60' },
+    explore: { to: '西安钟楼(东北角下客点)', amount: '31.45' },
+    commute: { to: '中贸广场 B 座(南门)', amount: '18.28' },
+  };
+  const taxiOf = (s) => {
+    const t = TAXI[s.scene] || TAXI.commute;
+    if (s.abs !== 'point') return { from: TAXI.from, to: t.to, amount: t.amount };
+    // 单店：终点为这家店，车费在片区基础上略增（送到店门口）
+    return { from: TAXI.from, to: pointOf(s).t, amount: (Number(t.amount) + 1.2).toFixed(2) };
   };
   const headOf = (s) => {
     const area = HEAD[s.scene].area;
@@ -381,7 +394,7 @@
     picks: '附近精选', dwell: '还能待多久', rest: '工作休息出来走走', lunch: '午休去哪儿', offwork: '下班好去处', fav: '你的收藏就在附近', drive: '驾车服务' };
   const describe = (k, s) => {
     switch (k) {
-      case 'pay': return '起终点 · 共计 18.28 元 · 物品遗失 / 联系司机 · 立即支付';
+      case 'pay': { const t = taxiOf(s); return `→ ${t.to} · 共计 ${t.amount} 元 · 物品遗失 / 联系司机 · 立即支付`; }
       case 'util': { const u = utilOf(s); return `${u.length} 项：${u.slice(0, 4).join(' · ')} …`; }
       case 'bus': return '地铁 + 夜班公交 2 条' + (s.time === 'night' ? ' · 21 点后排在到达对象之后、推荐之前' : '');
       case 'shop': { const p = pointOf(s); return `${p.t} · ${p.kind === 'cafe' ? '早餐一键下单' : `团购 ${p.deals.length} 档 · 看团购 / 联系商家`}` + (s.poi === 'closed' ? '（今日已打烊）' : ''); }
@@ -399,7 +412,7 @@
   };
 
   window.ArrivalIntent = {
-    SCENE, DIM, CLOCK, POIST, HEAD, headOf, pointOf, RIDE, FAC_KEY, utilOf, TOP, POICARD, topKey, topCards, topTitle, BTN,
+    SCENE, DIM, CLOCK, POIST, HEAD, headOf, taxiOf, pointOf, RIDE, FAC_KEY, utilOf, TOP, POICARD, topKey, topCards, topTitle, BTN,
     DWELL, SPOT, OFFWORK, DISH, PICK, THEME, pickImg, picksOn, FAVS, LASTBUS, PARK, GAS,
     LUNCH_AT, busOn, dwellQ, dwellOf, restOf, offworkOf, openAt, layout, NAME, describe,
   };
