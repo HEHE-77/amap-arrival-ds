@@ -288,7 +288,7 @@ amap-order-sheet[data-state="leaving"] .os-sheet__panel { transition-timing-func
 }
 .os-addon__add svg { width: 10px; height: 10px; }
 /* 加购后：「+ 数量 −」小步进器（Figma 1085:4890）：加号渐变、数量 数字/Small、减号 neutral/200 底；只剩 1 份时减号为 icon/disabled */
-.os-addon__stepper { display: flex; align-items: center; gap: 9px; }
+.os-addon__stepper { display: flex; align-items: center; gap: var(--space-sm); }   /* Figma 1085:4890：间距 6，整体 51×16 */
 .os-addon__qty {
   min-width: 7px; text-align: center;
   font-family: var(--font-family-numeric);
