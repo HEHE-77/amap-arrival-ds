@@ -115,7 +115,7 @@
   $('page').addEventListener('card-order-buy', (e) => openOrder(e));
   $('page').addEventListener('card-deal', (e) => {
     const card = R.card(e.target.closest('amap-place-card')?.dataset.card);
-    if (card && card.kind !== 'cafe') openOrder(e, { deal: e.detail.index });
+    if (card) openOrder(e, { deal: e.detail.index });   // 一键下单的店：已选商品换成这条团购
   });
   ['option-select', 'quantity-change', 'addon-change', 'order-submit', 'sheet-close'].forEach((type) => $('screen').addEventListener(type, (e) => {
     if (e.target.closest('#page')) return;

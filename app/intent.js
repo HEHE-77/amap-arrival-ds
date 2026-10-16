@@ -133,15 +133,16 @@
   };
   const POINT = {
     am: { brand: '麦当劳', kind: 'cafe', sc: '4.6', sl: '很棒', cat: '快餐 · 早餐', pp: '¥25/人', nav: '2310', fav: '8.2k+', pg: '1/9',
-      rank: '雁塔区早餐榜 · 第 1 名', st: '营业中', rev: '早上赶时间，手机下单到店就能拿…', rc: 186, open: '06:00-23:00',
-      deals: [['团', '13.9', '5.3折', '猪柳蛋麦满分 + 薯饼 + 中杯拿铁']],
-      rec: { n: '猪柳蛋麦满分套餐', why: '上次那份', whyLow: '早餐热卖', spec: '猪柳蛋麦满分·薯饼·中杯拿铁', note: '｜随时退｜不限购', p: '13.9', img: '', swap: '换一份' } },
+      rank: '雁塔区早餐榜 · 第 1 名', st: '营业中', open: '06:00-23:00', img: IMG + 'mcd-store.jpg',   // 早高峰不显示热评
+      deals: [['团', '13.9', '5.3折', '猪柳蛋麦满分 + 薯饼 + 中杯拿铁'], ['团', '18', '6.0折', '醒晨超值早餐（主食任选 + 饮品）']],
+      dealImg: ['order/samples/mcd-muffin-coffee.jpg', 'order/samples/mcd-breakfast.jpg'],
+      rec: { n: '猪柳蛋麦满分套餐', why: '上次那份', whyLow: '早餐热卖', spec: '猪柳蛋麦满分·薯饼·中杯拿铁', note: '｜随时退｜不限购', p: '13.9', img: 'order/samples/mcd-muffin-coffee.jpg', swap: '换一份' } },
     meal: { brand: '胡大饭馆 24h', kind: 'food', ...POICARD, open: '00:00-24:00' },
     other: { brand: '满记甜品', kind: 'food', sc: '4.7', sl: '超棒', cat: '甜品', pp: '¥38/人', nav: '1460', fav: '2.3w+', pg: '1/10',
-      rank: '雁塔区甜品榜 · 第 2 名', st: '营业中', rev: '杨枝甘露料很足，下午来不用排队…', rc: 143, open: '10:00-22:30',
+      rank: '雁塔区甜品榜 · 第 2 名', st: '营业中', rev: '杨枝甘露料很足，下午来不用排队…', rc: 143, open: '10:00-22:30', img: IMG + 'manji-store.jpg',
       deals: [['团', '49', '6.2折', '杨枝甘露 + 芒果班戟双人下午茶'], ['团', '25', '7.5折', '单人招牌甜品套餐']] },
     night: { brand: '木屋烧烤', kind: 'food', sc: '4.6', sl: '很棒', cat: '烧烤 · 宵夜', pp: '¥95/人', nav: '1890', fav: '1.6w+', pg: '1/11',
-      rank: '雁塔区宵夜榜 · 第 1 名', st: '营业至 02:00', rev: '凌晨还很热闹，羊肉串现烤…', rc: 208, open: '16:00-02:00',
+      rank: '雁塔区宵夜榜 · 第 1 名', st: '营业至 02:00', rev: '凌晨还很热闹，羊肉串现烤…', rc: 208, open: '16:00-02:00', img: IMG + 'muwu-store.jpg',
       deals: [['团', '128', '6.4折', '夜宵双人烤串套餐'], ['团', '68', '7.6折', '单人宵夜烤串 + 啤酒']] },
   };
   /** 当前时段、当前片区的到达单店（卡片数据 + 店名 / 地址） */
@@ -150,7 +151,7 @@
     const b = BRANCH[s.scene] || BRANCH.shop;
     if (s.time === 'meal' && s.scene === 'shop') return { ...p, address: '碑林区砺街 18 号' };   // Figma 原稿
     const name = s.time === 'meal' ? `胡大饭馆 24h（${b.tag}）` : `${p.brand}（${b.tag}）`;
-    return { ...p, t: name, d: b.d, address: b.addr, img: s.time === 'meal' ? p.img : '' };
+    return { ...p, t: name, d: b.d, address: b.addr };
   };
   const brandOf = (t) => String(t).split('（')[0];
   // 单店受阻时 TOP 3 也按时段：早高峰 / 平时 → 咖啡早餐（一键下单），饭点 / 21 点后 → 正餐
@@ -244,14 +245,16 @@
       commute: [['喜茶 · 中贸店', '距您 210 米 | 可自取'], ['% Arabica 咖啡', '距您 560 米 | 人均 ¥38']] } },
     massage: { src: '休闲按摩榜', t: '疲惫一扫轻松享受', sub: '精选 10 家热门店铺', tint: 'lav', food: false, items: {
       commute: [['松筋堂（雁塔南路店）', '距您 742 米 | 团购 ¥38 起'], ['筋膜实验室', '距您 516 米 | 无需预约']],
-      shop: [['松筋堂（万象城店）', '距您 210 米 | 团购 ¥38 起'], ['足道 · 小憩', '距您 390 米 | 可躺 40 分钟']] } },
+      shop: [['松筋堂（万象城店）', '距您 210 米 | 团购 ¥38 起'], ['足道 · 小憩', '距您 390 米 | 可躺 40 分钟']],
+      explore: [['松筋堂（钟楼店）', '距您 460 米 | 团购 ¥38 起'], ['筋膜实验室（西大街店）', '距您 610 米 | 无需预约']] } },
     newly:   { src: '近期新开榜', t: '吃腻了换换口味', sub: '精选 10 家热门店铺', tint: 'pink', food: true, items: {
       commute: [['巷子里的面', '距您 653 米 | 4.9 分'], ['松川唐风料理', '距您 451 米 | 4.8 分']],
       shop: [['一坐一忘 云南菜 · 5F', '距您 90 米 | 本月新开'], ['松川唐风料理', '距您 1.1 公里 | 4.8 分']],
       explore: [['粉巷新开 · 唐风茶点', '距您 380 米 | 本月新开'], ['巷子里的面', '距您 720 米 | 4.9 分']] } },
     slow:    { src: '慢饮时光榜', t: '一杯慢饮享悠闲', sub: '精选 13 家人气饮品店', tint: 'mint', food: false, items: {
       commute: [['Manner 咖啡', '距您 56 米 | 人均 ¥18'], ['蓝瓶咖啡（高新旗舰店）', '距您 32 米 | 人均 ¥22']],
-      shop: [['蓝瓶咖啡（万象城店）', '距您 140 米 | 人均 ¥30'], ['Manner 咖啡 · L1', '距您 200 米 | 人均 ¥18']] } },
+      shop: [['蓝瓶咖啡（万象城店）', '距您 140 米 | 人均 ¥30'], ['Manner 咖啡 · L1', '距您 200 米 | 人均 ¥18']],
+      explore: [['Manner 咖啡（钟楼店）', '距您 150 米 | 人均 ¥18'], ['蓝瓶咖啡（钟楼店）', '距您 320 米 | 人均 ¥30']] } },
   };
   const PICK_ORDER = {
     shop: { low: ['quality', 'fire', 'trip'], mid: ['fire', 'quality', 'trip'], high: ['newly', 'fire', 'slow'] },
@@ -259,25 +262,29 @@
     commute: { low: ['quality', 'fire', 'slow'], mid: ['fire', 'massage', 'slow'], high: ['massage', 'newly', 'slow'] },
   };
   const LEAD_OUT = { am: 'fire', meal: 'local', other: 'tea', night: 'hotel' };
+  // 附近精选固定 3 张：按原规则排序，不足时依次补其他榜单（单店先补非餐饮，再补餐饮），已关门的店不出现
+  const PICK_FILL = ['fire', 'quality', 'trip', 'local', 'newly', 'slow', 'massage', 'tea'];
   const picksOn = (s, at) => {
-    const cap = s.abs === 'point' ? 2 : 3;
+    const cap = 3;
     let base = s.abs === 'point' ? ['slow', 'massage'] : PICK_ORDER[s.scene][s.grid].slice();
     base = base.filter((k) => k !== 'tea' && k !== 'hotel');
     let ord;
     if (s.city === 'out') { const lead = LEAD_OUT[s.time]; ord = [lead].concat(lead !== 'hotel' ? ['hotel'] : [], base); }
     else { ord = base.slice(); if (s.time === 'other') ord = ord.slice(0, cap - 1).concat(['tea']); }
     const out = []; const seen = {};
-    for (const k of ord) {
-      if (out.length >= cap) break;
+    const take = (k, fill, allowFood) => {
       const p = PICK[k];
-      if (seen[k] || !p || !p.items[s.scene]) continue;
-      seen[k] = 1;
-      if (p.outOnly && s.city !== 'out') continue;
-      if (p.timeOnly && p.timeOnly !== s.time) continue;
-      if (s.abs === 'point' && p.food) continue;
+      if (out.length >= cap || seen[k] || !p || !p.items[s.scene]) return;
+      if (p.outOnly && s.city !== 'out') return;
+      if (!fill && p.timeOnly && p.timeOnly !== s.time) return;
+      if (s.abs === 'point' && p.food && !allowFood) return;
       const items = p.items[s.scene].filter(([name]) => openAt(name, s, at));
-      if (items.length) out.push({ k, p, items });
-    }
+      if (!items.length) return;
+      seen[k] = 1; out.push({ k, p, items });
+    };
+    ord.forEach((k) => take(k, false, false));
+    PICK_FILL.forEach((k) => take(k, true, false));
+    PICK_FILL.forEach((k) => take(k, true, true));
     return out;
   };
 
@@ -356,7 +363,7 @@
     } else if (s.scene === 'shop') {
       L.push('top'); if (s.city === 'out') L.push('dish'); L.push('picks', 'dwell');
     } else if (s.scene === 'explore') {
-      L.push('top', 'dwell'); if (s.city === 'out') L.push('dish'); L.push('picks');
+      L.push('top', 'picks'); if (s.city === 'out') L.push('dish'); L.push('dwell');   // 附近精选紧跟扫街榜
     } else {
       L.push('top'); if (s.city === 'out') L.push('dish');
       if (s.time === 'am') L.push('rest', 'lunch', 'offwork');

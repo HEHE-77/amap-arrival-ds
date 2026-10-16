@@ -85,18 +85,18 @@
   Object.assign(SHOP, {
     '满记甜品': { where: '本店可用', sold: ['已售 6800', '已售 1.5 万'],
       deals: {
-        双人下午茶: { rules: '周一至周日 14:00–18:00 可用 · 随时退 · 可堂食', summary: '3 样 · 适合 2 人', groups: [
+        双人下午茶: { image: 'order/samples/manji-duo.jpg', rules: '周一至周日 14:00–18:00 可用 · 随时退 · 可堂食', summary: '3 样 · 适合 2 人', groups: [
           { name: '甜品', items: [['杨枝甘露', '×1', '¥36'], ['芒果班戟', '×1', '¥32']] },
           { name: '饮品', items: [['港式冻柠茶', '×2', '¥30']] }] },
-        单人: { rules: '周一至周日可用 · 随时退 · 可堂食 · 可打包', summary: '2 道 · 适合 1 人', groups: [
+        单人: { image: 'order/samples/manji-single.jpg', rules: '周一至周日可用 · 随时退 · 可堂食 · 可打包', summary: '2 道 · 适合 1 人', groups: [
           { name: '甜品', items: [['招牌芒果西米捞', '×1', '¥28']] },
           { name: '饮品', items: [['港式冻柠茶', '×1', '¥15']] }] } } },
     '木屋烧烤': { where: '营业至 02:00 · 本店可用', sold: ['已售 9300', '已售 2.2 万'],
       deals: {
-        双人: { rules: '每天 17:00–02:00 可用 · 随时退 · 可堂食', summary: '6 样 · 适合 2 人', groups: [
+        双人: { image: 'order/samples/muwu-duo.jpg', rules: '每天 17:00–02:00 可用 · 随时退 · 可堂食', summary: '6 样 · 适合 2 人', groups: [
           { name: '烤串', items: [['羊肉串', '×10', '¥60'], ['烤鸡翅', '×4', '¥32'], ['烤韭菜', '1 份', '¥12'], ['烤馒头片', '×4', '¥12']] },
           { name: '饮品', items: [['冰镇啤酒', '×2', '¥24'], ['冰峰汽水', '×2', '¥10']] }] },
-        单人: { rules: '每天 21:00 后可用 · 随时退 · 可堂食', summary: '3 样 · 适合 1 人', groups: [
+        单人: { image: 'order/samples/muwu-single.jpg', rules: '每天 21:00 后可用 · 随时退 · 可堂食', summary: '3 样 · 适合 1 人', groups: [
           { name: '烤串', items: [['羊肉串', '×5', '¥30'], ['烤馒头片', '×2', '¥6']] },
           { name: '饮品', items: [['冰镇啤酒', '×1', '¥12']] }] } } },
   });
@@ -117,10 +117,10 @@
   const CAFE = {
     '麦当劳': { where: '到店自取', original: 26, prep: 5, unit: '份数', swap: '换一份',
       addons: [
-        { name: '脆薯饼', tag: '有 64 人换购', price: 5, original: 9 },
-        { name: '热豆浆', tag: '有 31 人换购', price: 4, original: 7 },
-        { name: '苹果派', tag: '有 22 人换购', price: 4.9, original: 8 },
-        { name: '麦辣鸡翅', tag: '收录 2 年', price: 9.9, original: 15 }] },
+        { name: '脆薯饼', tag: '有 64 人换购', price: 5, original: 9, image: 'order/samples/hash-brown.jpg' },
+        { name: '热豆浆', tag: '有 31 人换购', price: 4, original: 7, image: 'order/samples/soy-milk.jpg' },
+        { name: '苹果派', tag: '有 22 人换购', price: 4.9, original: 8, image: 'order/samples/apple-pie.jpg' },
+        { name: '麦辣鸡翅', tag: '有 45 人换购', price: 9.9, original: 15, image: 'order/samples/chicken-wings.jpg' }] },
     'Grid Coffee（万象城店）': { where: '到店自取', original: 18, prep: 12, unit: '杯数', swap: '换一杯',
       addons: [
         { name: '巴斯克芝士蛋糕', tag: '收录 2 年', price: 5.9, original: 16, image: 'order/samples/basque-cheesecake.jpg' },
@@ -241,9 +241,18 @@
   }
 
   /* ───────── 一键下单 ───────── */
-  function quickSheet(c, s, base, tag, clock) {
+  function quickSheet(c, s, base, tag, clock, deal) {
     const X = store(CAFE, c.t) || { addons: [], prep: 10, unit: '份数', swap: '换一份' };
-    const rec = c.rec || {};
+    let rec = c.rec || {};
+    let original = X.original;
+    // 从卡片上的某条团购进入：已选商品换成这条团购
+    if (deal != null && c.deals?.[deal]) {
+      const [, p, disc, title] = c.deals[deal];
+      rec = { n: shortName(title), spec: title.includes('（') ? title.split('（')[1].replace('）', '') : title.split(' + ').slice(1).join(' · '),
+        p, img: c.dealImg?.[deal] || c.img };
+      original = originalOf(num(p), disc);
+      tag = c.rec && title.includes(String(c.rec.n).slice(0, 3)) ? tag : '';   // 只有和推荐商品同款才保留「上次那份」
+    }
     const price = num(rec.p);
     const now = hm(clock);
     const ready = now + (X.prep || 10);
@@ -262,7 +271,7 @@
       ${addons.length ? `<amap-order-addons heading="顺手下单" desc="一起出餐，不用再排" items="${json(addons)}"></amap-order-addons>` : ''}
       <amap-order-payment cups="1" cups-label="${esc(X.unit)}" method="微信支付 (已开通免密支付)"></amap-order-payment>
       <amap-order-terms text="到店出示取餐码 · 下单即同意《服务条款》"></amap-order-terms>
-      ${footer(price, X.original, '免密支付')}`);
+      ${footer(price, original, '免密支付')}`);
   }
 
   /* ───────── 对外 ───────── */
@@ -271,7 +280,7 @@
     const { c, kind, tag } = card;
     const clock = CLOCKS[s.time] || '12:30';
     const sel = Math.max(0, Number(opts.deal) || 0);
-    if (kind === 'cafe') return quickSheet(c, s, base, tag, clock);
+    if (kind === 'cafe') return quickSheet(c, s, base, tag, clock, opts.deal == null ? null : sel);
     if (kind === 'scenic') return scenicSheet(c, s, base, sel, clock);
     return groupSheet(c, s, base, sel);
   }
