@@ -11,23 +11,28 @@
   const s = { scene: I.SCENE[initial] ? initial : 'shop' };
   Object.assign(s, I.SCENE[s.scene].preset);
 
-  const DIM_ORDER = ['move', 'grid', 'city', 'abs', 'poi', 'time', 'fav'];
+  const DIM_ORDER = ['move', 'grid', 'city', 'dest', 'poi', 'time', 'fav'];
+  // 终点类型：s.scene = 所在片区（商场 / 景区 / 写字楼），s.abs = area | point（餐饮单店，沿用当前片区）
+  const destOf = () => (s.abs === 'point' ? 'point' : s.scene);
+  // 样例只是一组预设：所有维度都与某个样例一致时它才高亮
+  const SAMPLE_KEYS = ['move', 'grid', 'city', 'abs', 'time', 'fav', 'poi'];
+  const sampleOn = (k) => s.scene === k && SAMPLE_KEYS.every((d) => I.SCENE[k].preset[d] === s[d]);
 
   function renderPanel() {
     $('scenes').innerHTML = Object.entries(I.SCENE).map(([k, v]) => `
-      <button type="button" class="scene" data-scene="${k}" aria-pressed="${s.scene === k}">
+      <button type="button" class="scene" data-scene="${k}" aria-pressed="${sampleOn(k)}">
         <b>${esc(v.n)}</b><span>${esc(v.short)}</span><em>Figma ${esc(v.figma)}</em>
       </button>`).join('');
 
     $('dims').innerHTML = DIM_ORDER.map((key) => {
       const d = I.DIM[key];
-      const legal = key === 'abs' ? I.SCENE[s.scene].abs : null;
       const off = key === 'poi' && s.abs !== 'point';
+      const cur = key === 'dest' ? destOf() : s[key];
       return `<div class="dim"${off ? ' data-disabled' : ''}>
         <div class="dim__head"><span class="dim__label">${esc(d.label)}</span><span class="dim__hint">${esc(d.hint)}</span></div>
         <div class="chips" role="group" aria-label="${esc(d.label)}">${Object.entries(d.opts).map(([v, n]) => {
-          const dis = off || (legal && !legal.includes(v));
-          return `<button type="button" class="chip" data-k="${key}" data-v="${v}" aria-pressed="${s[key] === v && !dis}"${dis ? ' disabled' : ''}>${esc(n)}</button>`;
+          const dis = off;
+          return `<button type="button" class="chip" data-k="${key}" data-v="${v}" aria-pressed="${cur === v && !dis}"${dis ? ' disabled' : ''}>${esc(n)}</button>`;
         }).join('')}</div></div>`;
     }).join('');
 
@@ -49,8 +54,6 @@
   }
 
   function render(resetScroll = false) {
-    const sc = I.SCENE[s.scene];
-    if (!sc.abs.includes(s.abs)) s.abs = sc.abs[0];
     renderPanel();
     renderPhone(resetScroll);
   }
@@ -65,7 +68,15 @@
       return;
     }
     const chip = e.target.closest('button[data-k]');
-    if (chip && !chip.disabled) { s[chip.dataset.k] = chip.dataset.v; render(); return; }
+    if (chip && !chip.disabled) {
+      const { k, v } = chip.dataset;
+      if (k === 'dest') {
+        if (v === 'point') s.abs = 'point';
+        else { s.scene = v; s.abs = 'area'; }
+      } else s[k] = v;
+      render(k === 'dest');
+      return;
+    }
     const go = e.target.closest('[data-goto]');
     if (go) {
       const el = $('page').querySelector(`[data-mod="${go.dataset.goto}"]`) || $('page').querySelector('.pg-top');

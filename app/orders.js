@@ -81,6 +81,26 @@
           { name: '商品', items: [['洁面旅行装', '×1', ''], ['精华小样', '×1', ''], ['面霜小样', '×1', '']] }] } } },
   };
 
+  // 单店按时段：平时满记甜品、21 点后木屋烧烤（饭点沿用胡大饭馆，早高峰麦当劳见 CAFE）
+  Object.assign(SHOP, {
+    '满记甜品': { where: '本店可用', sold: ['已售 6800', '已售 1.5 万'],
+      deals: {
+        双人下午茶: { rules: '周一至周日 14:00–18:00 可用 · 随时退 · 可堂食', summary: '3 样 · 适合 2 人', groups: [
+          { name: '甜品', items: [['杨枝甘露', '×1', '¥36'], ['芒果班戟', '×1', '¥32']] },
+          { name: '饮品', items: [['港式冻柠茶', '×2', '¥30']] }] },
+        单人: { rules: '周一至周日可用 · 随时退 · 可堂食 · 可打包', summary: '2 道 · 适合 1 人', groups: [
+          { name: '甜品', items: [['招牌芒果西米捞', '×1', '¥28']] },
+          { name: '饮品', items: [['港式冻柠茶', '×1', '¥15']] }] } } },
+    '木屋烧烤': { where: '营业至 02:00 · 本店可用', sold: ['已售 9300', '已售 2.2 万'],
+      deals: {
+        双人: { rules: '每天 17:00–02:00 可用 · 随时退 · 可堂食', summary: '6 样 · 适合 2 人', groups: [
+          { name: '烤串', items: [['羊肉串', '×10', '¥60'], ['烤鸡翅', '×4', '¥32'], ['烤韭菜', '1 份', '¥12'], ['烤馒头片', '×4', '¥12']] },
+          { name: '饮品', items: [['冰镇啤酒', '×2', '¥24'], ['冰峰汽水', '×2', '¥10']] }] },
+        单人: { rules: '每天 21:00 后可用 · 随时退 · 可堂食', summary: '3 样 · 适合 1 人', groups: [
+          { name: '烤串', items: [['羊肉串', '×5', '¥30'], ['烤馒头片', '×2', '¥6']] },
+          { name: '饮品', items: [['冰镇啤酒', '×1', '¥12']] }] } } },
+  });
+  // 单店按片区换分店名（胡大饭馆 24h（钟楼店）等），内容沿用总店
   const SCENIC = {
     '西安钟楼': { where: '钟楼盘道东检票口', sold: ['已售 5.2 万', '已售 1.1 万'],
       extra: [{ at: 1, name: '优待票(学生/儿童)', price: 25, sold: '已售 2.4 万' }],
@@ -95,6 +115,12 @@
   };
 
   const CAFE = {
+    '麦当劳': { where: '到店自取', original: 26, prep: 5, unit: '份数', swap: '换一份',
+      addons: [
+        { name: '脆薯饼', tag: '有 64 人换购', price: 5, original: 9 },
+        { name: '热豆浆', tag: '有 31 人换购', price: 4, original: 7 },
+        { name: '苹果派', tag: '有 22 人换购', price: 4.9, original: 8 },
+        { name: '麦辣鸡翅', tag: '收录 2 年', price: 9.9, original: 15 }] },
     'Grid Coffee（万象城店）': { where: '到店自取', original: 18, prep: 12, unit: '杯数', swap: '换一杯',
       addons: [
         { name: '巴斯克芝士蛋糕', tag: '收录 2 年', price: 5.9, original: 16, image: 'order/samples/basque-cheesecake.jpg' },
@@ -115,6 +141,9 @@
   };
 
   /* ───────── 工具 ───────── */
+  // 先按完整店名找，找不到再按品牌（括号前）找：单店按片区换分店名，内容共用
+  const brand = (t) => String(t).split('（')[0].trim();
+  const store = (map, t) => map[t] || Object.entries(map).find(([k]) => brand(k) === brand(t))?.[1];
   const num = (p) => parseFloat(String(p).replace(/[^\d.]/g, '')) || 0;
   function originalOf(price, disc) {
     const m = String(disc || '').match(/([\d.]+)\s*折/);
@@ -145,7 +174,7 @@
 
   /* ───────── 看团购 / 看优惠 ───────── */
   function groupSheet(c, s, base, sel) {
-    const X = SHOP[c.t] || {};
+    const X = store(SHOP, c.t) || {};
     const items = c.deals.map(([type, p, disc, title], i) => {
       const extra = pick(X.deals, title);
       const free = isFree(disc);
@@ -183,7 +212,7 @@
     return { list, first: list.findIndex((x) => !x.disabled) };
   }
   function scenicSheet(c, s, base, sel, clock) {
-    const X = SCENIC[c.t] || {};
+    const X = store(SCENIC, c.t) || {};
     let tickets = c.deals.map(([, p, disc, title], i) => {
       const price = num(p);
       return { name: shortName(title), price, original: originalOf(price, disc), off: /折|省/.test(disc) ? disc : '', sold: X.sold?.[i] ?? '' };
@@ -213,7 +242,7 @@
 
   /* ───────── 一键下单 ───────── */
   function quickSheet(c, s, base, tag, clock) {
-    const X = CAFE[c.t] || { addons: [], prep: 10, unit: '份数', swap: '换一份' };
+    const X = store(CAFE, c.t) || { addons: [], prep: 10, unit: '份数', swap: '换一份' };
     const rec = c.rec || {};
     const price = num(rec.p);
     const now = hm(clock);

@@ -8,11 +8,11 @@
 (() => {
   /* ───────── 维度（左侧面板） ───────── */
   const SCENE = {
-    shop:    { n: '开车去商场',       short: '商场 · 消费',   abs: ['area', 'point'], figma: '812:7852',
+    shop:    { n: '开车去商场',       short: '商场 · 消费',   figma: '812:7852',
                preset: { move: 'car',   grid: 'mid',  city: 'in',  abs: 'area', time: 'meal',  fav: 'no',  poi: 'ok' } },
-    explore: { n: '外地游客到钟楼',   short: '景区 · 体验',   abs: ['area'],          figma: '812:7853',
+    explore: { n: '外地游客到钟楼',   short: '景区 · 体验',   figma: '812:7853',
                preset: { move: 'metro', grid: 'low',  city: 'out', abs: 'area', time: 'other', fav: 'yes', poi: 'ok' } },
-    commute: { n: '上班族打车到公司', short: '写字楼 · 通勤', abs: ['area'],          figma: '812:7854',
+    commute: { n: '上班族打车到公司', short: '写字楼 · 通勤', figma: '812:7854',
                preset: { move: 'taxi',  grid: 'high', city: 'in',  abs: 'area', time: 'am',    fav: 'no',  poi: 'ok' } },
   };
   const DIM = {
@@ -22,11 +22,12 @@
             opts: { low: '0–1 次（首次到访）', mid: '2–3 次（偶尔来）', high: '≥4 次（常去地点）' } },
     city: { label: 'L2 常驻城市', hint: '决定当地特色菜、酒店榜、首张前置、异地限行',
             opts: { out: '非常驻城市', in: '常驻城市内' } },
-    abs:  { label: 'L3 终点类型', hint: '景区与写字楼只能是 AOI，POI 仅指餐饮单店',
-            opts: { area: 'AOI（片区）', point: 'POI（单店 · 仅餐饮）' } },
-    poi:  { label: 'L3 到店状态', hint: '仅 POI，决定扫街榜 TOP 3 是否被唤起',
+    // 终点类型：前三项是 AOI 片区（决定页头、扫街榜、周边推荐）；餐饮单店沿用当前片区
+    dest: { label: 'L3 终点类型', hint: '商场 / 景区 / 写字楼为 AOI 片区；餐饮单店为 POI，沿用当前片区',
+            opts: { shop: '商场（AOI）', explore: '景区（AOI）', commute: '写字楼（AOI）', point: '餐饮单店（POI）' } },
+    poi:  { label: 'L3 到店状态', hint: '仅餐饮单店，决定扫街榜 TOP 3 是否被唤起',
             opts: { ok: '正常营业', queue: '排队 90 分钟', closed: '今日已打烊' } },
-    time: { label: 'L4 时段', hint: '决定 TOP 3 标题、还能待多久、末班车位置、通勤时间线',
+    time: { label: 'L4 时段', hint: '决定单店、TOP 3 标题、还能待多久、末班车、通勤时间线；已关门的地点不推荐',
             opts: { am: '早高峰', meal: '饭点（午 / 晚餐）', other: '平时', night: '21 点后' } },
     fav:  { label: 'L5 收藏', hint: '命中时出「你的收藏就在附近」，位于驾车服务之前',
             opts: { no: '附近无我的收藏', yes: '我收藏过的店就在附近' } },
@@ -44,6 +45,12 @@
                point: { address: '胡大饭馆 24h（砺街总店）· 碑林区砺街 18 号', energy: '28' } },
     explore: { area:  { address: '地铁2号线 · 钟楼(地铁站)', energy: '54' } },
     commute: { area:  { address: '中贸广场 B 座 · 长安南路 79 号', energy: '28', place: '中贸广场 B 座', street: '长安南路 79 号' } },
+  };
+  const headOf = (s) => {
+    const area = HEAD[s.scene].area;
+    if (s.abs !== 'point') return area;
+    const p = pointOf(s);
+    return { address: `${p.t} · ${p.address}`, energy: area.energy, place: p.t, street: p.address };
   };
   const RIDE = { provider: '享道-经济型', driver: '何师傅·陕 AA01306' };
 
@@ -111,18 +118,51 @@
         deals: [['团', '15', '4.6折', '招牌小面 + 卤蛋']],
         rec: { n: '小面 + 豆腐脑早餐组', why: '最多收藏', spec: '含推荐菜', note: '｜随时退｜不限购', p: '18.9', img: IMG + 'order-xiaomian-doufunao.jpg' } }] },
   };
-  /* 单 POI 到达：这家店本身（Figma 858:6486） */
+  /* 单 POI 到达：这家店本身（Figma 858:6486）；饭点为胡大饭馆，其他时段见 POINT */
   const POICARD = { t: '胡大饭馆 24h（砺街总店）', d: '距您 62 米', sc: '4.8', sl: '超棒', cat: '川菜', pp: '¥150/人', nav: '3652', fav: '10.7w+', pg: '1/12',
     img: IMG + 'huda-fanguan-wide.jpg', rank: '碑林区川菜榜单 · 第 1 名', st: '营业中', rev: '关晓彤推荐来的！冲他家的蒜蓉酸辣螃蟹…', rc: 252,
     deals: [['团', '98', '5.6折', '夏宫双人招牌套餐（提前一天预约）'], ['团', '128', '6.8折', '满汉全席招牌套餐（提前一天预约）']] };
   const TOP_SPARE = { t: '老孙家泡馍（东大街店）', d: '520 米', sc: '4.7', sl: '超棒', cat: '泡馍', pp: '¥48/人', nav: '2210', fav: '5.2w+', pg: '1/14', img: IMG + 'laosunjia.jpg',
     rank: '碑林区陕菜榜 · 第 2 名', st: '营业中', rev: '掰馍掰到手酸，汤是真的鲜…', rc: 176,
     deals: [['团', '58', '7.2折', '单人泡馍套餐'], ['团', '108', '6.9折', '双人优选套餐']] };
-  const topKey = (s) => (s.scene === 'shop'
-    ? ((s.time === 'meal' || s.time === 'night' || s.abs === 'point') ? 'shop_eat' : 'shop_go') : s.scene);
+  /* 单 POI 到达按时段换店（真实品牌，分店名按所在片区）：早高峰麦当劳早餐 · 饭点胡大饭馆 · 平时满记甜品 · 21 点后木屋烧烤 */
+  const BRANCH = {
+    shop:    { tag: '万象城店', addr: '长安南路 289 号 · 西安万象城 B1', d: '距您 62 米' },
+    explore: { tag: '钟楼店',   addr: '东大街 1 号 · 钟楼饭店 1 层',    d: '距您 80 米' },
+    commute: { tag: '中贸广场店', addr: '长安南路 79 号 · 中贸广场 1 层', d: '距您 45 米' },
+  };
+  const POINT = {
+    am: { brand: '麦当劳', kind: 'cafe', sc: '4.6', sl: '很棒', cat: '快餐 · 早餐', pp: '¥25/人', nav: '2310', fav: '8.2k+', pg: '1/9',
+      rank: '雁塔区早餐榜 · 第 1 名', st: '营业中', rev: '早上赶时间，手机下单到店就能拿…', rc: 186, open: '06:00-23:00',
+      deals: [['团', '13.9', '5.3折', '猪柳蛋麦满分 + 薯饼 + 中杯拿铁']],
+      rec: { n: '猪柳蛋麦满分套餐', why: '上次那份', whyLow: '早餐热卖', spec: '猪柳蛋麦满分·薯饼·中杯拿铁', note: '｜随时退｜不限购', p: '13.9', img: '', swap: '换一份' } },
+    meal: { brand: '胡大饭馆 24h', kind: 'food', ...POICARD, open: '00:00-24:00' },
+    other: { brand: '满记甜品', kind: 'food', sc: '4.7', sl: '超棒', cat: '甜品', pp: '¥38/人', nav: '1460', fav: '2.3w+', pg: '1/10',
+      rank: '雁塔区甜品榜 · 第 2 名', st: '营业中', rev: '杨枝甘露料很足，下午来不用排队…', rc: 143, open: '10:00-22:30',
+      deals: [['团', '49', '6.2折', '杨枝甘露 + 芒果班戟双人下午茶'], ['团', '25', '7.5折', '单人招牌甜品套餐']] },
+    night: { brand: '木屋烧烤', kind: 'food', sc: '4.6', sl: '很棒', cat: '烧烤 · 宵夜', pp: '¥95/人', nav: '1890', fav: '1.6w+', pg: '1/11',
+      rank: '雁塔区宵夜榜 · 第 1 名', st: '营业至 02:00', rev: '凌晨还很热闹，羊肉串现烤…', rc: 208, open: '16:00-02:00',
+      deals: [['团', '128', '6.4折', '夜宵双人烤串套餐'], ['团', '68', '7.6折', '单人宵夜烤串 + 啤酒']] },
+  };
+  /** 当前时段、当前片区的到达单店（卡片数据 + 店名 / 地址） */
+  const pointOf = (s) => {
+    const p = POINT[s.time] || POINT.meal;
+    const b = BRANCH[s.scene] || BRANCH.shop;
+    if (s.time === 'meal' && s.scene === 'shop') return { ...p, address: '碑林区砺街 18 号' };   // Figma 原稿
+    const name = s.time === 'meal' ? `胡大饭馆 24h（${b.tag}）` : `${p.brand}（${b.tag}）`;
+    return { ...p, t: name, d: b.d, address: b.addr, img: s.time === 'meal' ? p.img : '' };
+  };
+  const brandOf = (t) => String(t).split('（')[0];
+  // 单店受阻时 TOP 3 也按时段：早高峰 / 平时 → 咖啡早餐（一键下单），饭点 / 21 点后 → 正餐
+  const topKey = (s) => {
+    if (s.abs === 'point') return (s.time === 'am' || s.time === 'other') ? 'commute' : 'shop_eat';
+    return s.scene === 'shop' ? ((s.time === 'meal' || s.time === 'night') ? 'shop_eat' : 'shop_go') : s.scene;
+  };
   const topCards = (s) => {
     const arr = TOP[topKey(s)].cards;
-    return s.abs !== 'point' ? arr : arr.filter((c) => c.t !== POICARD.t).concat([TOP_SPARE]).slice(0, 3);
+    if (s.abs !== 'point') return arr;
+    const self = brandOf(pointOf(s).t);
+    return arr.filter((c) => brandOf(c.t) !== self).concat([TOP_SPARE]).slice(0, 3);
   };
   const topTitle = (s) => {
     if (s.abs === 'point') return '猜你想吃';
@@ -219,7 +259,7 @@
     commute: { low: ['quality', 'fire', 'slow'], mid: ['fire', 'massage', 'slow'], high: ['massage', 'newly', 'slow'] },
   };
   const LEAD_OUT = { am: 'fire', meal: 'local', other: 'tea', night: 'hotel' };
-  const picksOn = (s) => {
+  const picksOn = (s, at) => {
     const cap = s.abs === 'point' ? 2 : 3;
     let base = s.abs === 'point' ? ['slow', 'massage'] : PICK_ORDER[s.scene][s.grid].slice();
     base = base.filter((k) => k !== 'tea' && k !== 'hotel');
@@ -235,7 +275,8 @@
       if (p.outOnly && s.city !== 'out') continue;
       if (p.timeOnly && p.timeOnly !== s.time) continue;
       if (s.abs === 'point' && p.food) continue;
-      out.push({ k, p, items: p.items[s.scene] });
+      const items = p.items[s.scene].filter(([name]) => openAt(name, s, at));
+      if (items.length) out.push({ k, p, items });
     }
     return out;
   };
@@ -264,19 +305,52 @@
   const GAS = [['中国石化加油站 (科技路站)', ['距终点 1.2 公里', '92# 优惠 0.8 元/升'], '直降 1.2 元'],
                ['中国石油加油站（高新路站）', ['距终点 2.5 公里'], '直降 1.2 元']];
 
+  /* ───────── 营业时间：到达时已关门（或还没开门）的地点不推荐 ─────────
+   * 键为名称片段；'HH:MM-HH:MM'，结束早于开始表示跨午夜；未登记的地点视为营业 */
+  const HOURS = [
+    ['生命之树', '10:00-22:00'], ['西安电视塔', '09:00-20:00'], ['秦腔艺术博物馆', '09:00-22:00'], ['粉巷', '10:00-02:00'],
+    ['星巴克臻选', '07:30-21:00'], ['小雁塔广场', '06:00-22:30'],
+    ['大唐不夜城', '00:00-24:00'], ['西影电影园区', '09:00-21:00'], ['陕西历史博物馆', '08:30-18:00'], ['洒金桥美食街', '10:00-02:00'],
+    ['永宁门', '08:00-22:00'], ['回民街', '09:00-01:00'], ['拓得时代训练馆', '06:00-23:00'], ['易俗社文化街区', '10:00-22:00'], ['长安书院', '09:00-21:30'],
+    ['喜茶', '10:00-22:00'], ['奈雪', '10:00-22:00'], ['Arabica', '08:00-21:00'], ['Manner', '07:30-20:00'], ['蓝瓶咖啡', '08:00-20:00'],
+    ['松筋堂', '11:00-02:00'], ['筋膜实验室', '11:00-23:00'], ['足道 · 小憩', '11:00-02:00'],
+  ];
+  const mins = (t) => { const [h, m] = String(t).split(':').map(Number); return h * 60 + (m || 0); };
+  const hoursOf = (name) => (HOURS.find(([k]) => String(name).includes(k)) || [])[1];
+  /** 到达时刻（CLOCK[s.time]）是否营业；at 指定其他时刻（午休 12:00、下班 18:30 这类面向之后时段的模块） */
+  const openAt = (name, s, at) => {
+    const h = hoursOf(name);
+    if (!h) return true;
+    const [a, b] = h.split('-').map(mins); const now = mins(at || CLOCK[s.time]);
+    return a <= b ? (now >= a && now < b) : (now >= a || now < b);
+  };
+
   /* ───────── 页面编排（原表 layout()） ───────── */
   const busOn = (s) => s.move === 'metro' && s.time !== 'am';
-  const dwellQ = (s) => {
-    if (s.abs === 'point') return '吃完还能待多久？';
+  /** 还能待多久：短档 / 长档按营业时间过滤；单店沿用所在片区的数据 */
+  const dwellOf = (s) => {
     const d = DWELL[s.scene];
-    return d && d.q ? d.q[s.time] : null;
+    if (!d || !d.short) return null;
+    const short = d.short.filter((x) => openAt(x.name, s));
+    const long = d.long.filter((k) => openAt(SPOT[k].name, s));
+    return short.length || long.length ? { short, long } : null;
   };
+  const dwellQ = (s) => {
+    if (!dwellOf(s)) return null;
+    if (s.abs === 'point') return '吃完还能待多久？';
+    return DWELL[s.scene].q[s.time];
+  };
+  const restOf = (s) => DWELL.commute.rest.filter((x) => openAt(x.name, s));
+  // 下班好去处面向下班后（按 18:30 判断；21 点后按到达时刻）
+  const offworkOf = (s) => OFFWORK.filter((k) => openAt(SPOT[k].name, s, s.time === 'night' ? null : '18:30'));
+  const LUNCH_AT = '12:00';   // 午休去哪儿按午休时刻判断
   const layout = (s) => {
     const L = ['util'];
     if (s.move === 'taxi') L.push('pay');
+    if (s.abs === 'point') L.push('shop');
+    // 21 点后末班车：排在到达对象（付款卡 / 商家卡）之后、所有推荐之前
     if (busOn(s) && s.time === 'night') L.push('bus');
     if (s.abs === 'point') {
-      L.push('shop');
       if (POIST[s.poi].blocked) L.push('top');
       L.push('dwell', 'picks');
     } else if (s.scene === 'shop') {
@@ -293,7 +367,8 @@
     if (busOn(s) && s.time !== 'night') L.push('bus');
     if (s.fav === 'yes') L.push('fav');
     if (s.move === 'car') L.push('drive');
-    return L.filter((k) => k !== 'dwell' || !!dwellQ(s));
+    const empty = { dwell: !dwellQ(s), picks: !picksOn(s).length, lunch: !picksOn(s, LUNCH_AT).length, rest: !restOf(s).length, offwork: !offworkOf(s).length };
+    return L.filter((k) => !empty[k]);
   };
   const NAME = { pay: '打车付款', util: '周边服务', bus: '今晚末班车', shop: '到达商家卡', top: '扫街榜 TOP 3', dish: '当地特色菜',
     picks: '附近精选', dwell: '还能待多久', rest: '工作休息出来走走', lunch: '午休去哪儿', offwork: '下班好去处', fav: '你的收藏就在附近', drive: '驾车服务' };
@@ -301,15 +376,15 @@
     switch (k) {
       case 'pay': return '起终点 · 共计 18.28 元 · 物品遗失 / 联系司机 · 立即支付';
       case 'util': { const u = utilOf(s); return `${u.length} 项：${u.slice(0, 4).join(' · ')} …`; }
-      case 'bus': return '地铁 + 夜班公交 2 条' + (s.time === 'night' ? ' · 21 点后提到推荐之前' : '');
-      case 'shop': return '这家店本身：评分 · 榜单排名 · 团购 2 档 · 看团购 / 联系商家' + (s.poi === 'closed' ? '（今日已打烊）' : '');
+      case 'bus': return '地铁 + 夜班公交 2 条' + (s.time === 'night' ? ' · 21 点后排在到达对象之后、推荐之前' : '');
+      case 'shop': { const p = pointOf(s); return `${p.t} · ${p.kind === 'cafe' ? '早餐一键下单' : `团购 ${p.deals.length} 档 · 看团购 / 联系商家`}` + (s.poi === 'closed' ? '（今日已打烊）' : ''); }
       case 'top': { const k2 = TOP[topKey(s)].kind;
         return `扫街榜 · ${topTitle(s)} · 主按钮：${k2 === 'cafe' ? '一键下单' + (s.grid === 'high' ? '（首卡上次那杯）' : '') : BTN[k2]}${s.abs === 'point' ? ' · 受阻唤起' : ''}`; }
       case 'dish': return '6 道 · 必吃排名 · 仅外地游客';
-      case 'picks': case 'lunch': return picksOn(s).map((x) => `${x.p.t} → ${x.p.src}`).join('；');
-      case 'dwell': return `${dwellQ(s)} · 短档 2 条 + 1 小时以上 3 张图片卡 + 查看更多`;
-      case 'rest': return '短档 2 条';
-      case 'offwork': return '图片卡 3 张 + 查看更多';
+      case 'picks': case 'lunch': return picksOn(s, k === 'lunch' ? LUNCH_AT : null).map((x) => `${x.p.t} → ${x.p.src}`).join('；');
+      case 'dwell': { const d = dwellOf(s); return `${dwellQ(s)} · 短档 ${d.short.length} 条 + 1 小时以上 ${d.long.length} 张图片卡（已关门的不推荐）`; }
+      case 'rest': return `短档 ${restOf(s).length} 条`;
+      case 'offwork': return `图片卡 ${offworkOf(s).length} 张 + 查看更多`;
       case 'fav': return '命中 2 家 · 导航过去';
       case 'drive': return (s.city === 'out' ? '异地限行 · ' : '') + ((s.time === 'meal' || s.time === 'night') ? '代驾 · ' : '') + '泊车指引 2 · 优惠加油 2';
       default: return '';
@@ -317,8 +392,8 @@
   };
 
   window.ArrivalIntent = {
-    SCENE, DIM, CLOCK, POIST, HEAD, RIDE, FAC_KEY, utilOf, TOP, POICARD, topKey, topCards, topTitle, BTN,
+    SCENE, DIM, CLOCK, POIST, HEAD, headOf, pointOf, RIDE, FAC_KEY, utilOf, TOP, POICARD, topKey, topCards, topTitle, BTN,
     DWELL, SPOT, OFFWORK, DISH, PICK, THEME, pickImg, picksOn, FAVS, LASTBUS, PARK, GAS,
-    busOn, dwellQ, layout, NAME, describe,
+    LUNCH_AT, busOn, dwellQ, dwellOf, restOf, offworkOf, openAt, layout, NAME, describe,
   };
 })();
