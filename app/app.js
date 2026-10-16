@@ -39,7 +39,7 @@
     const L = I.layout(s);
     $('order').innerHTML = L.map((k, i) => `
       <li><button type="button" class="order__item" data-goto="${k}">
-        <span class="order__no">${i + 1}</span><span class="order__name">${esc(I.NAME[k])}</span><span class="order__desc">${esc(I.describe(k, s))}</span>
+        <span class="order__no">${i + 1}</span><span class="order__name">${esc(I.titleOf(k, s))}</span><span class="order__desc">${esc(I.describe(k, s))}</span>
       </button></li>`).join('');
   }
 

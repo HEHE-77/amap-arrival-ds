@@ -93,7 +93,7 @@
       });
       return `<amap-poi-card theme="${I.THEME[p.tint]}" heading="${esc(p.t)}" subtitle="${esc(p.sub)}" items="${json(list)}"></amap-poi-card>`;
     }).join(''), '查看其他榜单'),
-    lunch: (s) => R.picks(s, '午休去哪儿', I.LUNCH_AT),
+    lunch: (s) => R.picks(s, I.titleOf('lunch', s), I.lunchAt(s)),
 
     dwell: (s) => {
       const d = I.dwellOf(s);   // 已按到达时刻过滤掉关门的地点
@@ -107,8 +107,8 @@
           ${scrollSection('', recommendRow(d.long), '查看更多')}
         </div>` : ''}</div>`;
     },
-    rest: (s) => `<amap-section heading="工作休息出来走走">${nearby(I.restOf(s))}</amap-section>`,
-    offwork: (s) => scrollSection('下班好去处', recommendRow(I.offworkOf(s)), '查看更多'),
+    rest: (s) => `<amap-section heading="${esc(I.titleOf('rest', s))}">${nearby(I.restOf(s))}</amap-section>`,
+    offwork: (s) => scrollSection(I.titleOf('offwork', s), recommendRow(I.offworkOf(s)), '查看更多'),
 
     fav: () => `<amap-section heading="你的收藏就在附近">${I.FAVS.map((f) =>
       `<amap-place-row name="${esc(f.name)}" distance="${esc(f.distance)}" details="${json(f.details)}" image="${esc(img(f.image))}"></amap-place-row>`).join('')}</amap-section>`,

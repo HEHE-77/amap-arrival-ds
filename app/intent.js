@@ -18,7 +18,7 @@
   const DIM = {
     move: { label: 'L1 出行方式', hint: '决定付款卡、末班车、工具条首项、驾车服务',
             opts: { car: '自驾', slow: '骑行 / 步行', metro: '公交地铁', taxi: '打车' } },
-    grid: { label: 'L2 到访频次', hint: '近 90 天该 1km 网格到访次数，决定附近精选与「上次那杯」',
+    grid: { label: 'L2 到访频次', hint: '近 90 天该 1km 网格到访次数，决定附近精选与「上次那杯」；写字楼 0–3 次按访客',
             opts: { low: '0–1 次（首次到访）', mid: '2–3 次（偶尔来）', high: '≥4 次（常去地点）' } },
     city: { label: 'L2 常驻城市', hint: '决定当地特色菜、酒店榜、首张前置、异地限行',
             opts: { out: '非常驻城市', in: '常驻城市内' } },
@@ -77,9 +77,13 @@
     explore: ['游客服务中心', '公共厕所', '行李寄存', '便利店', '警务站', '共享单车停放点'],
     commute: ['便利店', '快递柜', '电梯口', '打印复印', '药房', '共享单车停放点', 'ATM'],
   };
+  // 写字楼的「访客」：首次到 / 偶尔来（不分本地外地）——多是来开会、面试、拜访，不是在这上班；≥4 次按上班族
+  const visitorOf = (s) => s.scene === 'commute' && s.abs !== 'point' && s.grid !== 'high';
+  // 访客先要打印复印、ATM（材料、现金），快递柜对他们用处不大，放最后
+  const UTIL_VISITOR = ['打印复印', 'ATM', '便利店', '电梯口', '药房', '共享单车停放点', '快递柜'];
   const utilOf = (s) => {
     const a = UTIL_MOVE[s.move].slice();
-    UTIL_SCENE[s.scene].forEach((x) => { if (!a.includes(x)) a.push(x); });
+    (visitorOf(s) ? UTIL_VISITOR : UTIL_SCENE[s.scene]).forEach((x) => { if (!a.includes(x)) a.push(x); });
     return a;
   };
 
@@ -214,7 +218,8 @@
     yisushe:    { name: '易俗社文化街区', tag: '文化街区', saves: '2.7w+人收藏',  tint: '#915C5C', image: PR + 'yisushe.jpg' },
     changan:    { name: '长安书院',       tag: '文化街区', saves: '4.1w+人收藏',  tint: '#6D5023', image: PR + 'changan-academy.jpg' },
   };
-  const OFFWORK = ['tuode', 'yisushe', 'changan'];
+  const OFFWORK = ['tuode', 'yisushe', 'changan'];          // 常来（在这上班）：健身、街区
+  const OFFWORK_VISIT = ['datang', 'yisushe', 'changan'];   // 访客：忙完顺路逛逛，不推健身房
 
   /* ───────── 当地特色菜 ───────── */
   const DS = 'dish/samples/';
@@ -283,7 +288,11 @@
     let base = s.abs === 'point' ? ['slow', 'massage'] : PICK_ORDER[s.scene][s.grid].slice();
     base = base.filter((k) => k !== 'tea' && k !== 'hotel');
     let ord;
-    if (s.city === 'out') { const lead = LEAD_OUT[s.time]; ord = [lead].concat(lead !== 'hotel' ? ['hotel'] : [], base); }
+    if (s.city === 'out') {
+      const lead = LEAD_OUT[s.time]; ord = [lead].concat(lead !== 'hotel' ? ['hotel'] : [], base);
+      // 写字楼 · 外地常来 · 饭点：本地菜早吃过了，「吃腻了换换口味」放第一张
+      if (s.scene === 'commute' && s.abs !== 'point' && s.grid === 'high' && s.time === 'meal') ord = ['newly'].concat(ord.filter((k) => k !== 'newly'));
+    }
     else { ord = base.slice(); if (s.time === 'other') ord = ord.slice(0, cap - 1).concat(['tea']); }
     const out = []; const seen = {};
     const take = (k, fill, allowFood) => {
@@ -363,8 +372,16 @@
   };
   const restOf = (s) => DWELL.commute.rest.filter((x) => openAt(x.name, s));
   // 下班好去处面向下班后（按 18:30 判断；21 点后按到达时刻）
-  const offworkOf = (s) => OFFWORK.filter((k) => openAt(SPOT[k].name, s, s.time === 'night' ? null : '18:30'));
+  const offworkOf = (s) => (visitorOf(s) ? OFFWORK_VISIT : OFFWORK).filter((k) => openAt(SPOT[k].name, s, s.time === 'night' ? null : '18:30'));
   const LUNCH_AT = '12:00';   // 午休去哪儿按午休时刻判断
+  const lunchAt = (s) => (visitorOf(s) ? null : LUNCH_AT);   // 访客不在这午休，按到达时刻
+  /** 写字楼模块标题：常来的人按上班节奏（午休 / 下班），访客按「附近」；21 点后统一「附近好去处」 */
+  const titleOf = (k, s) => {
+    if (k === 'offwork') return s.time === 'night' ? '附近好去处' : visitorOf(s) ? '忙完去哪儿' : '下班好去处';
+    if (k === 'lunch') return visitorOf(s) ? '附近精选' : '午休去哪儿';
+    if (k === 'rest') return visitorOf(s) ? '到早了先坐会儿' : '工作休息出来走走';
+    return NAME[k];
+  };
   const layout = (s) => {
     const L = ['util'];
     if (s.move === 'taxi') L.push('pay');
@@ -388,7 +405,7 @@
     if (busOn(s) && s.time !== 'night') L.push('bus');
     if (s.fav === 'yes') L.push('fav');
     if (s.move === 'car') L.push('drive');
-    const empty = { dwell: !dwellQ(s), picks: !picksOn(s).length, lunch: !picksOn(s, LUNCH_AT).length, rest: !restOf(s).length, offwork: !offworkOf(s).length };
+    const empty = { dwell: !dwellQ(s), picks: !picksOn(s).length, lunch: !picksOn(s, lunchAt(s)).length, rest: !restOf(s).length, offwork: !offworkOf(s).length };
     return L.filter((k) => !empty[k]);
   };
   const NAME = { pay: '打车付款', util: '周边服务', bus: '今晚末班车', shop: '到达商家卡', top: '扫街榜 TOP 3', dish: '当地特色菜',
@@ -402,10 +419,10 @@
       case 'top': { const k2 = TOP[topKey(s)].kind;
         return `扫街榜 · ${topTitle(s)} · 主按钮：${k2 === 'cafe' ? '一键下单' + (s.grid === 'high' ? '（首卡上次那杯）' : '') : BTN[k2]}${s.abs === 'point' ? ' · 受阻唤起' : ''}`; }
       case 'dish': return '6 道 · 必吃排名 · 仅外地游客';
-      case 'picks': case 'lunch': return picksOn(s, k === 'lunch' ? LUNCH_AT : null).map((x) => `${x.p.t} → ${x.p.src}`).join('；');
+      case 'picks': case 'lunch': return picksOn(s, k === 'lunch' ? lunchAt(s) : null).map((x) => `${x.p.t} → ${x.p.src}`).join('；');
       case 'dwell': { const d = dwellOf(s); return `${dwellQ(s)} · 短档 ${d.short.length} 条 + 1 小时以上 ${d.long.length} 张图片卡（已关门的不推荐）`; }
       case 'rest': return `短档 ${restOf(s).length} 条`;
-      case 'offwork': return `图片卡 ${offworkOf(s).length} 张 + 查看更多`;
+      case 'offwork': return (visitorOf(s) ? '访客：大唐不夜城替换健身房 · ' : '') + `图片卡 ${offworkOf(s).length} 张 + 查看更多`;
       case 'fav': return '命中 2 家 · 导航过去';
       case 'drive': return (s.city === 'out' ? '异地限行 · ' : '') + ((s.time === 'meal' || s.time === 'night') ? '代驾 · ' : '') + '泊车指引 2 · 优惠加油 2';
       default: return '';
@@ -415,6 +432,6 @@
   window.ArrivalIntent = {
     SCENE, DIM, CLOCK, POIST, HEAD, headOf, taxiOf, pointOf, RIDE, FAC_KEY, utilOf, TOP, POICARD, topKey, topCards, topTitle, BTN,
     DWELL, SPOT, OFFWORK, DISH, PICK, THEME, pickImg, picksOn, FAVS, LASTBUS, PARK, GAS,
-    LUNCH_AT, busOn, dwellQ, dwellOf, restOf, offworkOf, openAt, layout, NAME, describe,
+    LUNCH_AT, lunchAt, visitorOf, titleOf, busOn, dwellQ, dwellOf, restOf, offworkOf, openAt, layout, NAME, describe,
   };
 })();
