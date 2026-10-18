@@ -198,10 +198,16 @@
     shop: { q: { am: null, meal: '吃完还能待多久？', other: '还打算逛多久？', night: '逛到这个点，还想待会儿吗？' },
       short: [{ name: '生命之树', distance: '距您 200 米', details: ['免费', '22:00 关'], image: NB + 'shengming-zhi-shu.jpg' },
               { name: '西安电视塔', distance: '距您 580 米', details: ['登塔 ¥50', '20:00 关'], image: NB + 'xian-tv-tower.jpg' }],
+      // 短档候补：原有地点关门时按顺序补位，保证短档始终 2 条
+      spare: [{ name: '喜茶 · 万象城店', distance: '距您 120 米', details: ['可自取', '22:00 关'], image: 'poi/samples/heytea.png' },
+              { name: 'Manner 咖啡 · L1', distance: '距您 200 米', details: ['人均 ¥18', '20:00 关'], image: 'poi/samples/manner.png' },
+              { name: '蓝瓶咖啡（万象城店）', distance: '距您 140 米', details: ['人均 ¥30', '20:00 关'], image: 'poi/samples/blue-bottle.png' }],
       long: ['datang', 'xiying', 'shaanxi'] },
     explore: { q: { am: '今天打算逛多久？', meal: '吃完接着逛？', other: '逛完还能待多久？', night: '夜场还能去哪？' },
       short: [{ name: '秦腔艺术博物馆', distance: '距您 200 米', details: ['门票 ¥20', '22:00 关'], image: NB + 'qinqiang-museum.jpg' },
               { name: '粉巷', distance: '距您 580 米', details: ['免费', '2:00 关'], image: NB + 'fenxiang.jpg' }],
+      spare: [{ name: '洒金桥菜市', distance: '距您 476 米', details: ['逛早市', '13:00 关'], image: 'poi/samples/sajinqiao-market.png' },
+              { name: '德福巷咖啡街', distance: '距您 508 米', details: ['人均 ¥30', '24:00 关'], image: 'poi/samples/defuxiang-cafe.png' }],
       long: ['sajinqiao', 'yongningmen', 'huimin'] },
     commute: { rest: [{ name: '星巴克臻选店', distance: '距您 150 米', details: ['安静', '21:00 关'], image: NB + 'starbucks-reserve.jpg' },
                       { name: '小雁塔广场', distance: '距您 380 米', details: ['免费', '有长椅'], image: NB + 'xiaoyanta-square.jpg' }] },
@@ -218,6 +224,7 @@
     yisushe:    { name: '易俗社文化街区', tag: '文化街区', saves: '2.7w+人收藏',  tint: '#915C5C', image: PR + 'yisushe.jpg' },
     changan:    { name: '长安书院',       tag: '文化街区', saves: '4.1w+人收藏',  tint: '#6D5023', image: PR + 'changan-academy.jpg' },
   };
+  const LONG_FILL = ['datang', 'sajinqiao', 'huimin', 'yongningmen', 'shaanxi', 'xiying', 'yisushe', 'changan'];   // 长档补位顺序（不含健身房）
   const OFFWORK = ['tuode', 'yisushe', 'changan'];          // 常来（在这上班）：健身、街区
   const OFFWORK_VISIT = ['datang', 'yisushe', 'changan'];   // 访客：忙完顺路逛逛，不推健身房
 
@@ -295,13 +302,15 @@
     }
     else { ord = base.slice(); if (s.time === 'other') ord = ord.slice(0, cap - 1).concat(['tea']); }
     const out = []; const seen = {};
+    // 同一页不重复推荐：「还能待多久」短档已出现的店，附近精选里不再出现
+    const dw = dwellOf(s); const taken = dw ? dw.short.map((x) => x.name) : [];
     const take = (k, fill, allowFood) => {
       const p = PICK[k];
       if (out.length >= cap || seen[k] || !p || !p.items[s.scene]) return;
       if (p.outOnly && s.city !== 'out') return;
       if (!fill && p.timeOnly && p.timeOnly !== s.time) return;
       if (s.abs === 'point' && p.food && !allowFood) return;
-      const items = p.items[s.scene].filter(([name]) => openAt(name, s, at));
+      const items = p.items[s.scene].filter(([name]) => openAt(name, s, at) && !taken.includes(name));
       if (items.length < 2) return;   // 每张榜单卡固定 2 家；关门后凑不满 2 家的榜单整张不出，由后面的榜单补位
       seen[k] = 1; out.push({ k, p, items });
     };
@@ -339,7 +348,7 @@
    * 键为名称片段；'HH:MM-HH:MM'，结束早于开始表示跨午夜；未登记的地点视为营业 */
   const HOURS = [
     ['生命之树', '10:00-22:00'], ['西安电视塔', '09:00-20:00'], ['秦腔艺术博物馆', '09:00-22:00'], ['粉巷', '10:00-02:00'],
-    ['星巴克臻选', '07:30-21:00'], ['小雁塔广场', '06:00-22:30'],
+    ['星巴克臻选', '07:30-21:00'], ['洒金桥菜市', '06:00-13:00'], ['德福巷', '08:00-24:00'], ['小雁塔广场', '06:00-22:30'],
     ['大唐不夜城', '00:00-24:00'], ['西影电影园区', '09:00-21:00'], ['陕西历史博物馆', '08:30-18:00'], ['洒金桥美食街', '10:00-02:00'],
     ['永宁门', '08:00-22:00'], ['回民街', '09:00-01:00'], ['拓得时代训练馆', '06:00-23:00'], ['易俗社文化街区', '10:00-22:00'], ['长安书院', '09:00-21:30'],
     ['喜茶', '10:00-22:00'], ['奈雪', '10:00-22:00'], ['Arabica', '08:00-21:00'], ['Manner', '07:30-20:00'], ['蓝瓶咖啡', '08:00-20:00'],
@@ -361,8 +370,11 @@
   const dwellOf = (s) => {
     const d = DWELL[s.scene];
     if (!d || !d.short) return null;
-    const short = d.short.filter((x) => openAt(x.name, s));
-    const long = d.long.filter((k) => openAt(SPOT[k].name, s));
+    // 各时段条数一致：短档固定 2 条、长档固定 3 张；关门的不推荐，由候补按顺序补位
+    const short = d.short.concat(d.spare || []).filter((x) => openAt(x.name, s)).slice(0, 2);
+    // 长档要待 1 小时以上：按到达后半小时判断（到那儿时已开门、且不会马上关）
+    const later = (() => { const m = (mins(CLOCK[s.time]) + 30) % 1440; return `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`; })();
+    const long = [...new Set(d.long.concat(LONG_FILL))].filter((k) => openAt(SPOT[k].name, s, later)).slice(0, 3);
     return short.length || long.length ? { short, long } : null;
   };
   const dwellQ = (s) => {
