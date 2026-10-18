@@ -302,7 +302,7 @@
       if (!fill && p.timeOnly && p.timeOnly !== s.time) return;
       if (s.abs === 'point' && p.food && !allowFood) return;
       const items = p.items[s.scene].filter(([name]) => openAt(name, s, at));
-      if (!items.length) return;
+      if (items.length < 2) return;   // 每张榜单卡固定 2 家；关门后凑不满 2 家的榜单整张不出，由后面的榜单补位
       seen[k] = 1; out.push({ k, p, items });
     };
     ord.forEach((k) => take(k, false, false));
