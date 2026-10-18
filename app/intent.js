@@ -16,20 +16,20 @@
                preset: { move: 'taxi',  grid: 'high', city: 'in',  abs: 'area', time: 'am',    fav: 'no',  poi: 'ok' } },
   };
   const DIM = {
-    move: { label: 'L1 出行方式', hint: '决定付款卡、末班车、工具条首项、驾车服务',
+    move: { label: '出行方式', hint: '决定付款卡、末班车、工具条首项、驾车服务',
             opts: { car: '自驾', slow: '骑行 / 步行', metro: '公交地铁', taxi: '打车' } },
-    grid: { label: 'L2 到访频次', hint: '近 90 天该 1km 网格到访次数，决定附近精选与「上次那杯」；写字楼 0–3 次按访客',
+    grid: { label: '到访频次', hint: '近 90 天该 1km 网格到访次数，决定附近精选与「上次那杯」；写字楼 0–3 次按访客',
             opts: { low: '0–1 次（首次到访）', mid: '2–3 次（偶尔来）', high: '≥4 次（常去地点）' } },
-    city: { label: 'L2 常驻城市', hint: '决定当地特色菜、酒店榜、首张前置、异地限行',
+    city: { label: '常驻城市', hint: '决定当地特色菜、酒店榜、首张前置、异地限行',
             opts: { out: '非常驻城市', in: '常驻城市内' } },
     // 终点类型：前三项是 AOI 片区（决定页头、扫街榜、周边推荐）；餐饮单店沿用当前片区
-    dest: { label: 'L3 终点类型', hint: '商场 / 景区 / 写字楼为 AOI 片区；餐饮单店为 POI，沿用当前片区',
+    dest: { label: '终点类型', hint: '商场 / 景区 / 写字楼为 AOI 片区；餐饮单店为 POI，沿用当前片区',
             opts: { shop: '商场（AOI）', explore: '景区（AOI）', commute: '写字楼（AOI）', point: '餐饮单店（POI）' } },
-    poi:  { label: 'L3 到店状态', hint: '仅餐饮单店，决定扫街榜 TOP 3 是否被唤起',
+    poi:  { label: '到店状态', hint: '仅餐饮单店，决定扫街榜 TOP 3 是否被唤起',
             opts: { ok: '正常营业', queue: '排队 90 分钟', closed: '今日已打烊' } },
-    time: { label: 'L4 时段', hint: '决定单店、TOP 3 标题、还能待多久、末班车、通勤时间线；已关门的地点不推荐',
+    time: { label: '时段', hint: '决定单店、TOP 3 标题、还能待多久、末班车、通勤时间线；已关门的地点不推荐',
             opts: { am: '早高峰', meal: '饭点（午 / 晚餐）', other: '平时', night: '21 点后' } },
-    fav:  { label: 'L5 收藏', hint: '命中时出「你的收藏就在附近」，位于驾车服务之前',
+    fav:  { label: '收藏', hint: '命中时出「你的收藏就在附近」，位于驾车服务之前',
             opts: { no: '附近无我的收藏', yes: '我收藏过的店就在附近' } },
   };
   const CLOCK = { am: '8:14', meal: '12:30', other: '15:20', night: '21:40' };
