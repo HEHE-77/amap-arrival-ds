@@ -404,7 +404,11 @@
       L.push(...rec);
     }
     if (busOn(s) && s.time !== 'night') L.push('bus');
-    if (s.fav === 'yes') L.push('fav');
+    if (s.fav === 'yes') {
+      // 首次到达：对这里不熟，收藏的店是最确定的去处，提到扫街榜 TOP 3 之后（单店无扫街榜时跟在商家卡后）
+      if (s.grid === 'low') { const at = L.includes('top') ? L.indexOf('top') : L.indexOf('shop'); L.splice(at >= 0 ? at + 1 : L.length, 0, 'fav'); }
+      else L.push('fav');
+    }
     if (s.move === 'car') L.push('drive');
     const empty = emptyOf(s);
     return L.filter((k) => !empty[k]);
@@ -424,7 +428,7 @@
       case 'dwell': { const d = dwellOf(s); return `${dwellQ(s)} · 短档 ${d.short.length} 条 + 1 小时以上 ${d.long.length} 张图片卡（已关门的不推荐）`; }
       case 'rest': return `短档 ${restOf(s).length} 条`;
       case 'offwork': return (visitorOf(s) ? '访客：大唐不夜城替换健身房 · ' : '') + `图片卡 ${offworkOf(s).length} 张 + 查看更多`;
-      case 'fav': return '命中 2 家 · 导航过去';
+      case 'fav': return '命中 2 家 · 导航过去' + (s.grid === 'low' ? ' · 首次到达，提到扫街榜之后' : '');
       case 'drive': return (s.city === 'out' ? '异地限行 · ' : '') + ((s.time === 'meal' || s.time === 'night') ? '代驾 · ' : '') + '泊车指引 2 · 优惠加油 2';
       default: return '';
     }
