@@ -13,7 +13,7 @@
 
   /* ───────── 页头 ───────── */
   function head(s) {
-    const h = I.HEAD[s.scene][s.abs] || I.HEAD[s.scene].area;
+    const h = I.headOf(s);
     const header = s.move === 'taxi'
       ? `<amap-arrival-header variant="taxi" place="${esc(h.place || h.address)}" address="${esc(h.street || '')}"
            provider="${esc(I.RIDE.provider)}" driver="${esc(I.RIDE.driver)}"></amap-arrival-header>`
@@ -44,7 +44,7 @@
       attrs['deal-more'] = '查看更多';
       const why = (i === 0 && s.grid !== 'high' && c.rec.whyLow) ? c.rec.whyLow : c.rec.why;
       attrs.order = JSON.stringify({ image: img(c.rec.img), title: c.rec.n, tag: why, spec: c.rec.spec, note: c.rec.note,
-        price: c.rec.p, actionLabel: '一键下单', swapLabel: '换一杯' });
+        price: c.rec.p, actionLabel: '一键下单', swapLabel: c.rec.swap || '换一杯' });
     }
     // 登记卡片数据，点 CTA / 优惠时按这张卡生成下单浮层（app/orders.js）
     const tag = kind === 'cafe' ? ((i === 0 && s.grid !== 'high' && c.rec.whyLow) ? c.rec.whyLow : c.rec.why) : '';
@@ -64,13 +64,14 @@
   /* ───────── 模块 ───────── */
   const R = {
     util: () => '',                                   // 设施入口已在页头区块内
-    pay: () => `<div class="pg-pad"><amap-taxi-bill from="汇通太古城英皇之都(西1门)" to="中贸广场 B 座(南门)" amount="18.28"></amap-taxi-bill></div>`,
+    pay: (s) => { const t = I.taxiOf(s);   // 终点跟着到达的 AOI / 单店
+      return `<div class="pg-pad"><amap-taxi-bill from="${esc(t.from)}" to="${esc(t.to)}" amount="${esc(t.amount)}"></amap-taxi-bill></div>`; },
 
     shop: (s) => {
       const st = I.POIST[s.poi];
-      const c = I.POICARD;
+      const c = I.pointOf(s);   // 按时段换店：早餐 / 正餐 / 甜品 / 宵夜
       const closed = s.poi === 'closed';
-      const card = placeCard({ ...c, st: closed ? '今日已打烊' : c.st }, null, 'food', s,
+      const card = placeCard({ ...c, st: closed ? '今日已打烊' : c.st }, null, c.kind, s,
         `layout="single"${closed ? ' closed' : ''}`);
       return `<div class="pg-stack">${st.alert ? `<amap-notice text="${esc(st.alert)}"></amap-notice>` : ''}<div class="pg-pad">${card}</div></div>`;
     },
@@ -85,29 +86,29 @@
     dish: () => `<amap-section heading="当地特色菜" layout="scroll">${I.DISH.map((d) =>
       `<amap-dish-card name="${esc(d.name)}" rank="${d.rank}" stores="${esc(d.stores)}" image="${esc(img(d.image))}"></amap-dish-card>`).join('')}</amap-section>`,
 
-    picks: (s, title = '附近精选') => scrollSection(title, I.picksOn(s).map(({ p, items }) => {
+    picks: (s, title = '附近精选', at = null) => scrollSection(title, I.picksOn(s, at).map(({ p, items }) => {
       const list = items.map(([name, meta]) => {
         const [distance, ...details] = meta.split(' | ');
         return { name, distance, details, image: img(I.pickImg(name)) };
       });
       return `<amap-poi-card theme="${I.THEME[p.tint]}" heading="${esc(p.t)}" subtitle="${esc(p.sub)}" items="${json(list)}"></amap-poi-card>`;
     }).join(''), '查看其他榜单'),
-    lunch: (s) => R.picks(s, '午休去哪儿'),
+    lunch: (s) => R.picks(s, I.titleOf('lunch', s), I.lunchAt(s)),
 
     dwell: (s) => {
-      const d = I.DWELL[s.abs === 'point' ? 'shop' : s.scene];
+      const d = I.dwellOf(s);   // 已按到达时刻过滤掉关门的地点
       return `<div class="pg-dwell">
         <amap-section heading="${esc(I.dwellQ(s))}">
-          <amap-tier-label text="还有 20 分钟" style="--tier-inset: 0"></amap-tier-label>
-          ${nearby(d.short)}
+          ${d.short.length ? `<amap-tier-label text="还有 20 分钟" style="--tier-inset: 0"></amap-tier-label>
+          ${nearby(d.short)}` : ''}
         </amap-section>
-        <div class="pg-dwell__long">
+        ${d.long.length ? `<div class="pg-dwell__long">
           <amap-tier-label text="有 1 小时以上"></amap-tier-label>
           ${scrollSection('', recommendRow(d.long), '查看更多')}
-        </div></div>`;
+        </div>` : ''}</div>`;
     },
-    rest: () => `<amap-section heading="工作休息出来走走">${nearby(I.DWELL.commute.rest)}</amap-section>`,
-    offwork: () => scrollSection('下班好去处', recommendRow(I.OFFWORK), '查看更多'),
+    rest: (s) => `<amap-section heading="${esc(I.titleOf('rest', s))}">${nearby(I.restOf(s))}</amap-section>`,
+    offwork: (s) => scrollSection(I.titleOf('offwork', s), recommendRow(I.offworkOf(s)), '查看更多'),
 
     fav: () => `<amap-section heading="你的收藏就在附近">${I.FAVS.map((f) =>
       `<amap-place-row name="${esc(f.name)}" distance="${esc(f.distance)}" details="${json(f.details)}" image="${esc(img(f.image))}"></amap-place-row>`).join('')}</amap-section>`,

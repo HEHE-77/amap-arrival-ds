@@ -86,13 +86,13 @@
 
 .amap-header__actions {
   display: flex;
-  align-items: flex-start;
+  align-items: center;   /* 绿色能量（图标 + 文字）与「行程回溯」垂直居中对齐 */
   gap: var(--header-gap-actions);
 }
 
 .amap-header__eco {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--header-gap-icon-label);
   height: var(--line-height-body);
 }

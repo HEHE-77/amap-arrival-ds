@@ -41,7 +41,8 @@ amap-order-sheet[hidden] { display: none; }
 .os-sheet__panel {
   position: absolute; left: 0; right: 0; bottom: 0;
   display: flex; flex-direction: column;
-  max-height: calc(100% - var(--sheet-top-gap));
+  /* 固定高度：不随内容增减变化，内容少时内容区留空，内容多时内容区滚动（取三张整屏稿中最高的 732） */
+  height: min(var(--sheet-height, 732px), calc(100% - var(--sheet-top-gap)));
   border-radius: var(--shape-sheet-top);
   background: var(--color-bg-page-subtle);
   overflow: hidden;
@@ -286,7 +287,23 @@ amap-order-sheet[data-state="leaving"] .os-sheet__panel { transition-timing-func
   background: var(--gradient-theme); color: var(--color-icon-inverse);
 }
 .os-addon__add svg { width: 10px; height: 10px; }
-.os-addon__add[aria-pressed="true"] { background: var(--color-surface-default); color: var(--color-icon-accent); box-shadow: inset 0 0 0 1px var(--color-border-accent); }
+/* 加购后：「+ 数量 −」小步进器（Figma 1085:4890）：加号渐变、数量 数字/Small、减号 neutral/200 底；只剩 1 份时减号为 icon/disabled */
+.os-addon__stepper { display: flex; align-items: center; gap: var(--space-sm); }   /* Figma 1085:4890：间距 6，整体 51×16 */
+.os-addon__qty {
+  min-width: 7px; text-align: center;
+  font-family: var(--font-family-numeric);
+  font-size: var(--font-size-numeric-sm); font-weight: var(--font-weight-semibold); line-height: var(--line-height-numeric-sm);
+  color: var(--color-text-primary);
+}
+.os-addon__minus {
+  flex: none; display: grid; place-items: center;
+  width: 16px; height: 16px; padding: 0; margin: 0; border: 0; cursor: pointer;
+  border-radius: var(--radius-control);
+  background: var(--color-neutral-200); color: var(--color-icon-disabled);
+  -webkit-tap-highlight-color: transparent;
+}
+.os-addon__minus.is-active { color: var(--color-icon-primary); }
+.os-addon__minus svg { width: 12px; height: 12px; }
 
 /* ───────── 杯数 + 支付方式 ───────── */
 .os-pay { gap: 0; padding: 0 var(--space-lg); }

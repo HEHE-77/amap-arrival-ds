@@ -62,7 +62,8 @@ button { font: inherit; }
 
 .dims { display: grid; gap: 14px; padding: 16px; border: 1px solid var(--app-line); border-radius: 12px; background: var(--app-surface); }
 .dim[data-disabled] { opacity: 0.4; }
-.dim__head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.dim__head { display: flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+.dim__icon { flex: none; width: 20px; height: 20px; color: var(--app-text); }
 .dim__label { font-size: 13px; font-weight: 600; white-space: nowrap; }
 .dim__hint { font-size: 12px; color: var(--app-text-3); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }

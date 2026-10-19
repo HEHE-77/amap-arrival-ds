@@ -24,7 +24,7 @@
  *   <amap-order-quantity heading="数量" [desc] value min max>   数量行（内含步进器）· 事件 quantity-change → { value }
  *   <amap-stepper value min max>                                  步进器 96×26 · 事件 stepper-change → { value }
  *   <amap-order-item image name tag spec link-label swap-label>   已选商品卡 · 事件 item-spec / item-swap
- *   <amap-order-addons heading desc items='[{ name, tag, price, original, image, tone }]'>  加购（tone = brand|warning|success|pink）· 事件 addon-change → { index, added }
+ *   <amap-order-addons heading desc items='[{ name, tag, price, original, image, tone }]'>  加购（tone = brand|warning|success|pink）· 加购后为「+ 数量 −」· 事件 addon-change → { index, qty }
  *   <amap-order-payment cups="1" method="微信支付 (已开通免密支付)">  杯数 + 支付方式 · 事件 quantity-change / payment-change
  *   <amap-order-terms text="到店出示取餐码 · 下单即同意《服务条款》">
  *   <amap-order-notice lines='["…","…"]' link-label="购买须知">  购买须知条 · 事件 notice-more
@@ -218,7 +218,8 @@
   const ADDON_TONE = ['brand', 'warning', 'success', 'pink'];
   class AmapOrderAddons extends Base {
     static get observedAttributes() { return ['heading', 'desc', 'items', 'added']; }
-    get added() { return parse(this.attr('added'), []); }
+    /** 已加购数量 { 序号: 份数 }（Figma 1085:4890：加购后变为「+ 数量 −」小步进器） */
+    get added() { const a = parse(this.attr('added'), {}); return Array.isArray(a) ? Object.fromEntries(a.map((i) => [i, 1])) : a; }
     render() {
       const items = parse(this.attr('items'), []);
       const added = this.added;
@@ -234,16 +235,21 @@
               </div>
               <div class="os-addon__foot">
                 <span class="os-addon__price"><span class="os-opt__price"><small>¥</small>${esc(it.price)}</span>${has(it.original) ? `<s>¥${esc(it.original)}</s>` : ''}</span>
-                <button type="button" class="os-addon__add" data-index="${i}" aria-pressed="${added.includes(i)}" aria-label="加购 ${esc(it.name)}">${added.includes(i) ? ICON.minus : ICON.plus}</button>
+                ${added[i] ? `<span class="os-addon__stepper">
+                  <button type="button" class="os-addon__add" data-index="${i}" data-d="1" aria-label="再加一份 ${esc(it.name)}">${ICON.plus}</button>
+                  <span class="os-addon__qty" aria-live="polite">${added[i]}</span>
+                  <button type="button" class="os-addon__minus${added[i] > 1 ? ' is-active' : ''}" data-index="${i}" data-d="-1" aria-label="减一份 ${esc(it.name)}">${ICON.minus}</button>
+                </span>` : `<button type="button" class="os-addon__add" data-index="${i}" data-d="1" aria-label="加购 ${esc(it.name)}">${ICON.plus}</button>`}
               </div>
             </div>`).join('')}</div>
         </section>`;
-      this.querySelectorAll('.os-addon__add').forEach((b) => b.addEventListener('click', () => {
+      this.querySelectorAll('.os-addon__add, .os-addon__minus').forEach((b) => b.addEventListener('click', () => {
         const index = Number(b.dataset.index);
-        const on = !added.includes(index);
-        const next = on ? [...added, index] : added.filter((x) => x !== index);
+        const qty = Math.max(0, (added[index] || 0) + Number(b.dataset.d));
+        const next = { ...added, [index]: qty };
+        if (!qty) delete next[index];
         this.setAttribute('added', JSON.stringify(next));
-        fire(this, 'addon-change', { index, added: on, item: items[index] });
+        fire(this, 'addon-change', { index, qty, added: qty > 0, item: items[index] });
       }));
     }
   }
@@ -361,7 +367,7 @@
       this.addEventListener('quantity-change', (e) => { this._qty = e.detail.value; this.reprice(); });
       this.addEventListener('addon-change', (e) => {
         this._addons = this._addons || new Map();
-        if (e.detail.added) this._addons.set(e.detail.index, e.detail.item); else this._addons.delete(e.detail.index);
+        if (e.detail.qty) this._addons.set(e.detail.index, { ...e.detail.item, qty: e.detail.qty }); else this._addons.delete(e.detail.index);
         this.reprice();
       });
     }
@@ -394,7 +400,7 @@
       const qty = this._qty ?? 1;
       const price = Number(this._unit.price), was = Number(this._unit.original ?? this._unit.price);
       let now = price * qty, orig = was * qty;
-      for (const a of (this._addons || new Map()).values()) { now += Number(a.price); orig += Number(a.original ?? a.price); }
+      for (const a of (this._addons || new Map()).values()) { const n = a.qty || 1; now += Number(a.price) * n; orig += Number(a.original ?? a.price) * n; }
       const save = orig - now;
       if (!f.dataset.action) f.dataset.action = this._unit.action ? '去下单' : (f.getAttribute('action-label') || '去下单');
       f.setAttribute('action-label', this._unit.action || f.dataset.action);
