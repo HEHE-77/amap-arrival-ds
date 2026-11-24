@@ -183,7 +183,9 @@
     return s.scene === 'shop' ? ((s.time === 'meal' || s.time === 'night') ? 'shop_eat' : 'shop_go') : s.scene;
   };
   const topCards = (s) => {
-    const arr = TOP[topKey(s)].cards;
+    let arr = TOP[topKey(s)].cards;
+    // 咖啡早餐卡的分店名跟随所在片区（写字楼 → 中贸广场店），与页头、付款卡终点一致
+    if (topKey(s) === 'commute') { const tag = (BRANCH[s.scene] || BRANCH.commute).tag; arr = arr.map((c) => ({ ...c, t: `${brandOf(c.t)}（${tag}）` })); }
     if (visitorOf(s)) return [TOP_VISITOR_FIRST, arr[0], arr[2]];   // 访客：早餐榜第 1 → Grid Coffee → 小面日记
     if (s.abs !== 'point') return arr;
     const self = brandOf(pointOf(s).t);
