@@ -135,6 +135,12 @@
         deals: [['团', '15', '4.6折', '招牌小面 + 卤蛋']],
         rec: { n: '小面 + 豆腐脑早餐组', why: '最多收藏', spec: '含推荐菜', note: '｜随时退｜不限购', p: '18.9', img: IMG + 'order-xiaomian-doufunao.jpg' } }] },
   };
+  /* 写字楼访客（0–3 次）的扫街榜：首卡换成榜单第 1、评分最高、去的人最多的早餐店，主推最多人购买的套餐；
+   * 第一次来没有「上次那杯」，跟着大多数人选最稳 */
+  const TOP_VISITOR_FIRST = { t: '麦当劳（中贸广场店）', d: '45 米', sc: '4.9', sl: '超棒', cat: '快餐 · 早餐', pp: '¥25/人', nav: '2310', fav: '8.2k+', pg: '1/9',
+    img: IMG + 'mcd-store.jpg', rank: '雁塔区早餐榜 · 第 1 名', grey: '收录 5 年', st: '正在营业',
+    deals: [['团', '13.9', '5.3折', '猪柳蛋麦满分 + 薯饼 + 中杯拿铁']],
+    rec: { n: '猪柳蛋麦满分套餐', why: '最多人购买', spec: '猪柳蛋麦满分·薯饼·中杯拿铁', note: '｜随时退｜不限购', p: '13.9', img: 'order/samples/mcd-muffin-coffee.jpg', swap: '换一份' } };
   /* 单 POI 到达：这家店本身（Figma 858:6486）；饭点为胡大饭馆，其他时段见 POINT */
   const POICARD = { t: '胡大饭馆 24h（砺街总店）', d: '距您 62 米', sc: '4.8', sl: '超棒', cat: '川菜', pp: '¥150/人', nav: '3652', fav: '10.7w+', pg: '1/12',
     img: IMG + 'huda-fanguan-wide.jpg', rank: '碑林区川菜榜单 · 第 1 名', st: '营业中', rev: '关晓彤推荐来的！冲他家的蒜蓉酸辣螃蟹…', rc: 252,
@@ -178,6 +184,7 @@
   };
   const topCards = (s) => {
     const arr = TOP[topKey(s)].cards;
+    if (visitorOf(s)) return [TOP_VISITOR_FIRST, arr[0], arr[2]];   // 访客：早餐榜第 1 → Grid Coffee → 小面日记
     if (s.abs !== 'point') return arr;
     const self = brandOf(pointOf(s).t);
     return arr.filter((c) => brandOf(c.t) !== self).concat([TOP_SPARE]).slice(0, 3);
@@ -325,6 +332,12 @@
     { name: '魏世纪 Hey wego·Bistro', distance: '369 米', details: ['4.8 分', '酒吧'], image: 'place-row/samples/weishiji-bistro.jpg' },
     { name: '永兴坊', distance: '1.2 公里', details: ['4.8 分', '美食街'], image: 'place-row/samples/yongxingfang.jpg' },
   ];
+  // 写字楼访客的收藏：和工作相关的店——能坐下来等开会的咖啡馆、开会前打印材料的地方
+  const FAVS_WORK = [
+    { name: '言几又书店 · 咖啡区', distance: '260 米', details: ['4.6 分', '安静 · 有插座'], image: 'restaurant/samples/yanjiyou-store.jpg' },
+    { name: '中贸快印 · 商务中心', distance: '60 米', details: ['4.8 分', '打印 · 装订'], image: 'place-row/samples/print-center.jpg' },
+  ];
+  const favsOf = (s) => (visitorOf(s) ? FAVS_WORK : FAVS);
   const LINE2 = '#C42D2A'; const NIGHT = '#7A5BD6';
   const LASTBUS = {
     explore: [{ line: '2 号线', color: LINE2, title: '钟楼站 · B 口进站', subtitle: '往 北客站 方向 · 换乘 4 号线', time: '23:10' },
@@ -434,13 +447,13 @@
       case 'bus': return '地铁 + 夜班公交 2 条' + (s.time === 'night' ? ' · 21 点后排在到达对象之后、推荐之前' : '');
       case 'shop': { const p = pointOf(s); return `${p.t} · ${p.kind === 'cafe' ? '早餐一键下单' : `团购 ${p.deals.length} 档 · 看团购 / 联系商家`}` + (s.poi === 'closed' ? '（今日已打烊）' : ''); }
       case 'top': { const k2 = TOP[topKey(s)].kind;
-        return `扫街榜 · ${topTitle(s)} · 主按钮：${k2 === 'cafe' ? '一键下单' + (s.grid === 'high' ? '（首卡上次那杯）' : '') : BTN[k2]}${s.abs === 'point' ? ' · 受阻唤起' : ''}`; }
+        return `扫街榜 · ${topTitle(s)} · 主按钮：${k2 === 'cafe' ? '一键下单' + (s.grid === 'high' ? '（首卡上次那杯）' : visitorOf(s) ? '（首卡早餐榜第 1 · 最多人购买）' : '') : BTN[k2]}${s.abs === 'point' ? ' · 受阻唤起' : ''}`; }
       case 'dish': return '6 道 · 必吃排名 · 仅外地游客';
       case 'picks': case 'lunch': return picksOn(s, k === 'lunch' ? lunchAt(s) : null).map((x) => `${x.p.t} → ${x.p.src}`).join('；');
       case 'dwell': { const d = dwellOf(s); return `${dwellQ(s)} · 短档 ${d.short.length} 条 + 1 小时以上 ${d.long.length} 张图片卡（已关门的不推荐）`; }
       case 'rest': return `短档 ${restOf(s).length} 条`;
       case 'offwork': return (visitorOf(s) ? '访客：大唐不夜城替换健身房 · ' : '') + `图片卡 ${offworkOf(s).length} 张 + 查看更多`;
-      case 'fav': return '命中 2 家 · 导航过去' + (s.grid === 'low' ? ' · 首次到达，提到扫街榜之后' : '');
+      case 'fav': return (visitorOf(s) ? '命中 2 家（咖啡馆 · 打印店）' : '命中 2 家') + ' · 导航过去' + (s.grid === 'low' ? ' · 首次到达，提到扫街榜之后' : '');
       case 'drive': return (s.city === 'out' ? '异地限行 · ' : '') + ((s.time === 'meal' || s.time === 'night') ? '代驾 · ' : '') + '泊车指引 2 · 优惠加油 2';
       default: return '';
     }
@@ -448,7 +461,7 @@
 
   window.ArrivalIntent = {
     SCENE, DIM, CLOCK, POIST, HEAD, headOf, taxiOf, pointOf, RIDE, FAC_KEY, utilOf, TOP, POICARD, topKey, topCards, topTitle, BTN,
-    DWELL, SPOT, OFFWORK, DISH, PICK, THEME, pickImg, picksOn, FAVS, LASTBUS, PARK, GAS,
+    DWELL, SPOT, OFFWORK, DISH, PICK, THEME, pickImg, picksOn, FAVS, favsOf, LASTBUS, PARK, GAS,
     LUNCH_AT, lunchAt, visitorOf, titleOf, busOn, dwellQ, dwellOf, restOf, offworkOf, openAt, layout, NAME, describe,
   };
 })();

@@ -42,12 +42,12 @@
     if (kind === 'go') attrs['primary-label'] = I.BTN.go;
     if (kind === 'cafe') {
       attrs['deal-more'] = '查看更多';
-      const why = (i === 0 && s.grid !== 'high' && c.rec.whyLow) ? c.rec.whyLow : c.rec.why;
+      const why = (s.grid !== 'high' && c.rec.whyLow) ? c.rec.whyLow : c.rec.why;
       attrs.order = JSON.stringify({ image: img(c.rec.img), title: c.rec.n, tag: why, spec: c.rec.spec, note: c.rec.note,
         price: c.rec.p, actionLabel: '一键下单', swapLabel: c.rec.swap || '换一杯' });
     }
     // 登记卡片数据，点 CTA / 优惠时按这张卡生成下单浮层（app/orders.js）
-    const tag = kind === 'cafe' ? ((i === 0 && s.grid !== 'high' && c.rec.whyLow) ? c.rec.whyLow : c.rec.why) : '';
+    const tag = kind === 'cafe' ? ((s.grid !== 'high' && c.rec.whyLow) ? c.rec.whyLow : c.rec.why) : '';
     attrs['data-card'] = String(CARDS.push({ c, kind, tag }) - 1);
     const a = Object.entries(attrs).filter(([, v]) => v !== '' && v != null).map(([k, v]) => `${k}="${esc(v)}"`).join(' ');
     return `<amap-place-card ${a} deals="${json(deals)}" ${extra}></amap-place-card>`;
@@ -110,7 +110,7 @@
     rest: (s) => `<amap-section heading="${esc(I.titleOf('rest', s))}">${nearby(I.restOf(s))}</amap-section>`,
     offwork: (s) => scrollSection(I.titleOf('offwork', s), recommendRow(I.offworkOf(s)), '查看更多'),
 
-    fav: () => `<amap-section heading="你的收藏就在附近">${I.FAVS.map((f) =>
+    fav: (s) => `<amap-section heading="你的收藏就在附近">${I.favsOf(s).map((f) =>
       `<amap-place-row name="${esc(f.name)}" distance="${esc(f.distance)}" details="${json(f.details)}" image="${esc(img(f.image))}"></amap-place-row>`).join('')}</amap-section>`,
 
     bus: (s) => `<amap-section heading="今晚末班车时间" more-label="查看更多"><amap-transit-list items="${json(I.LASTBUS[s.scene])}"></amap-transit-list></amap-section>`,
