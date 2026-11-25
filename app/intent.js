@@ -143,6 +143,11 @@
     img: IMG + 'mcd-store.jpg', rank: '雁塔区早餐榜 · 第 1 名', grey: '收录 5 年', st: '正在营业',
     deals: [['团', '13.9', '5.3折', '猪柳蛋麦满分 + 薯饼 + 中杯拿铁']],
     rec: { n: '猪柳蛋麦满分套餐', why: '最多人购买', spec: '猪柳蛋麦满分·薯饼·中杯拿铁', note: '｜随时退｜不限购', p: '13.9', img: 'order/samples/mcd-muffin-coffee.jpg', swap: '换一份' } };
+  // 访客第 2 张：换一家连锁咖啡，不和上班族的首卡（Grid Coffee）重复
+  const TOP_VISITOR_CAFE = { t: 'Manner 咖啡（中贸广场店）', d: '80 米', sc: '4.7', sl: '很棒', cat: '咖啡', pp: '¥18/人', nav: '1280', fav: '3.1k+', pg: '1/10',
+    img: IMG + 'manner-coffee.jpg', rank: '雁塔区咖啡榜 · 第 1 名', grey: '收录 3 年', st: '正在营业',
+    deals: [['团', '12.9', '6.5折', '大杯拿铁']],
+    rec: { n: '拿铁（大杯）', why: '店长推荐', spec: '大杯·热 / 冰·标准糖', note: '｜随时退｜不限购', p: '15', img: IMG + 'order-oat-latte.jpg' } };
   /* 单 POI 到达：这家店本身（Figma 858:6486）；饭点为胡大饭馆，其他时段见 POINT */
   const POICARD = { t: '胡大饭馆 24h（砺街总店）', d: '距您 62 米', sc: '4.8', sl: '超棒', cat: '川菜', pp: '¥150/人', nav: '3652', fav: '10.7w+', pg: '1/12',
     img: IMG + 'huda-fanguan-wide.jpg', rank: '碑林区川菜榜单 · 第 1 名', st: '营业中', rev: '关晓彤推荐来的！冲他家的蒜蓉酸辣螃蟹…', rc: 252,
@@ -188,7 +193,7 @@
     let arr = TOP[topKey(s)].cards;
     // 咖啡早餐卡的分店名跟随所在片区（写字楼 → 中贸广场店），与页头、付款卡终点一致
     if (topKey(s) === 'commute') { const tag = (BRANCH[s.scene] || BRANCH.commute).tag; arr = arr.map((c) => ({ ...c, t: `${brandOf(c.t)}（${tag}）` })); }
-    if (visitorOf(s)) return [TOP_VISITOR_FIRST, arr[0], arr[2]];   // 访客：早餐榜第 1 → Grid Coffee → 小面日记
+    if (visitorOf(s)) return [TOP_VISITOR_FIRST, TOP_VISITOR_CAFE, arr[2]];   // 访客：早餐榜第 1 → Manner 咖啡 → 小面日记
     if (s.abs !== 'point') return arr;
     const self = brandOf(pointOf(s).t);
     return arr.filter((c) => brandOf(c.t) !== self).concat([TOP_SPARE]).slice(0, 3);

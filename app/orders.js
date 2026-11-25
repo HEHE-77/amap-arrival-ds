@@ -127,6 +127,10 @@
         { name: '焦糖奶油布丁', tag: '有 21 人换购', price: 3.9, original: 12, image: 'order/samples/caramel-pudding.jpg' },
         { name: '巧克力曲奇', tag: '有 8 人换购', price: 3.9, original: 16, image: 'order/samples/choco-cookie.jpg' },
         { name: '草莓杯子蛋糕', tag: '收录 2 年', price: 4.9, original: 12, image: 'order/samples/strawberry-cupcake.jpg' }] },
+    'Manner 咖啡（中贸广场店）': { where: '到店自取', original: 20, prep: 6, unit: '杯数', swap: '换一杯',
+      addons: [
+        { name: '巴斯克芝士蛋糕', tag: '有 18 人换购', price: 6.9, original: 16, image: 'order/samples/basque-cheesecake.jpg' },
+        { name: '巧克力曲奇', tag: '有 9 人换购', price: 3.9, original: 12, image: 'order/samples/choco-cookie.jpg' }] },
     '早安山丘（银泰 B 座 B1）': { where: '到店自取', original: 26, prep: 8, unit: '份数', swap: '换一份',
       addons: [
         { name: '黄油可颂', tag: '有 36 人换购', price: 6.9, original: 12, image: 'order/samples/croissant.jpg' },
