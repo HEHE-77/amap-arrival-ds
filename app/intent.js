@@ -55,6 +55,8 @@
   };
   const taxiOf = (s) => {
     const t = TAXI[s.scene] || TAXI.commute;
+    // 外地访客到写字楼：多是下了高铁直接打车过来
+    if (s.abs !== 'point' && s.scene === 'commute' && visitorOf(s) && s.city === 'out') return { from: '西安北站(南广场)', to: t.to, amount: '46.80' };
     if (s.abs !== 'point') return { from: TAXI.from, to: t.to, amount: t.amount };
     // 单店：终点为这家店，车费在片区基础上略增（送到店门口）
     return { from: TAXI.from, to: pointOf(s).t, amount: (Number(t.amount) + 1.2).toFixed(2) };
@@ -193,7 +195,6 @@
   };
   const topTitle = (s) => {
     if (s.abs === 'point') return '猜你想吃';
-    if (s.scene === 'commute' && s.grid === 'high') return '中贸商圈';
     if (s.scene === 'commute') return (s.time === 'am' || s.time === 'meal') ? '猜你想吃' : '猜你想去';
     if (s.scene === 'shop') return topKey(s) === 'shop_eat' ? '猜你想吃' : '猜你想逛';
     return '猜你想去';
@@ -406,7 +407,7 @@
   const titleOf = (k, s) => {
     if (k === 'offwork') return s.time === 'night' ? '附近好去处' : visitorOf(s) ? '忙完去哪儿' : '下班好去处';
     if (k === 'lunch') return visitorOf(s) ? '附近精选' : '午休去哪儿';
-    if (k === 'rest') return visitorOf(s) ? '到早了先坐会儿' : '工作休息出来走走';
+    if (k === 'rest') return visitorOf(s) ? '附近歇歇脚' : '工作休息出来走走';
     return NAME[k];
   };
   const emptyOf = (s) => ({ dwell: !dwellQ(s), picks: !picksOn(s).length, lunch: !picksOn(s, lunchAt(s)).length, rest: !restOf(s).length, offwork: !offworkOf(s).length });
@@ -427,7 +428,7 @@
       // 写字楼：当地特色菜不抢前排——至少排在第 3 个推荐模块；平时（下午）放到所有推荐之后
       const rec = ['top'].concat({ am: ['rest', 'lunch', 'offwork'], meal: ['lunch', 'offwork'], other: ['rest', 'offwork'], night: ['offwork'] }[s.time])
         .filter((k) => !emptyOf(s)[k]);
-      if (s.city === 'out') rec.splice(s.time === 'other' ? rec.length : Math.min(2, rec.length), 0, 'dish');
+      // 写字楼不出当地特色菜：来这里是办事 / 上班，不是来吃的
       L.push(...rec);
     }
     if (busOn(s) && s.time !== 'night') L.push('bus');
